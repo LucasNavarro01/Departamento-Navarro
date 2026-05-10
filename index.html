@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Departamento Navarro | Alojamiento en Malargüe, Mendoza</title>
+  <meta name="description" content="Alojamiento temporario en Malargüe, Mendoza. Cómodo, limpio y bien ubicado. La base perfecta para Las Leñas, Llancanelo y los volcanes. Reservá directo." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --cream:       #F5F0E1;
+      --sand:        #EDE3D0;
+      --terracotta:  #C67B5C;
+      --clay:        #A0522D;
+      --clay-dark:   #7A3B1E;
+      --brown:       #3D2B1F;
+      --brown-light: #6B4A38;
+      --navy:        #1E3A8A;
+      --navy-light:  #2B4FAD;
+      --gold:        #C8960C;
+      --white:       #FFFFFF;
+      --card-bg:     #FFFDF8;
+      --border:      #E0D4C0;
+      --shadow-sm:   0 2px 8px rgba(61,43,31,.08);
+      --shadow-md:   0 8px 32px rgba(61,43,31,.12);
+      --shadow-lg:   0 20px 60px rgba(61,43,31,.18);
+      --radius:      12px;
+      --radius-lg:   20px;
+      --font-serif:  'Playfair Display', Georgia, serif;
+      --font-sans:   'Inter', system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-sans); background: var(--cream); color: var(--brown); line-height: 1.6; overflow-x: hidden; }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; border: none; font-family: inherit; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .section-label { font-size: .75rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: var(--terracotta); margin-bottom: .6rem; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 600; color: var(--brown); line-height: 1.2; }
+    .section-sub { font-size: 1rem; color: var(--brown-light); margin-top: .75rem; line-height: 1.7; }
+
+    .btn { display: inline-flex; align-items: center; gap: .5rem; padding: .85rem 2rem; border-radius: 50px; font-size: .92rem; font-weight: 600; transition: all .25s ease; white-space: nowrap; }
+    .btn-primary { background: var(--terracotta); color: #fff; box-shadow: 0 4px 20px rgba(198,123,92,.4); }
+    .btn-primary:hover { background: var(--clay); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(198,123,92,.5); }
+    .btn-outline { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,.75); }
+    .btn-outline:hover { background: rgba(255,255,255,.15); }
+    .btn-ghost { background: transparent; color: var(--terracotta); border: 2px solid var(--terracotta); }
+    .btn-ghost:hover { background: var(--terracotta); color: #fff; }
+    .btn-navy { background: var(--navy); color: #fff; box-shadow: 0 4px 20px rgba(30,58,138,.3); }
+    .btn-navy:hover { background: var(--navy-light); transform: translateY(-2px); }
+
+    /* ── NAVBAR ── */
+    #navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 1.25rem 0; transition: all .3s ease; }
+    #navbar.scrolled { background: rgba(245,240,225,.97); backdrop-filter: blur(12px); box-shadow: 0 2px 20px rgba(61,43,31,.1); padding: .85rem 0; }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-family: var(--font-serif); font-size: 1.35rem; font-weight: 600; color: #fff; transition: color .3s; }
+    #navbar.scrolled .nav-logo { color: var(--clay-dark); }
+    .nav-logo span { color: var(--terracotta); }
+    .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+    .nav-links a { font-size: .88rem; font-weight: 500; color: rgba(255,255,255,.9); transition: color .2s; }
+    #navbar.scrolled .nav-links a { color: var(--brown-light); }
+    .nav-links a:hover { color: var(--terracotta) !important; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; background: none; padding: 4px; }
+    .hamburger span { width: 24px; height: 2px; background: #fff; border-radius: 2px; transition: background .3s; }
+    #navbar.scrolled .hamburger span { background: var(--brown); }
+    .mobile-menu { display: none; position: fixed; inset: 0; background: var(--cream); z-index: 99; padding-top: 80px; flex-direction: column; align-items: center; gap: 1.5rem; }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { font-family: var(--font-serif); font-size: 1.4rem; color: var(--brown); }
+    .mobile-menu a:hover { color: var(--terracotta); }
+    .mobile-close { position: absolute; top: 1.5rem; right: 1.5rem; font-size: 1.8rem; background: none; color: var(--brown); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      background:
+        linear-gradient(160deg, rgba(30,58,138,.5) 0%, rgba(61,43,31,.68) 55%, rgba(198,123,92,.38) 100%),
+        url('fotos/malargue-invierno.jpg') center/cover no-repeat;
+      display: flex; align-items: center; position: relative; overflow: hidden;
+    }
+    .hero-content { padding: 120px 0 80px; max-width: 700px; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: rgba(255,255,255,.15); backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,.3); border-radius: 50px;
+      padding: .4rem 1rem; font-size: .82rem; font-weight: 500; color: #fff; margin-bottom: 1.5rem;
+    }
+    .hero-title { font-family: var(--font-serif); font-size: clamp(2.4rem, 6vw, 4rem); font-weight: 600; color: #fff; line-height: 1.15; margin-bottom: 1.25rem; }
+    .hero-title em { font-style: italic; color: #F5D5C0; }
+    .hero-sub { font-size: 1.08rem; color: rgba(255,255,255,.88); line-height: 1.75; margin-bottom: 2.5rem; max-width: 540px; }
+    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 3rem; }
+    .hero-stats { display: flex; gap: 2.5rem; flex-wrap: wrap; }
+    .hero-stat-num { font-family: var(--font-serif); font-size: 1.9rem; font-weight: 700; color: #fff; }
+    .hero-stat-label { font-size: .78rem; color: rgba(255,255,255,.7); margin-top: .1rem; }
+    .hero-scroll { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: .4rem; color: rgba(255,255,255,.6); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; animation: bounce 2s ease-in-out infinite; }
+    @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+
+    /* ── FEATURES BAR ── */
+    #features-bar { background: var(--white); box-shadow: var(--shadow-md); }
+    .features-bar-grid { display: grid; grid-template-columns: repeat(6, 1fr); }
+    .fbar-item { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 1.6rem .75rem; gap: .4rem; border-right: 1px solid var(--border); transition: background .2s; }
+    .fbar-item:last-child { border-right: none; }
+    .fbar-item:hover { background: var(--cream); }
+    .fbar-icon { font-size: 1.5rem; }
+    .fbar-label { font-size: .82rem; font-weight: 600; color: var(--brown); }
+    .fbar-sub { font-size: .72rem; color: var(--brown-light); }
+
+    /* ── ABOUT ── */
+    #about { padding: 100px 0; }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .about-images { position: relative; }
+    .about-main-img { border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-lg); aspect-ratio: 4/3; }
+    .about-main-img img { width: 100%; height: 100%; object-fit: cover; }
+    .about-float-img { position: absolute; bottom: -2rem; right: -2rem; width: 180px; height: 145px; border-radius: var(--radius); overflow: hidden; border: 4px solid var(--white); box-shadow: var(--shadow-md); z-index: 2; }
+    .about-float-img img { width: 100%; height: 100%; object-fit: cover; }
+    .about-badge { position: absolute; top: 1.5rem; left: -1.5rem; background: var(--terracotta); color: #fff; border-radius: var(--radius); padding: .75rem 1.25rem; box-shadow: var(--shadow-md); text-align: center; z-index: 3; }
+    .about-badge strong { display: block; font-family: var(--font-serif); font-size: 1.4rem; }
+    .about-badge span { font-size: .72rem; opacity: .9; }
+    .about-feats { display: grid; grid-template-columns: 1fr 1fr; gap: .85rem; margin: 1.75rem 0; }
+    .about-feat { display: flex; align-items: center; gap: .75rem; }
+    .about-feat-icon { width: 34px; height: 34px; border-radius: 8px; background: rgba(198,123,92,.12); display: flex; align-items: center; justify-content: center; font-size: .95rem; flex-shrink: 0; }
+    .about-feat-label { font-size: .88rem; font-weight: 500; }
+
+    /* ── GALLERY ── */
+    #gallery { padding: 100px 0; background: var(--sand); }
+    .gallery-header { text-align: center; margin-bottom: 3rem; }
+    .gallery-header .section-sub { margin: .5rem auto 0; max-width: 500px; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: 240px 240px; gap: 10px; }
+    .g-item { overflow: hidden; border-radius: var(--radius); position: relative; cursor: pointer; background: var(--border); }
+    .g-item:first-child { grid-column: span 2; grid-row: span 2; }
+    .g-item img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+    .g-item:hover img { transform: scale(1.07); }
+    .g-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(61,43,31,.55), transparent); opacity: 0; transition: opacity .3s; display: flex; align-items: flex-end; padding: 1rem; }
+    .g-item:hover .g-overlay { opacity: 1; }
+    .g-overlay span { color: #fff; font-size: .82rem; font-weight: 500; }
+    .gallery-note { text-align: center; margin-top: 2rem; font-size: .88rem; color: var(--brown-light); }
+
+    /* ── AMENITIES ── */
+    #amenities { padding: 100px 0; }
+    .amenities-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+    .amenities-list { display: grid; grid-template-columns: 1fr 1fr; gap: .65rem; margin-top: 1.75rem; }
+    .am-item { display: flex; align-items: center; gap: .65rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: .8rem .9rem; transition: border-color .2s, box-shadow .2s; }
+    .am-item:hover { border-color: var(--terracotta); box-shadow: var(--shadow-sm); }
+    .am-item.highlight { background: rgba(198,123,92,.07); border-color: rgba(198,123,92,.28); }
+    .am-icon { font-size: 1.15rem; }
+    .am-label { font-size: .85rem; font-weight: 500; }
+    .cap-card { background: linear-gradient(135deg, var(--clay-dark), var(--brown)); border-radius: var(--radius-lg); padding: 2.25rem; color: #fff; margin-top: 1rem; }
+    .cap-card h3 { font-family: var(--font-serif); font-size: 1.35rem; margin-bottom: 1.25rem; }
+    .cap-row { display: flex; justify-content: space-between; align-items: center; padding: .7rem 0; border-bottom: 1px solid rgba(255,255,255,.1); }
+    .cap-row:last-of-type { border-bottom: none; }
+    .cap-label { font-size: .88rem; opacity: .8; }
+    .cap-value { font-weight: 600; font-size: .92rem; }
+    .cap-note { margin-top: 1.1rem; font-size: .8rem; opacity: .65; line-height: 1.6; border-top: 1px solid rgba(255,255,255,.1); padding-top: 1rem; }
+
+    /* ── ATRACCIONES ── */
+    #atracciones { padding: 100px 0; background: var(--sand); }
+    .atr-header { text-align: center; margin-bottom: 3.5rem; }
+    .atr-header .section-sub { margin: .5rem auto 0; max-width: 560px; }
+    .atr-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+    .atr-card { background: var(--card-bg); border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); transition: transform .3s, box-shadow .3s; }
+    .atr-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+    .atr-img { height: 190px; overflow: hidden; position: relative; }
+    .atr-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+    .atr-card:hover .atr-img img { transform: scale(1.08); }
+    .atr-tag { position: absolute; top: .75rem; right: .75rem; background: var(--terracotta); color: #fff; font-size: .7rem; font-weight: 700; padding: .28rem .7rem; border-radius: 50px; text-transform: uppercase; letter-spacing: .05em; }
+    .atr-body { padding: 1.35rem; }
+    .atr-dist { font-size: .75rem; font-weight: 700; color: var(--terracotta); text-transform: uppercase; letter-spacing: .06em; margin-bottom: .35rem; }
+    .atr-name { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 600; color: var(--brown); margin-bottom: .45rem; }
+    .atr-desc { font-size: .85rem; color: var(--brown-light); line-height: 1.6; }
+
+    /* ── RESEÑAS ── */
+    #resenas { padding: 100px 0; }
+    .res-header { text-align: center; margin-bottom: 3rem; }
+    .rating-wrap { display: flex; align-items: center; justify-content: center; gap: 3rem; margin-bottom: 3.5rem; flex-wrap: wrap; }
+    .rating-big { text-align: center; }
+    .rating-num { font-family: var(--font-serif); font-size: 4.5rem; font-weight: 700; color: var(--brown); line-height: 1; }
+    .rating-stars { font-size: 1.5rem; color: var(--gold); margin: .3rem 0; }
+    .rating-source { font-size: .82rem; color: var(--brown-light); }
+    .rating-bars { display: flex; flex-direction: column; gap: .55rem; min-width: 220px; }
+    .rbar-row { display: flex; align-items: center; gap: .75rem; }
+    .rbar-lbl { font-size: .8rem; color: var(--brown-light); width: 90px; }
+    .rbar-track { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+    .rbar-fill { height: 100%; background: var(--gold); border-radius: 3px; }
+    .rbar-val { font-size: .78rem; font-weight: 600; color: var(--brown); width: 24px; text-align: right; }
+    .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+    .rev-card { background: var(--card-bg); border-radius: var(--radius-lg); padding: 1.6rem; border: 1px solid var(--border); transition: box-shadow .2s; }
+    .rev-card:hover { box-shadow: var(--shadow-md); }
+    .rev-header { display: flex; align-items: center; gap: .85rem; margin-bottom: .9rem; }
+    .rev-avatar { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, var(--terracotta), var(--clay)); display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-size: 1rem; font-weight: 600; color: #fff; flex-shrink: 0; }
+    .rev-name { font-weight: 600; font-size: .92rem; color: var(--brown); }
+    .rev-origin { font-size: .78rem; color: var(--brown-light); }
+    .rev-stars { font-size: .9rem; color: var(--gold); margin-bottom: .65rem; }
+    .rev-text { font-size: .88rem; color: var(--brown-light); line-height: 1.7; font-style: italic; }
+    .rev-text::before { content: '"'; font-family: var(--font-serif); font-size: 1.8rem; color: var(--terracotta); line-height: 0; vertical-align: -.55rem; margin-right: .15rem; }
+    .rev-date { font-size: .73rem; color: var(--brown-light); margin-top: .9rem; opacity: .65; }
+
+    /* ── BOOKING ── */
+    #reservas { padding: 100px 0; background: var(--sand); }
+    .res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+    .book-form-card { background: var(--white); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-lg); border: 1px solid var(--border); }
+    .book-form-card h3 { font-family: var(--font-serif); font-size: 1.45rem; color: var(--brown); margin-bottom: .4rem; }
+    .book-form-card > p { font-size: .88rem; color: var(--brown-light); margin-bottom: 1.75rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .fg { display: flex; flex-direction: column; gap: .35rem; margin-bottom: .9rem; }
+    .fg label { font-size: .8rem; font-weight: 700; color: var(--brown); letter-spacing: .02em; }
+    .fg input, .fg select, .fg textarea { padding: .72rem 1rem; border: 1.5px solid var(--border); border-radius: 8px; font-family: var(--font-sans); font-size: .88rem; color: var(--brown); background: var(--cream); transition: border-color .2s, box-shadow .2s; outline: none; }
+    .fg input:focus, .fg select:focus, .fg textarea:focus { border-color: var(--terracotta); box-shadow: 0 0 0 3px rgba(198,123,92,.12); }
+    .fg textarea { resize: vertical; min-height: 75px; }
+    .form-btn { width: 100%; padding: .95rem; font-size: .95rem; font-weight: 700; margin-top: .5rem; border-radius: 10px; }
+    #form-success { display: none; text-align: center; padding: 2rem; background: rgba(198,123,92,.08); border-radius: var(--radius); border: 1px solid rgba(198,123,92,.3); }
+
+    .book-info h3 { font-family: var(--font-serif); font-size: 1.45rem; color: var(--brown); margin-bottom: .5rem; }
+    .book-info > p { font-size: .92rem; color: var(--brown-light); line-height: 1.75; margin-bottom: 2rem; }
+    .price-card { background: linear-gradient(135deg, var(--terracotta), var(--clay)); border-radius: var(--radius-lg); padding: 2rem; color: #fff; margin-bottom: 1.5rem; }
+    .price-lbl { font-size: .75rem; opacity: .85; text-transform: uppercase; letter-spacing: .1em; }
+    .price-amt { font-family: var(--font-serif); font-size: 2.8rem; font-weight: 700; line-height: 1.1; margin: .3rem 0; }
+    .price-amt sup { font-size: 1.1rem; vertical-align: top; margin-top: .55rem; }
+    .price-per { font-size: .82rem; opacity: .8; }
+    .price-incs { margin-top: 1.25rem; display: flex; flex-direction: column; gap: .45rem; }
+    .price-inc { display: flex; align-items: center; gap: .5rem; font-size: .82rem; opacity: .9; }
+    .policies { display: flex; flex-direction: column; gap: .7rem; }
+    .pol-item { display: flex; gap: .7rem; }
+    .pol-icon { font-size: 1.05rem; margin-top: .1rem; }
+    .pol-text strong { display: block; font-size: .88rem; font-weight: 600; color: var(--brown); }
+    .pol-text span { font-size: .8rem; color: var(--brown-light); }
+    .plats { display: flex; gap: .65rem; flex-wrap: wrap; margin-top: .75rem; }
+    .plat-btn { display: inline-flex; align-items: center; gap: .45rem; padding: .5rem 1.1rem; border-radius: 8px; font-size: .8rem; font-weight: 600; border: 1.5px solid var(--border); transition: all .2s; color: var(--brown); background: var(--cream); }
+    .plat-btn:hover { border-color: var(--terracotta); color: var(--terracotta); background: rgba(198,123,92,.06); }
+
+    /* ── UBICACIÓN ── */
+    #ubicacion { padding: 100px 0; }
+    .ubic-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+    .map-wrap { border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-lg); border: 2px solid var(--border); height: 420px; }
+    .map-wrap iframe { width: 100%; height: 100%; border: none; display: block; }
+    .ubic-info h3 { font-family: var(--font-serif); font-size: 1.5rem; color: var(--brown); margin-bottom: .75rem; }
+    .ubic-info > p { font-size: .92rem; color: var(--brown-light); line-height: 1.75; margin-bottom: 1.5rem; }
+    .addr-tag { display: inline-flex; align-items: center; gap: .5rem; background: rgba(198,123,92,.1); border: 1px solid rgba(198,123,92,.25); border-radius: 8px; padding: .55rem 1rem; font-size: .85rem; font-weight: 600; color: var(--clay); margin-bottom: 1.75rem; }
+    .how-to { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; }
+    .how-to h4 { font-weight: 700; font-size: .92rem; color: var(--brown); margin-bottom: 1rem; }
+    .transport { display: flex; gap: .7rem; margin-bottom: .8rem; }
+    .t-icon { font-size: 1.1rem; margin-top: .1rem; }
+    .t-text strong { display: block; font-size: .86rem; font-weight: 600; color: var(--brown); }
+    .t-text span { font-size: .8rem; color: var(--brown-light); }
+
+    /* ── CTA BANNER ── */
+    #cta-banner { padding: 80px 0; background: linear-gradient(135deg, var(--clay-dark), var(--navy)); text-align: center; position: relative; overflow: hidden; }
+    #cta-banner::before { content: ''; position: absolute; inset: 0; background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E") repeat; }
+    .cta-content { position: relative; z-index: 1; }
+    .cta-content h2 { font-family: var(--font-serif); font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 600; color: #fff; margin-bottom: .85rem; }
+    .cta-content p { font-size: 1rem; color: rgba(255,255,255,.8); margin-bottom: 2rem; }
+    .cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    /* ── FOOTER ── */
+    footer { background: var(--brown); color: rgba(255,255,255,.7); padding: 60px 0 28px; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 3rem; }
+    .footer-logo { font-family: var(--font-serif); font-size: 1.45rem; font-weight: 600; color: #fff; margin-bottom: .85rem; }
+    .footer-logo span { color: var(--terracotta); }
+    .footer-brand p { font-size: .86rem; line-height: 1.75; margin-bottom: 1.5rem; }
+    .socials { display: flex; gap: .65rem; }
+    .social { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,.1); display: flex; align-items: center; justify-content: center; font-size: .85rem; transition: all .2s; }
+    .social:hover { background: var(--terracotta); color: #fff; }
+    .footer-col h4 { font-size: .82rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 1.1rem; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: .55rem; }
+    .footer-col li a { font-size: .85rem; color: rgba(255,255,255,.6); transition: color .2s; }
+    .footer-col li a:hover { color: var(--terracotta); }
+    .fc-item { display: flex; gap: .6rem; margin-bottom: .7rem; font-size: .85rem; }
+    .fc-icon { color: var(--terracotta); margin-top: .15rem; flex-shrink: 0; }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,.1); padding-top: 1.75rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .footer-bottom p { font-size: .8rem; }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { font-size: .8rem; color: rgba(255,255,255,.45); transition: color .2s; }
+    .footer-links a:hover { color: var(--terracotta); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) {
+      .about-grid, .amenities-grid, .res-grid, .ubic-grid { grid-template-columns: 1fr; }
+      .about-images { margin-bottom: 1rem; }
+      .atr-grid { grid-template-columns: repeat(2, 1fr); }
+      .reviews-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .features-bar-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+      .hero-content { padding-top: 100px; }
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: auto; }
+      .g-item:first-child { grid-column: span 2; aspect-ratio: 16/9; }
+      .about-feats, .amenities-list { grid-template-columns: 1fr; }
+      .atr-grid { grid-template-columns: 1fr; }
+      .reviews-grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+    }
+    @media (max-width: 480px) {
+      .features-bar-grid { grid-template-columns: repeat(2, 1fr); }
+      .fbar-item:nth-child(2n) { border-right: none; }
+      .gallery-grid { grid-template-columns: 1fr; }
+      .g-item:first-child { grid-column: span 1; }
+      .hero-stats { gap: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">Depto. <span>Navarro</span></a>
+      <ul class="nav-links">
+        <li><a href="#about">El Departamento</a></li>
+        <li><a href="#gallery">Fotos</a></li>
+        <li><a href="#amenities">Comodidades</a></li>
+        <li><a href="#atracciones">Qué Hacer</a></li>
+        <li><a href="#resenas">Reseñas</a></li>
+      </ul>
+      <a href="#reservas" class="btn btn-primary" style="padding:.6rem 1.4rem;font-size:.85rem;" aria-label="Reservar">Reservar</a>
+      <button class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" onclick="toggleMenu()">✕</button>
+  <a href="#about" onclick="toggleMenu()">El Departamento</a>
+  <a href="#gallery" onclick="toggleMenu()">Fotos</a>
+  <a href="#amenities" onclick="toggleMenu()">Comodidades</a>
+  <a href="#atracciones" onclick="toggleMenu()">Qué Hacer</a>
+  <a href="#resenas" onclick="toggleMenu()">Reseñas</a>
+  <a href="#reservas" onclick="toggleMenu()" class="btn btn-primary" style="margin-top:1rem;">Reservar Ahora</a>
+</div>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-badge">📍 Malargüe, Mendoza · Argentina</div>
+      <h1 class="hero-title">Tu base perfecta para <em>explorar</em> el sur de Mendoza</h1>
+      <p class="hero-sub">Departamento completo, cómodo y bien ubicado en Malargüe. A minutos de Las Leñas, Llancanelo y los volcanes. Limpio, equipado y con todo lo que necesitás.</p>
+      <div class="hero-actions">
+        <a href="#reservas" class="btn btn-primary">
+          📅 Consultar disponibilidad
+        </a>
+        <a href="#gallery" class="btn btn-outline">Ver fotos</a>
+      </div>
+      <div class="hero-stats">
+        <div><div class="hero-stat-num">9.6</div><div class="hero-stat-label">⭐ Nota en Booking</div></div>
+        <div><div class="hero-stat-num">6</div><div class="hero-stat-label">👥 Huéspedes</div></div>
+        <div><div class="hero-stat-num">65</div><div class="hero-stat-label">📐 m² totales</div></div>
+        <div><div class="hero-stat-num">2</div><div class="hero-stat-label">🛏 Dormitorios</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+    Explorar
+  </div>
+</section>
+
+<!-- ── FEATURES BAR ── -->
+<section id="features-bar">
+  <div class="container">
+    <div class="features-bar-grid">
+      <div class="fbar-item"><div class="fbar-icon">📶</div><div class="fbar-label">WiFi Alta Velocidad</div><div class="fbar-sub">Gratis · Todo el depto</div></div>
+      <div class="fbar-item"><div class="fbar-icon">🔥</div><div class="fbar-label">Calefacción</div><div class="fbar-sub">Gas · Luz · Agua incl.</div></div>
+      <div class="fbar-item"><div class="fbar-icon">🅿️</div><div class="fbar-label">Garaje cubierto</div><div class="fbar-sub">Gratuito</div></div>
+      <div class="fbar-item"><div class="fbar-icon">🥩</div><div class="fbar-label">Patio con Parrilla</div><div class="fbar-sub">Asador incluido</div></div>
+      <div class="fbar-item"><div class="fbar-icon">🐾</div><div class="fbar-label">Aceptamos Mascotas</div><div class="fbar-sub">Sin cargo extra</div></div>
+      <div class="fbar-item"><div class="fbar-icon">🏠</div><div class="fbar-label">Depto. entero</div><div class="fbar-sub">Uso exclusivo</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-images">
+        <div class="about-main-img">
+          <img src="fotos/living.jpeg" alt="Living Departamento Navarro" loading="lazy" />
+        </div>
+        <div class="about-float-img">
+          <img src="fotos/dormitorio1.jpeg" alt="Dormitorio principal" loading="lazy" />
+        </div>
+        <div class="about-badge">
+          <strong>9.6</strong>
+          <span>Booking.com</span>
+        </div>
+      </div>
+      <div>
+        <p class="section-label">El Departamento</p>
+        <h2 class="section-title">Limpio, cómodo y bien equipado</h2>
+        <p class="section-sub">El Departamento Navarro está ubicado en el corazón de Malargüe, en Calle El Payén 466. Un espacio tranquilo, prolijo y con todo lo necesario para que tu estadía sea perfecta.</p>
+        <p class="section-sub" style="margin-top:.75rem;">"Fantástico, limpio, cómodo, supera ampliamente las expectativas." — Las mismas palabras que usan nuestros huéspedes, visita tras visita.</p>
+        <div class="about-feats">
+          <div class="about-feat"><div class="about-feat-icon">🛋️</div><div class="about-feat-label">Living cómodo</div></div>
+          <div class="about-feat"><div class="about-feat-icon">🍳</div><div class="about-feat-label">Cocina equipada</div></div>
+          <div class="about-feat"><div class="about-feat-icon">🛏️</div><div class="about-feat-label">2 dormitorios</div></div>
+          <div class="about-feat"><div class="about-feat-icon">🚿</div><div class="about-feat-label">Baño privado</div></div>
+          <div class="about-feat"><div class="about-feat-icon">🚗</div><div class="about-feat-label">Garaje cubierto</div></div>
+          <div class="about-feat"><div class="about-feat-icon">🔥</div><div class="about-feat-label">Patio con parrilla</div></div>
+        </div>
+        <a href="#reservas" class="btn btn-primary">Reservar ahora</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── GALLERY ── -->
+<section id="gallery">
+  <div class="container">
+    <div class="gallery-header">
+      <p class="section-label">Galería</p>
+      <h2 class="section-title">Así es el departamento</h2>
+      <p class="section-sub">Espacios luminosos, limpios y bien mantenidos. Todo lo que ves es lo que encontrás.</p>
+    </div>
+    <div class="gallery-grid">
+      <div class="g-item">
+        <img src="fotos/living.jpeg" alt="Living - Departamento Navarro" loading="lazy" />
+        <div class="g-overlay"><span>Living con TV y calefacción</span></div>
+      </div>
+      <div class="g-item">
+        <img src="fotos/dormitorio1.jpeg" alt="Dormitorio principal" loading="lazy" />
+        <div class="g-overlay"><span>Dormitorio matrimonial</span></div>
+      </div>
+      <div class="g-item">
+        <img src="fotos/cocina.jpeg" alt="Cocina comedor equipada" loading="lazy" />
+        <div class="g-overlay"><span>Cocina y comedor</span></div>
+      </div>
+      <div class="g-item">
+        <img src="fotos/bano.jpeg" alt="Baño completo" loading="lazy" />
+        <div class="g-overlay"><span>Baño con ducha</span></div>
+      </div>
+      <div class="g-item">
+        <img src="fotos/patio.jpeg" alt="Patio con parrilla" loading="lazy" />
+        <div class="g-overlay"><span>Patio y parrilla</span></div>
+      </div>
+      <div class="g-item">
+        <img src="fotos/dormitorio2.jpeg" alt="Segundo dormitorio con literas" loading="lazy" />
+        <div class="g-overlay"><span>Segundo dormitorio</span></div>
+      </div>
+      <div class="g-item">
+        <img src="fotos/exterior.jpeg" alt="Fachada exterior" loading="lazy" />
+        <div class="g-overlay"><span>Fachada y acceso</span></div>
+      </div>
+    </div>
+    <p class="gallery-note" style="margin-top:1.5rem;">¿Querés ver más fotos? <a href="#reservas" style="color:var(--terracotta);font-weight:600;">Escribinos y te enviamos el álbum completo →</a></p>
+  </div>
+</section>
+
+<!-- ── AMENITIES ── -->
+<section id="amenities">
+  <div class="container">
+    <div class="amenities-grid">
+      <div>
+        <p class="section-label">Comodidades</p>
+        <h2 class="section-title">Todo incluido, nada que buscar</h2>
+        <p class="section-sub">Llegás y te instalás. El departamento tiene todo lo que necesitás para una estadía cómoda, sea de 2 noches o 2 semanas.</p>
+        <div class="amenities-list">
+          <div class="am-item highlight"><span class="am-icon">📶</span><span class="am-label">WiFi Alta Velocidad gratis</span></div>
+          <div class="am-item highlight"><span class="am-icon">🔥</span><span class="am-label">Calefacción</span></div>
+          <div class="am-item"><span class="am-icon">📺</span><span class="am-label">TV pantalla plana</span></div>
+          <div class="am-item"><span class="am-icon">🍳</span><span class="am-label">Cocina equipada</span></div>
+          <div class="am-item"><span class="am-icon">❄️</span><span class="am-label">Heladera / freezer</span></div>
+          <div class="am-item"><span class="am-icon">🫙</span><span class="am-label">Vajilla completa</span></div>
+          <div class="am-item"><span class="am-icon">🧺</span><span class="am-label">Ropa de cama</span></div>
+          <div class="am-item"><span class="am-icon">🛁</span><span class="am-label">Toallas</span></div>
+          <div class="am-item"><span class="am-icon">🚿</span><span class="am-label">Ducha + bañera</span></div>
+          <div class="am-item"><span class="am-icon">🚽</span><span class="am-label">Bidé</span></div>
+          <div class="am-item"><span class="am-icon">🅿️</span><span class="am-label">Garaje cubierto</span></div>
+          <div class="am-item"><span class="am-icon">🐾</span><span class="am-label">Aceptamos mascotas · sin cargo</span></div>
+          <div class="am-item highlight"><span class="am-icon">🔥</span><span class="am-label">Parrilla/asador</span></div>
+          <div class="am-item"><span class="am-icon">☕</span><span class="am-label">Cafetera</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="cap-card">
+          <h3>Capacidad y Distribución</h3>
+          <div class="cap-row"><span class="cap-label">Huéspedes</span><span class="cap-value">Hasta 6 personas</span></div>
+          <div class="cap-row"><span class="cap-label">Dormitorios</span><span class="cap-value">2 (1 matrimonial + 1 con literas)</span></div>
+          <div class="cap-row"><span class="cap-label">Baños</span><span class="cap-value">1 completo (ducha + bañera)</span></div>
+          <div class="cap-row"><span class="cap-label">Superficie</span><span class="cap-value">65 m²</span></div>
+          <div class="cap-row"><span class="cap-label">Estacionamiento</span><span class="cap-value">Garaje cubierto gratuito</span></div>
+          <div class="cap-row"><span class="cap-label">Mascotas</span><span class="cap-value">Permitidas (sin cargo)</span></div>
+          <div class="cap-row"><span class="cap-label">Estadía mínima</span><span class="cap-value">2 noches</span></div>
+          <div class="cap-row"><span class="cap-label">Pago</span><span class="cap-value">Efectivo, transferencia, tarjeta, MercadoPago</span></div>
+          <p class="cap-note">Temporada de ski (julio–septiembre): reservar con anticipación. Se llena rápido.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ATRACCIONES ── -->
+<section id="atracciones">
+  <div class="container">
+    <div class="atr-header">
+      <p class="section-label">Qué Hacer en Malargüe</p>
+      <h2 class="section-title">La aventura empieza a tu puerta</h2>
+      <p class="section-sub">Malargüe es uno de los destinos más increíbles de Argentina. Nieve, volcanes, lagunas y paisajes que parecen de otro planeta — todo a pocos kilómetros.</p>
+    </div>
+    <div class="atr-grid">
+
+      <div class="atr-card">
+        <div class="atr-img">
+          <img src="fotos/malargue-invierno.jpg" alt="Las Leñas" loading="lazy" />
+          <span class="atr-tag">Ski & Nieve</span>
+        </div>
+        <div class="atr-body">
+          <div class="atr-dist">📍 95 km · 1 hs 10 min</div>
+          <div class="atr-name">Las Leñas</div>
+          <p class="atr-desc">El resort de ski más famoso de Argentina. 17.500 hectáreas, 40 pistas, nieve garantizada y el casino más alto del mundo. Temporada de junio a octubre.</p>
+        </div>
+      </div>
+
+      <div class="atr-card">
+        <div class="atr-img">
+          <img src="https://www.welcomeargentina.com/malargue/imagenes/malargue_dire18.jpg" alt="Laguna Llancanelo" loading="lazy" />
+          <span class="atr-tag">Naturaleza</span>
+        </div>
+        <div class="atr-body">
+          <div class="atr-dist">📍 75 km · 55 min</div>
+          <div class="atr-name">Laguna Llancanelo</div>
+          <p class="atr-desc">Reserva de biósfera Ramsar con 155 especies de aves. Miles de flamencos rosados, cisnes y patos en una laguna volcánica única de 650 km².</p>
+        </div>
+      </div>
+
+      <div class="atr-card">
+        <div class="atr-img">
+          <img src="fotos/malargue-primavera.jpg" alt="Pozo de las Ánimas" loading="lazy" />
+          <span class="atr-tag">Geología</span>
+        </div>
+        <div class="atr-body">
+          <div class="atr-dist">📍 57 km · 40 min</div>
+          <div class="atr-name">Pozo de las Ánimas</div>
+          <p class="atr-desc">Dos dolinas cársticas de 200m de diámetro y 80m de profundidad con agua en el fondo. Una de las formaciones geológicas más impactantes de Argentina.</p>
+        </div>
+      </div>
+
+      <div class="atr-card">
+        <div class="atr-img">
+          <img src="https://www.welcomeargentina.com/paseos/caverna_las_brujas/caverna-las-brujas-4.jpg" alt="Caverna de las Brujas" loading="lazy"
+            onerror="this.src='https://www.welcomeargentina.com/paseos/caverna_las_brujas/caverna-las-brujas-1.jpg'" />
+          <span class="atr-tag">Espeleología</span>
+        </div>
+        <div class="atr-body">
+          <div class="atr-dist">📍 77 km · 1 hs</div>
+          <div class="atr-name">Caverna de las Brujas</div>
+          <p class="atr-desc">La caverna de mármol más importante de Argentina, a 1.830 msnm. Estalactitas, estalagmitas y columnas cristalinas de millones de años. Visita guiada todo el año.</p>
+        </div>
+      </div>
+
+      <div class="atr-card">
+        <div class="atr-img">
+          <img src="https://www.welcomeargentina.com/paseos/reserva_la_payunia/la-payunia-1.jpg" alt="La Payunia" loading="lazy" />
+          <span class="atr-tag">Volcanes</span>
+        </div>
+        <div class="atr-body">
+          <div class="atr-dist">📍 ~90 km · 1 hs 20 min</div>
+          <div class="atr-name">Reserva La Payunia</div>
+          <p class="atr-desc">El campo volcánico más denso del planeta: más de 800 volcanes. Paisaje marciano de lava negra y roja, guanacos y el imponente Volcán Payún Matrú.</p>
+        </div>
+      </div>
+
+      <div class="atr-card">
+        <div class="atr-img">
+          <img src="https://www.welcomeargentina.com/malargue/imagenes/malargue-plaza4.jpg" alt="Centro Malargüe" loading="lazy"
+            onerror="this.src='https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=640&q=80'" />
+          <span class="atr-tag">Ciudad</span>
+        </div>
+        <div class="atr-body">
+          <div class="atr-dist">📍 En el centro · a pie</div>
+          <div class="atr-name">Centro de Malargüe</div>
+          <p class="atr-desc">Plazas, restaurantes de cocina regional, Planetario Pierre Auger, Museo del Petróleo y el Observatorio de Rayos Cósmicos. Todo cerca del departamento.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── RESEÑAS ── -->
+<section id="resenas">
+  <div class="container">
+    <div class="res-header">
+      <p class="section-label">Reseñas</p>
+      <h2 class="section-title">Lo que dicen nuestros huéspedes</h2>
+      <p class="section-sub" style="max-width:500px;margin:.5rem auto 0;">Opiniones reales de personas que se hospedaron en el Departamento Navarro.</p>
+    </div>
+
+    <div class="rating-wrap">
+      <div class="rating-big">
+        <div class="rating-num">9.6</div>
+        <div class="rating-stars">★★★★★</div>
+        <div class="rating-source"><a href="https://www.booking.com/hotel/ar/departamento-navarro-malargue.es-ar.html#tab-reviews" target="_blank" rel="noopener" style="color:var(--brown-light);text-decoration:underline;text-underline-offset:3px;">Nota en Booking.com</a></div>
+      </div>
+      <div class="rating-bars">
+        <div class="rbar-row"><span class="rbar-lbl">Limpieza</span><div class="rbar-track"><div class="rbar-fill" style="width:100%"></div></div><span class="rbar-val">9.9</span></div>
+        <div class="rbar-row"><span class="rbar-lbl">Comodidad</span><div class="rbar-track"><div class="rbar-fill" style="width:95%"></div></div><span class="rbar-val">9.5</span></div>
+        <div class="rbar-row"><span class="rbar-lbl">Ubicación</span><div class="rbar-track"><div class="rbar-fill" style="width:92%"></div></div><span class="rbar-val">9.2</span></div>
+        <div class="rbar-row"><span class="rbar-lbl">Atención</span><div class="rbar-track"><div class="rbar-fill" style="width:100%"></div></div><span class="rbar-val">9.9</span></div>
+        <div class="rbar-row"><span class="rbar-lbl">Rel. calidad/precio</span><div class="rbar-track"><div class="rbar-fill" style="width:95%"></div></div><span class="rbar-val">9.5</span></div>
+      </div>
+    </div>
+
+    <div class="reviews-grid">
+      <div class="rev-card">
+        <div class="rev-header">
+          <div class="rev-avatar">M</div>
+          <div><div class="rev-name">Martina</div><div class="rev-origin">Argentina · Booking.com</div></div>
+        </div>
+        <div class="rev-stars">★★★★★</div>
+        <p class="rev-text">El alojamiento es fantástico, limpio, cómodo, supera ampliamente las expectativas, digno de recomendar.</p>
+        <div class="rev-date">Reseña verificada · Booking.com</div>
+      </div>
+
+      <div class="rev-card">
+        <div class="rev-header">
+          <div class="rev-avatar" style="background:linear-gradient(135deg,#1E3A8A,#3B82F6)">C</div>
+          <div><div class="rev-name">Carolina</div><div class="rev-origin">Argentina · Booking.com</div></div>
+        </div>
+        <div class="rev-stars">★★★★★</div>
+        <p class="rev-text">Muy lindo departamento, super limpio, cómodo y completo. La dueña super amable.</p>
+        <div class="rev-date">Reseña verificada · Booking.com</div>
+      </div>
+
+      <div class="rev-card">
+        <div class="rev-header">
+          <div class="rev-avatar" style="background:linear-gradient(135deg,#B5651D,#8B4513)">R</div>
+          <div><div class="rev-name">Roberto</div><div class="rev-origin">Argentina · Booking.com</div></div>
+        </div>
+        <div class="rev-stars">★★★★★</div>
+        <p class="rev-text">Todo muy hermoso en general todo el departamento, muy bien mantenido y limpio.</p>
+        <div class="rev-date">Reseña verificada · Booking.com</div>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:2.5rem;">
+      <a href="https://www.booking.com/hotel/ar/departamento-navarro-malargue.es-ar.html#tab-reviews" target="_blank" rel="noopener" class="btn btn-outline" style="display:inline-flex;align-items:center;gap:.5rem;">
+        🏨 Ver todas las reseñas en Booking.com
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── RESERVAS ── -->
+<section id="reservas">
+  <div class="container">
+    <div class="res-grid">
+      <div class="book-info">
+        <p class="section-label">Reservas</p>
+        <h2 class="section-title" style="font-size:clamp(1.6rem,3vw,2.2rem);">Reservá directo y sin comisiones</h2>
+        <p>Hablás directamente con nosotros. Sin intermediarios, sin sorpresas.</p>
+
+        <div class="price-card">
+          <div class="price-lbl">Precio desde</div>
+          <div class="price-amt"><sup>$</sup>15.000</div>
+          <div class="price-per">por noche · hasta 4 personas</div>
+          <div class="price-incs">
+            <div class="price-inc">✓ Ropa de cama y toallas</div>
+            <div class="price-inc">✓ WiFi + garaje incluidos</div>
+            <div class="price-inc">✓ Mascotas permitidas (gratis)</div>
+          </div>
+        </div>
+
+        <div class="policies">
+          <div class="pol-item">
+            <span class="pol-icon">🕐</span>
+            <div class="pol-text">
+              <strong>Check-in / Check-out</strong>
+              <span>Check-in desde las 14 hs · Check-out hasta las 11 hs</span>
+            </div>
+          </div>
+          <div class="pol-item">
+            <span class="pol-icon">💳</span>
+            <div class="pol-text">
+              <strong>Formas de pago aceptadas</strong>
+              <span>Efectivo · Transferencia bancaria · Tarjeta de crédito/débito · MercadoPago</span>
+            </div>
+          </div>
+          <div class="pol-item">
+            <span class="pol-icon">🐾</span>
+            <div class="pol-text">
+              <strong>Mascotas</strong>
+              <span>Se admiten mascotas sin costo adicional</span>
+            </div>
+          </div>
+          <div class="pol-item">
+            <span class="pol-icon">🚫</span>
+            <div class="pol-text">
+              <strong>Política de convivencia</strong>
+              <span>No se permiten fiestas ni despedidas de solteros</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:2rem;">
+          <p style="font-size:.82rem;color:var(--brown-light);margin-bottom:.75rem;">¿Preferís reservar por plataformas?</p>
+          <div class="plats">
+            <a href="https://www.booking.com/hotel/ar/departamento-navarro-malargue.es-ar.html" target="_blank" rel="noopener" class="plat-btn">🏨 Booking.com</a>
+            <a href="https://wa.me/5492604000000?text=Hola!%20Quiero%20consultar%20disponibilidad%20en%20el%20Departamento%20Navarro%20en%20Malarg%C3%BCe" target="_blank" rel="noopener" class="plat-btn">💬 WhatsApp</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="book-form-card">
+        <h3>Consultá disponibilidad</h3>
+        <p>Completá el formulario y te respondemos rápido.</p>
+        <form id="contactForm" onsubmit="handleSubmit(event)">
+          <div class="form-row">
+            <div class="fg"><label>Nombre</label><input type="text" placeholder="Tu nombre" required /></div>
+            <div class="fg"><label>Apellido</label><input type="text" placeholder="Tu apellido" required /></div>
+          </div>
+          <div class="fg"><label>Email</label><input type="email" placeholder="tu@email.com" required /></div>
+          <div class="fg"><label>WhatsApp / Teléfono</label><input type="tel" placeholder="+54 9 XXX XXX XXXX" /></div>
+          <div class="form-row">
+            <div class="fg"><label>Llegada</label><input type="date" required /></div>
+            <div class="fg"><label>Salida</label><input type="date" required /></div>
+          </div>
+          <div class="fg">
+            <label>Huéspedes</label>
+            <select>
+              <option>1 persona</option>
+              <option>2 personas</option>
+              <option>3 personas</option>
+              <option>4 personas</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Mensaje (opcional)</label>
+            <textarea placeholder="¿Traés mascotas? ¿Necesitás algo especial?"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary form-btn">Enviar consulta →</button>
+        </form>
+        <div id="form-success">
+          <div style="font-size:2.5rem;margin-bottom:.5rem;">✅</div>
+          <strong style="color:var(--brown);font-size:1rem;">¡Consulta enviada!</strong>
+          <p style="font-size:.85rem;color:var(--brown-light);margin-top:.4rem;">Te respondemos a la brevedad.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── UBICACIÓN ── -->
+<section id="ubicacion">
+  <div class="container">
+    <div class="ubic-grid">
+      <div class="ubic-info">
+        <p class="section-label">Ubicación</p>
+        <h3 class="section-title" style="font-size:clamp(1.6rem,3vw,2.2rem);">En el corazón de Malargüe</h3>
+        <p>A pasos de los principales servicios, restaurantes y la terminal de ómnibus. La ubicación ideal para llegar, instalarte y salir a explorar.</p>
+        <div style="margin:1.25rem 0;">
+          <span class="addr-tag">📍 Calle El Payén 466, Malargüe, Mendoza (5613)</span>
+        </div>
+        <div class="how-to">
+          <h4>🗺️ Cómo llegar</h4>
+          <div class="transport">
+            <span class="t-icon">✈️</span>
+            <div class="t-text">
+              <strong>Desde el aeropuerto local (LGS)</strong>
+              <span>Aeropuerto Cnel. Ricardo Salomón — 10 min en auto o remís</span>
+            </div>
+          </div>
+          <div class="transport">
+            <span class="t-icon">🚌</span>
+            <div class="t-text">
+              <strong>Desde la terminal de ómnibus</strong>
+              <span>Terminal de Malargüe — 8 min a pie o 3 min en auto</span>
+            </div>
+          </div>
+          <div class="transport">
+            <span class="t-icon">🚗</span>
+            <div class="t-text">
+              <strong>En auto desde otras ciudades</strong>
+              <span>San Rafael: ~2 hs · Mendoza capital: ~4.5 hs · Buenos Aires: ~10 hs</span>
+            </div>
+          </div>
+          <div class="transport">
+            <span class="t-icon">⛷️</span>
+            <div class="t-text">
+              <strong>Hasta Las Leñas</strong>
+              <span>95 km por ruta — aprox. 1 hora 10 minutos en auto</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="map-wrap">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3003.76!2d-69.5726102!3d-35.4704492!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x967a79c4b86ca01f%3A0xa636ed43c5873469!2sDepartamento%20Navarro!5e0!3m2!1ses!2sar!4v1"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Ubicación Departamento Navarro - Malargüe">
+        </iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA BANNER ── -->
+<section id="cta-banner">
+  <div class="container">
+    <div class="cta-content">
+      <h2>¿Listo para tu próxima aventura en Malargüe?</h2>
+      <p>Temporada de ski 2025 · Las plazas se agotan. Reservá con anticipación.</p>
+      <div class="cta-actions">
+        <a href="#reservas" class="btn btn-primary">Reservar Ahora</a>
+        <a href="https://wa.me/5492604000000?text=Hola!%20Quiero%20consultar%20por%20el%20Departamento%20Navarro%20en%20Malarg%C3%BCe" target="_blank" rel="noopener" class="btn btn-outline">💬 WhatsApp Directo</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">Depto. <span>Navarro</span></div>
+        <p>Alojamiento temporario en Malargüe, Mendoza. Limpio, cómodo y bien ubicado. La base perfecta para explorar el sur mendocino.</p>
+        <div class="socials">
+          <a href="#" class="social" aria-label="Instagram">📷</a>
+          <a href="#" class="social" aria-label="Facebook">📘</a>
+          <a href="#" class="social" aria-label="WhatsApp">💬</a>
+          <a href="https://www.booking.com/hotel/ar/departamento-navarro-malargue.es-ar.html" target="_blank" class="social" aria-label="Booking">🏨</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>El Departamento</h4>
+        <ul>
+          <li><a href="#about">Sobre el lugar</a></li>
+          <li><a href="#gallery">Fotos</a></li>
+          <li><a href="#amenities">Comodidades</a></li>
+          <li><a href="#reservas">Precios</a></li>
+          <li><a href="#ubicacion">Cómo llegar</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Atracciones</h4>
+        <ul>
+          <li><a href="#atracciones">Las Leñas (ski)</a></li>
+          <li><a href="#atracciones">Laguna Llancanelo</a></li>
+          <li><a href="#atracciones">Pozo de las Ánimas</a></li>
+          <li><a href="#atracciones">Caverna de las Brujas</a></li>
+          <li><a href="#atracciones">La Payunia</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contacto</h4>
+        <div class="fc-item"><span class="fc-icon">📍</span><span>Calle El Payén 466<br/>Malargüe, Mendoza (5613)</span></div>
+        <div class="fc-item"><span class="fc-icon">💬</span><span>WhatsApp disponible</span></div>
+        <div class="fc-item"><span class="fc-icon">🏨</span><a href="https://www.booking.com/hotel/ar/departamento-navarro-malargue.es-ar.html" target="_blank" style="color:rgba(255,255,255,.6)">Ver en Booking.com</a></div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Departamento Navarro · Malargüe, Mendoza</p>
+      <div class="footer-links">
+        <a href="#">Política de cancelación</a>
+        <a href="#">Términos de uso</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Navbar scroll
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Mobile menu
+  function toggleMenu() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+  }
+
+  // Form submit
+  function handleSubmit(e) {
+    e.preventDefault();
+    document.getElementById('contactForm').style.display = 'none';
+    document.getElementById('form-success').style.display = 'block';
+  }
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.atr-card, .rev-card, .am-item, .about-feat').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity .5s ease, transform .5s ease';
+    observer.observe(el);
+  });
+
+  // Fix missing attraction images with Unsplash fallbacks
+  document.querySelectorAll('.atr-img img').forEach(img => {
+    img.addEventListener('error', function() {
+      const fallbacks = {
+        'Las': 'https://images.unsplash.com/photo-1551524164-687a55dd1126?w=640&q=80',
+        'Llancanelo': 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=640&q=80',
+        'nimas': 'https://images.unsplash.com/photo-1504214208698-ea1916a2195a?w=640&q=80',
+        'Brujas': 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=640&q=80',
+        'Payunia': 'https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=640&q=80',
+        'Malargue': 'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=640&q=80'
+      };
+      const alt = this.alt;
+      for (const [key, url] of Object.entries(fallbacks)) {
+        if (alt.includes(key)) { this.src = url; break; }
+      }
+    });
+  });
+</script>
+</body>
+</html>

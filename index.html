@@ -9,6 +9,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/airbnb.css">
 
   <style>
     :root {
@@ -211,6 +215,14 @@
     .fg input, .fg select, .fg textarea { padding: .72rem 1rem; border: 1.5px solid var(--border); border-radius: 8px; font-family: var(--font-sans); font-size: .88rem; color: var(--brown); background: var(--cream); transition: border-color .2s, box-shadow .2s; outline: none; }
     .fg input:focus, .fg select:focus, .fg textarea:focus { border-color: var(--terracotta); box-shadow: 0 0 0 3px rgba(198,123,92,.12); }
     .fg textarea { resize: vertical; min-height: 75px; }
+    .availability-status { display:flex; align-items:center; gap:.5rem; margin-bottom:1rem; font-size:.85rem; }
+    .avail-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+    .avail-dot.loading { background:#C8960C; animation: pulse 1s infinite; }
+    .avail-dot.ok { background:#2D6A4F; }
+    .avail-dot.error { background:#C67B5C; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .flatpickr-day.blocked { background:#FECACA !important; color:#991B1B !important; cursor:not-allowed; }
+    .flatpickr-day.blocked:hover { background:#FCA5A5 !important; }
     .form-btn { width: 100%; padding: .95rem; font-size: .95rem; font-weight: 700; margin-top: .5rem; border-radius: 10px; }
     #form-success { display: none; text-align: center; padding: 2rem; background: rgba(198,123,92,.08); border-radius: var(--radius); border: 1px solid rgba(198,123,92,.3); }
 
@@ -713,6 +725,10 @@
       <div class="book-form-card">
         <h3>Consultá disponibilidad</h3>
         <p>Completá el formulario y te respondemos rápido.</p>
+        <div class="availability-status" id="avail-status">
+          <span class="avail-dot loading"></span>
+          <span class="avail-text">Cargando disponibilidad...</span>
+        </div>
         <form id="contactForm" onsubmit="handleSubmit(event)">
           <div class="form-row">
             <div class="fg"><label>Nombre</label><input type="text" placeholder="Tu nombre" required /></div>
@@ -720,9 +736,11 @@
           </div>
           <div class="fg"><label>Email</label><input type="email" placeholder="tu@email.com" required /></div>
           <div class="fg"><label>WhatsApp / Teléfono</label><input type="tel" placeholder="+54 9 XXX XXX XXXX" /></div>
-          <div class="form-row">
-            <div class="fg"><label>Llegada</label><input type="date" required /></div>
-            <div class="fg"><label>Salida</label><input type="date" required /></div>
+          <div class="fg date-range-wrap">
+            <label>Fechas de estadía</label>
+            <input type="text" id="date-range" placeholder="Seleccioná llegada — salida" readonly />
+            <input type="hidden" id="checkin-hidden" name="checkin" />
+            <input type="hidden" id="checkout-hidden" name="checkout" />
           </div>
           <div class="fg">
             <label>Huéspedes</label>
@@ -923,6 +941,51 @@
       }
     });
   });
+
+  // Availability calendar
+  (async function initCalendar() {
+    const statusEl = document.getElementById('avail-status');
+    const dotEl = statusEl?.querySelector('.avail-dot');
+    const textEl = statusEl?.querySelector('.avail-text');
+    let blockedDates = [];
+
+    try {
+      const res = await fetch('/api/availability');
+      const data = await res.json();
+      blockedDates = data.blockedDates || [];
+      if (dotEl) { dotEl.className = 'avail-dot ok'; }
+      if (textEl) { textEl.textContent = blockedDates.length > 0
+        ? 'Calendario actualizado — fechas en rojo no disponibles'
+        : 'Todas las fechas disponibles'; }
+    } catch (e) {
+      if (dotEl) { dotEl.className = 'avail-dot error'; }
+      if (textEl) { textEl.textContent = 'No se pudo cargar el calendario'; }
+    }
+
+    const input = document.getElementById('date-range');
+    if (!input) return;
+
+    flatpickr(input, {
+      mode: 'range',
+      minDate: 'today',
+      dateFormat: 'd/m/Y',
+      locale: 'es',
+      disable: blockedDates,
+      onDayCreate: function(dObj, dStr, fp, dayElem) {
+        const dateStr = dayElem.dateObj.toISOString().split('T')[0];
+        if (blockedDates.includes(dateStr)) {
+          dayElem.classList.add('blocked');
+        }
+      },
+      onChange: function(selectedDates) {
+        if (selectedDates.length === 2) {
+          const fmt = d => d.toISOString().split('T')[0];
+          document.getElementById('checkin-hidden').value = fmt(selectedDates[0]);
+          document.getElementById('checkout-hidden').value = fmt(selectedDates[1]);
+        }
+      }
+    });
+  })();
 </script>
 </body>
 </html>

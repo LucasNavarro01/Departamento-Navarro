@@ -1,0 +1,11 @@
+{
+  "name": "departamento-navarro",
+  "version": "1.0.0",
+  "description": "Sitio web y backend para Departamento Navarro - Malargüe",
+  "dependencies": {
+    "node-ical": "^0.26.1"
+  },
+  "engines": {
+    "node": "20.x"
+  }
+}

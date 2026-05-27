@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel de Administración · Departamento Navarro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --terracotta: #C67B5C;
+      --brown: #3D2B1F;
+      --cream: #F5F0E1;
+      --sand: #EDE3D0;
+      --white: #FFFFFF;
+      --muted: #7A6A5C;
+      --border: #E0D4C0;
+      --ok: #2D6A4F;
+      --error: #B91C1C;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, system-ui, sans-serif;
+      background: var(--cream);
+      color: var(--brown);
+    }
+    .wrap { width: min(100% - 2rem, 680px); margin: 0 auto; padding: 2rem 0 3rem; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; }
+    h1 { margin: 0; font-size: clamp(1.35rem, 5vw, 2rem); line-height: 1.15; }
+    h2 { margin: 0 0 1rem; font-size: 1.1rem; }
+    p { color: var(--muted); line-height: 1.6; }
+    .panel, .login {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      box-shadow: 0 12px 40px rgba(61,43,31,.1);
+    }
+    label { display: block; margin-bottom: .4rem; font-size: .85rem; font-weight: 700; }
+    input, textarea {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: .8rem .9rem;
+      font: inherit;
+      color: var(--brown);
+      background: var(--cream);
+      outline: none;
+    }
+    input:focus, textarea:focus { border-color: var(--terracotta); box-shadow: 0 0 0 3px rgba(198,123,92,.14); }
+    textarea { min-height: 96px; resize: vertical; }
+    .field { margin-bottom: 1rem; }
+    .help { margin: .35rem 0 0; font-size: .8rem; color: var(--muted); }
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: .78rem 1rem;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      background: var(--terracotta);
+      color: var(--white);
+    }
+    button.secondary { background: var(--brown); }
+    button.ghost { background: transparent; color: var(--brown); border: 1px solid var(--border); }
+    button.danger { background: #B91C1C; }
+    button:disabled { opacity: .6; cursor: not-allowed; }
+    .tabs { display: flex; gap: .5rem; overflow-x: auto; margin: 1rem 0; padding-bottom: .25rem; }
+    .tab { white-space: nowrap; background: var(--sand); color: var(--brown); border: 1px solid var(--border); }
+    .tab.active { background: var(--brown); color: var(--white); }
+    .section { display: none; }
+    .section.active { display: block; }
+    .row { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+    @media (min-width: 620px) { .row { grid-template-columns: 1fr 1fr; } }
+    .toggle-line { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+    .switch { position: relative; width: 54px; height: 30px; flex: 0 0 auto; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; inset: 0; background: var(--border); border-radius: 999px; cursor: pointer; }
+    .slider::before { content: ""; position: absolute; width: 24px; height: 24px; left: 3px; top: 3px; background: var(--white); border-radius: 50%; transition: transform .18s; }
+    .switch input:checked + .slider { background: var(--terracotta); }
+    .switch input:checked + .slider::before { transform: translateX(24px); }
+    .status { min-height: 1.25rem; margin-top: .8rem; font-size: .85rem; font-weight: 700; }
+    .status.ok { color: var(--ok); }
+    .status.error { color: var(--error); }
+    .chips { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1rem; }
+    .chip { display: inline-flex; align-items: center; gap: .45rem; padding: .5rem .7rem; border-radius: 999px; background: var(--sand); font-size: .88rem; }
+    .chip button { width: 22px; height: 22px; padding: 0; border-radius: 50%; background: var(--brown); line-height: 1; }
+    .add-line { display: grid; grid-template-columns: 1fr auto; gap: .5rem; }
+    .photo-list { display: grid; gap: .75rem; margin-bottom: 1rem; }
+    .photo-row { display: grid; grid-template-columns: 72px 1fr; gap: .75rem; align-items: center; border: 1px solid var(--border); border-radius: 8px; padding: .6rem; }
+    .photo-row img { width: 72px; height: 54px; object-fit: cover; border-radius: 6px; background: var(--sand); }
+    .photo-meta strong { display: block; font-size: .9rem; word-break: break-word; }
+    .photo-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .55rem; }
+    .photo-actions button { padding: .45rem .65rem; font-size: .78rem; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <h1>Panel de Administración · Departamento Navarro</h1>
+      <a href="/" style="color:var(--brown);font-weight:700;">Ver sitio</a>
+    </header>
+
+    <section class="login" id="login-view">
+      <h2>Ingresar</h2>
+      <p>Usá la contraseña configurada en Vercel para administrar la propiedad.</p>
+      <form id="login-form">
+        <div class="field">
+          <label for="password">Contraseña</label>
+          <input id="password" type="password" autocomplete="current-password" required />
+        </div>
+        <button type="submit">Entrar</button>
+        <div class="status" id="login-status"></div>
+      </form>
+    </section>
+
+    <section class="panel hidden" id="admin-view">
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="estado">Estado</button>
+        <button class="tab" data-tab="precios">Precios</button>
+        <button class="tab" data-tab="contacto">Contacto</button>
+        <button class="tab" data-tab="comodidades">Comodidades</button>
+        <button class="tab" data-tab="fotos">Fotos</button>
+      </div>
+
+      <form class="section active" id="estado" data-save="estado">
+        <h2>Estado de la propiedad</h2>
+        <div class="toggle-line">
+          <div>
+            <strong id="closed-label">Propiedad activa</strong>
+            <p class="help">Al cerrarla se deshabilita el formulario público.</p>
+          </div>
+          <label class="switch" aria-label="Propiedad cerrada temporalmente">
+            <input type="checkbox" id="is_closed" />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="field hidden" id="closed-message-wrap">
+          <label for="closed_message">Mensaje cuando está cerrada</label>
+          <textarea id="closed_message"></textarea>
+        </div>
+        <button type="submit">Guardar cambios</button>
+        <div class="status" data-status="estado"></div>
+      </form>
+
+      <form class="section" id="precios" data-save="precios">
+        <h2>Precios</h2>
+        <div class="row">
+          <div class="field">
+            <label for="price_per_night">Precio base por noche (ARS $)</label>
+            <input id="price_per_night" type="number" min="0" step="100" />
+          </div>
+          <div class="field">
+            <label for="price_extra_person">Cargo por persona adicional (ARS $)</label>
+            <input id="price_extra_person" type="number" min="0" step="100" />
+            <p class="help">Se cobra a partir de la 3ra persona.</p>
+          </div>
+          <div class="field">
+            <label for="min_nights_low">Mínimo de noches — temporada baja</label>
+            <input id="min_nights_low" type="number" min="1" step="1" />
+          </div>
+          <div class="field">
+            <label for="min_nights_high">Mínimo de noches — temporada alta (julio–sept)</label>
+            <input id="min_nights_high" type="number" min="1" step="1" />
+          </div>
+        </div>
+        <button type="submit">Guardar cambios</button>
+        <div class="status" data-status="precios"></div>
+      </form>
+
+      <form class="section" id="contacto" data-save="contacto">
+        <h2>Contacto</h2>
+        <div class="field">
+          <label for="phone">Número de WhatsApp</label>
+          <input id="phone" type="text" placeholder="+5492604XXXXXXX" />
+          <p class="help">Incluir código de país. Ej: +5492604123456</p>
+        </div>
+        <button type="submit">Guardar cambios</button>
+        <div class="status" data-status="contacto"></div>
+      </form>
+
+      <form class="section" id="comodidades" data-save="comodidades">
+        <h2>Comodidades</h2>
+        <div class="chips" id="amenities-list"></div>
+        <div class="add-line">
+          <input id="amenity-input" type="text" placeholder="Nueva comodidad" />
+          <button type="button" id="add-amenity">Agregar</button>
+        </div>
+        <div style="margin-top:1rem;">
+          <button type="submit">Guardar cambios</button>
+        </div>
+        <div class="status" data-status="comodidades"></div>
+      </form>
+
+      <form class="section" id="fotos" data-save="fotos">
+        <h2>Fotos</h2>
+        <div class="photo-list" id="photo-list"></div>
+        <div class="add-line">
+          <input id="photo-input" type="url" placeholder="https://..." />
+          <button type="button" id="add-photo">Agregar foto</button>
+        </div>
+        <div style="margin-top:1rem;">
+          <button type="submit">Guardar cambios</button>
+        </div>
+        <div class="status" data-status="fotos"></div>
+      </form>
+
+      <div style="margin-top:1.5rem;">
+        <button class="ghost" id="logout" type="button">Cerrar sesión</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const state = { password: '', config: {}, amenities: [], photos: [] };
+    const sections = {
+      estado: ['is_closed', 'closed_message'],
+      precios: ['price_per_night', 'price_extra_person', 'min_nights_low', 'min_nights_high'],
+      contacto: ['phone'],
+      comodidades: ['amenities'],
+      fotos: ['photos']
+    };
+
+    const $ = selector => document.querySelector(selector);
+    const $$ = selector => [...document.querySelectorAll(selector)];
+
+    function setStatus(name, message, type = 'ok') {
+      const el = document.querySelector(`[data-status="${name}"]`) || $('#login-status');
+      el.textContent = message;
+      el.className = `status ${type}`;
+    }
+
+    async function postConfig(key, value) {
+      const res = await fetch('/api/update-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: state.password, key, value })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'No se pudo guardar');
+      return data;
+    }
+
+    async function verifyPassword(password) {
+      const res = await fetch('/api/update-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password, key: 'ping', value: 1 })
+      });
+      return res.ok;
+    }
+
+    async function loadConfig() {
+      const res = await fetch('/api/config');
+      state.config = await res.json();
+      state.amenities = Array.isArray(state.config.amenities) ? [...state.config.amenities] : [];
+      state.photos = Array.isArray(state.config.photos) ? [...state.config.photos] : [];
+      fillFields();
+    }
+
+    function fillFields() {
+      $('#is_closed').checked = Boolean(state.config.is_closed);
+      $('#closed_message').value = state.config.closed_message || '';
+      $('#price_per_night').value = state.config.price_per_night || 0;
+      $('#price_extra_person').value = state.config.price_extra_person || 0;
+      $('#min_nights_low').value = state.config.min_nights_low || 1;
+      $('#min_nights_high').value = state.config.min_nights_high || 1;
+      $('#phone').value = state.config.phone || '';
+      renderClosedFields();
+      renderAmenities();
+      renderPhotos();
+    }
+
+    function renderClosedFields() {
+      const closed = $('#is_closed').checked;
+      $('#closed-label').textContent = closed ? 'Cerrada temporalmente' : 'Propiedad activa';
+      $('#closed-message-wrap').classList.toggle('hidden', !closed);
+    }
+
+    function renderAmenities() {
+      $('#amenities-list').innerHTML = state.amenities.map((item, index) => `
+        <span class="chip">${escapeHtml(item)} <button type="button" data-remove-amenity="${index}" aria-label="Eliminar">×</button></span>
+      `).join('');
+    }
+
+    function renderPhotos() {
+      $('#photo-list').innerHTML = state.photos.map((photo, index) => `
+        <div class="photo-row">
+          <img src="${escapeAttr(photo.src)}" alt="${escapeAttr(photo.alt || 'Foto')}" />
+          <div class="photo-meta">
+            <strong>${escapeHtml(photo.alt || photo.src)}</strong>
+            <p class="help">${photo.visible === false ? 'Oculta' : 'Visible'}</p>
+            <div class="photo-actions">
+              <button type="button" class="ghost" data-toggle-photo="${index}">${photo.visible === false ? 'Mostrar' : 'Ocultar'}</button>
+              <button type="button" class="danger" data-remove-photo="${index}">Eliminar</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[char]));
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value).replace(/`/g, '&#096;');
+    }
+
+    async function saveSection(name) {
+      const keys = sections[name];
+      setStatus(name, 'Guardando...', 'ok');
+
+      const payloads = keys.map(key => {
+        if (key === 'is_closed') return [key, $('#is_closed').checked];
+        if (key === 'amenities') return [key, state.amenities];
+        if (key === 'photos') return [key, state.photos];
+        if (['price_per_night', 'price_extra_person', 'min_nights_low', 'min_nights_high'].includes(key)) {
+          return [key, Number(document.getElementById(key).value || 0)];
+        }
+        return [key, document.getElementById(key).value];
+      });
+
+      await Promise.all(payloads.map(([key, value]) => postConfig(key, value)));
+      setStatus(name, '✓ Guardado');
+    }
+
+    async function showAdmin(password) {
+      state.password = password;
+      sessionStorage.setItem('admin_auth', password);
+      $('#login-view').classList.add('hidden');
+      $('#admin-view').classList.remove('hidden');
+      await loadConfig();
+    }
+
+    $('#login-form').addEventListener('submit', async event => {
+      event.preventDefault();
+      const password = $('#password').value;
+      $('#login-status').textContent = 'Verificando...';
+      if (await verifyPassword(password)) {
+        await showAdmin(password);
+      } else {
+        $('#login-status').textContent = 'Contraseña incorrecta';
+        $('#login-status').className = 'status error';
+      }
+    });
+
+    $$('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        $$('.tab').forEach(item => item.classList.remove('active'));
+        $$('.section').forEach(section => section.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    $$('.section').forEach(form => {
+      form.addEventListener('submit', async event => {
+        event.preventDefault();
+        try {
+          await saveSection(form.dataset.save);
+        } catch (error) {
+          setStatus(form.dataset.save, error.message, 'error');
+        }
+      });
+    });
+
+    $('#is_closed').addEventListener('change', renderClosedFields);
+    $('#add-amenity').addEventListener('click', () => {
+      const value = $('#amenity-input').value.trim();
+      if (!value) return;
+      state.amenities.push(value);
+      $('#amenity-input').value = '';
+      renderAmenities();
+    });
+    $('#add-photo').addEventListener('click', () => {
+      const src = $('#photo-input').value.trim();
+      if (!src) return;
+      state.photos.push({ src, alt: 'Foto externa', visible: true });
+      $('#photo-input').value = '';
+      renderPhotos();
+    });
+    document.addEventListener('click', event => {
+      const amenityIndex = event.target.dataset.removeAmenity;
+      if (amenityIndex !== undefined) {
+        state.amenities.splice(Number(amenityIndex), 1);
+        renderAmenities();
+      }
+
+      const togglePhoto = event.target.dataset.togglePhoto;
+      if (togglePhoto !== undefined) {
+        const photo = state.photos[Number(togglePhoto)];
+        photo.visible = photo.visible === false;
+        renderPhotos();
+      }
+
+      const removePhoto = event.target.dataset.removePhoto;
+      if (removePhoto !== undefined) {
+        state.photos.splice(Number(removePhoto), 1);
+        renderPhotos();
+      }
+    });
+    $('#logout').addEventListener('click', () => {
+      sessionStorage.removeItem('admin_auth');
+      location.reload();
+    });
+
+    (async function init() {
+      const password = sessionStorage.getItem('admin_auth');
+      if (!password) return;
+      if (await verifyPassword(password)) {
+        await showAdmin(password);
+      } else {
+        sessionStorage.removeItem('admin_auth');
+      }
+    })();
+  </script>
+</body>
+</html>

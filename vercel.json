@@ -1,11 +1,22 @@
 {
   "version": 2,
+  "rewrites": [
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/admin/", "destination": "/admin.html" },
+    { "source": "/login", "destination": "/login.html" },
+    { "source": "/login/", "destination": "/login.html" },
+    { "source": "/auth/callback", "destination": "/auth-callback.html" },
+    { "source": "/cuenta", "destination": "/cuenta.html" },
+    { "source": "/cuenta/", "destination": "/cuenta.html" },
+    { "source": "/reservar", "destination": "/reservar.html" },
+    { "source": "/reservar/", "destination": "/reservar.html" }
+  ],
   "headers": [
     {
       "source": "/api/(.*)",
       "headers": [
         { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET, OPTIONS" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, PATCH, OPTIONS" },
         { "key": "Access-Control-Allow-Headers", "value": "Content-Type" }
       ]
     }

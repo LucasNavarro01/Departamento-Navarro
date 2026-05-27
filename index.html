@@ -52,6 +52,7 @@
     .btn { display: inline-flex; align-items: center; gap: .5rem; padding: .85rem 2rem; border-radius: 50px; font-size: .92rem; font-weight: 600; transition: all .25s ease; white-space: nowrap; }
     .btn-primary { background: var(--terracotta); color: #fff; box-shadow: 0 4px 20px rgba(198,123,92,.4); }
     .btn-primary:hover { background: var(--clay); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(198,123,92,.5); }
+    .btn[aria-disabled="true"] { opacity: .55; pointer-events: none; cursor: not-allowed; }
     .btn-outline { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,.75); }
     .btn-outline:hover { background: rgba(255,255,255,.15); }
     .btn-ghost { background: transparent; color: var(--terracotta); border: 2px solid var(--terracotta); }
@@ -97,6 +98,8 @@
     .hero-title { font-family: var(--font-serif); font-size: clamp(2.4rem, 6vw, 4rem); font-weight: 600; color: #fff; line-height: 1.15; margin-bottom: 1.25rem; }
     .hero-title em { font-style: italic; color: #F5D5C0; }
     .hero-sub { font-size: 1.08rem; color: rgba(255,255,255,.88); line-height: 1.75; margin-bottom: 2.5rem; max-width: 540px; }
+    .closed-banner { display: none; max-width: 680px; margin: 0 0 1.5rem; padding: 1rem 1.15rem; border-radius: 8px; background: #3D2B1F; color: #fff; font-weight: 700; line-height: 1.5; box-shadow: var(--shadow-md); }
+    .closed-banner.show { display: block; }
     .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 3rem; }
     .hero-stats { display: flex; gap: 2.5rem; flex-wrap: wrap; }
     .hero-stat-num { font-family: var(--font-serif); font-size: 1.9rem; font-weight: 700; color: #fff; }
@@ -235,6 +238,7 @@
     .price-per { font-size: .82rem; opacity: .8; }
     .price-incs { margin-top: 1.25rem; display: flex; flex-direction: column; gap: .45rem; }
     .price-inc { display: flex; align-items: center; gap: .5rem; font-size: .82rem; opacity: .9; }
+    .price-extra { color: #fff; }
     .policies { display: flex; flex-direction: column; gap: .7rem; }
     .pol-item { display: flex; gap: .7rem; }
     .pol-icon { font-size: 1.05rem; margin-top: .1rem; }
@@ -333,7 +337,8 @@
         <li><a href="#atracciones">Qué Hacer</a></li>
         <li><a href="#resenas">Reseñas</a></li>
       </ul>
-      <a href="#reservas" class="btn btn-primary" style="padding:.6rem 1.4rem;font-size:.85rem;" aria-label="Reservar">Reservar</a>
+      <a href="/cuenta" class="btn btn-ghost" style="padding:.55rem 1rem;font-size:.82rem;" aria-label="Mi cuenta">Mi cuenta</a>
+      <a href="/reservar" class="btn btn-primary" style="padding:.6rem 1.4rem;font-size:.85rem;" aria-label="Reservar">Reservar</a>
       <button class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
     </div>
   </div>
@@ -346,7 +351,8 @@
   <a href="#amenities" onclick="toggleMenu()">Comodidades</a>
   <a href="#atracciones" onclick="toggleMenu()">Qué Hacer</a>
   <a href="#resenas" onclick="toggleMenu()">Reseñas</a>
-  <a href="#reservas" onclick="toggleMenu()" class="btn btn-primary" style="margin-top:1rem;">Reservar Ahora</a>
+  <a href="/cuenta" onclick="toggleMenu()">Mi cuenta</a>
+  <a href="/reservar" onclick="toggleMenu()" class="btn btn-primary" style="margin-top:1rem;">Reservar Ahora</a>
 </div>
 
 <!-- ── HERO ── -->
@@ -356,8 +362,9 @@
       <div class="hero-badge">📍 Malargüe, Mendoza · Argentina</div>
       <h1 class="hero-title">Tu base perfecta para <em>explorar</em> el sur de Mendoza</h1>
       <p class="hero-sub">Departamento completo, cómodo y bien ubicado en Malargüe. A minutos de Las Leñas, Llancanelo y los volcanes. Limpio, equipado y con todo lo que necesitás.</p>
+      <div class="closed-banner" id="closed-banner"></div>
       <div class="hero-actions">
-        <a href="#reservas" class="btn btn-primary">
+        <a href="/reservar" class="btn btn-primary">
           📅 Consultar disponibilidad
         </a>
         <a href="#gallery" class="btn btn-outline">Ver fotos</a>
@@ -419,7 +426,7 @@
           <div class="about-feat"><div class="about-feat-icon">🚗</div><div class="about-feat-label">Garaje cubierto</div></div>
           <div class="about-feat"><div class="about-feat-icon">🔥</div><div class="about-feat-label">Patio con parrilla</div></div>
         </div>
-        <a href="#reservas" class="btn btn-primary">Reservar ahora</a>
+        <a href="/reservar" class="btn btn-primary">Reservar ahora</a>
       </div>
     </div>
   </div>
@@ -679,6 +686,7 @@
             <div class="price-inc">✓ Ropa de cama y toallas</div>
             <div class="price-inc">✓ WiFi + garaje incluidos</div>
             <div class="price-inc">✓ Mascotas permitidas (gratis)</div>
+            <div class="price-inc price-extra"></div>
           </div>
         </div>
 
@@ -830,7 +838,7 @@
       <h2>¿Listo para tu próxima aventura en Malargüe?</h2>
       <p>Temporada de ski 2025 · Las plazas se agotan. Reservá con anticipación.</p>
       <div class="cta-actions">
-        <a href="#reservas" class="btn btn-primary">Reservar Ahora</a>
+        <a href="/reservar" class="btn btn-primary">Reservar Ahora</a>
         <a href="https://wa.me/5492604000000?text=Hola!%20Quiero%20consultar%20por%20el%20Departamento%20Navarro%20en%20Malarg%C3%BCe" target="_blank" rel="noopener" class="btn btn-outline">💬 WhatsApp Directo</a>
       </div>
     </div>
@@ -906,6 +914,153 @@
     document.getElementById('contactForm').style.display = 'none';
     document.getElementById('form-success').style.display = 'block';
   }
+
+  const defaultSiteConfig = {
+    price_per_night: 15000,
+    price_extra_person: 3000,
+    min_nights_low: 2,
+    min_nights_high: 4,
+    phone: '+5492604000000',
+    is_closed: false,
+    closed_message: 'Temporalmente sin disponibilidad. Contactanos por WhatsApp.',
+    amenities: [
+      'WiFi Alta Velocidad gratis',
+      'Calefacción',
+      'Gas · Luz · Agua incl.',
+      'Garaje cubierto',
+      'Patio con Parrilla',
+      'Cocina equipada',
+      'Heladera',
+      'Lavarropas',
+      'Microondas',
+      'Cafetera',
+      'Ropa de cama',
+      'Toallas',
+      'Smart TV',
+      'Mascotas permitidas'
+    ],
+    photos: [
+      { src: 'fotos/living.jpeg', alt: 'Living', visible: true },
+      { src: 'fotos/dormitorio1.jpeg', alt: 'Dormitorio principal', visible: true },
+      { src: 'fotos/cocina.jpeg', alt: 'Cocina', visible: true },
+      { src: 'fotos/bano.jpeg', alt: 'Baño', visible: true },
+      { src: 'fotos/patio.jpeg', alt: 'Patio con parrilla', visible: true },
+      { src: 'fotos/dormitorio2.jpeg', alt: 'Segundo dormitorio', visible: true },
+      { src: 'fotos/exterior.jpeg', alt: 'Exterior', visible: true }
+    ]
+  };
+
+  function formatARS(value) {
+    return Number(value || 0).toLocaleString('es-AR');
+  }
+
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[char]));
+  }
+
+  function updateWhatsAppLinks(phone) {
+    const cleanPhone = String(phone || '').replace(/[^\d]/g, '');
+    document.querySelectorAll('a[href^="https://wa.me/"]').forEach(link => {
+      const current = new URL(link.href);
+      const text = current.searchParams.get('text');
+      link.href = `https://wa.me/${cleanPhone}${text ? `?text=${encodeURIComponent(text)}` : ''}`;
+    });
+
+    document.querySelectorAll('.fc-item').forEach(item => {
+      if (item.textContent.includes('WhatsApp')) {
+        const label = item.querySelector('span:last-child');
+        if (label) label.textContent = `WhatsApp ${phone}`;
+      }
+    });
+  }
+
+  function updateMinimumStay(config) {
+    const month = new Date().getMonth();
+    const minNights = month >= 6 && month <= 8 ? config.min_nights_high : config.min_nights_low;
+    document.querySelectorAll('.cap-row').forEach(row => {
+      if (row.textContent.includes('Estadía mínima')) {
+        const value = row.querySelector('.cap-value');
+        if (value) value.textContent = `${minNights} ${Number(minNights) === 1 ? 'noche' : 'noches'}`;
+      }
+    });
+  }
+
+  function updateAmenities(amenities) {
+    const list = document.querySelector('.amenities-list');
+    if (!list || !Array.isArray(amenities) || amenities.length === 0) return;
+
+    const icons = ['✓', '✓', '✓', '✓', '✓', '✓', '✓', '✓', '✓', '✓', '✓', '✓', '✓', '✓'];
+    list.innerHTML = amenities.map((item, index) => `
+      <div class="am-item${index < 2 ? ' highlight' : ''}">
+        <span class="am-icon">${icons[index % icons.length]}</span>
+        <span class="am-label">${escapeHtml(item)}</span>
+      </div>
+    `).join('');
+  }
+
+  function updateGallery(photos) {
+    const gallery = document.querySelector('.gallery-grid');
+    if (!gallery || !Array.isArray(photos)) return;
+
+    const visiblePhotos = photos.filter(photo => photo && photo.visible !== false && photo.src);
+    if (visiblePhotos.length === 0) return;
+
+    gallery.innerHTML = visiblePhotos.map(photo => `
+      <div class="g-item">
+        <img src="${escapeHtml(photo.src)}" alt="${escapeHtml(photo.alt || 'Foto Departamento Navarro')}" loading="lazy" />
+        <div class="g-overlay"><span>${escapeHtml(photo.alt || 'Departamento Navarro')}</span></div>
+      </div>
+    `).join('');
+  }
+
+  function updateClosedState(config) {
+    const banner = document.getElementById('closed-banner');
+    const form = document.getElementById('contactForm');
+    const submit = form?.querySelector('button[type="submit"]');
+
+    if (banner) {
+      banner.textContent = config.closed_message || defaultSiteConfig.closed_message;
+      banner.classList.toggle('show', Boolean(config.is_closed));
+    }
+
+    form?.querySelectorAll('input, select, textarea, button').forEach(control => {
+      control.disabled = Boolean(config.is_closed);
+    });
+
+    if (submit) {
+      submit.textContent = config.is_closed ? 'Reservas temporalmente pausadas' : 'Enviar consulta →';
+    }
+
+    document.querySelectorAll('a[href^="https://wa.me/"]').forEach(link => {
+      link.setAttribute('aria-disabled', String(Boolean(config.is_closed)));
+      link.tabIndex = config.is_closed ? -1 : 0;
+    });
+  }
+
+  function applySiteConfig(config) {
+    document.querySelector('.price-amt').innerHTML = `<sup>$</sup>${formatARS(config.price_per_night)}`;
+    document.querySelector('.price-per').textContent = 'por noche · precio base 2 personas';
+    const priceExtra = document.querySelector('.price-extra');
+    if (priceExtra) priceExtra.textContent = `+ $${formatARS(config.price_extra_person)} por persona adicional`;
+
+    updateMinimumStay(config);
+    updateWhatsAppLinks(config.phone);
+    updateAmenities(config.amenities);
+    updateGallery(config.photos);
+    updateClosedState(config);
+  }
+
+  (async function initDynamicConfig() {
+    const [configResult] = await Promise.allSettled([
+      fetch('/api/config').then(res => {
+        if (!res.ok) throw new Error('Config request failed');
+        return res.json();
+      })
+    ]);
+
+    const remoteConfig = configResult.status === 'fulfilled' ? configResult.value : {};
+    applySiteConfig({ ...defaultSiteConfig, ...remoteConfig });
+  })();
 
   // Scroll reveal
   const observer = new IntersectionObserver((entries) => {

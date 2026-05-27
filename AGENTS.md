@@ -25,37 +25,46 @@ El objetivo es doble:
 - **Booking.com:** https://www.booking.com/hotel/ar/departamento-navarro-malargue.es-ar.html
 - **Coordenadas:** -35.47054844, -69.57000147
 
-## Stack técnico (presente y futuro)
+## Stack técnico
 ```
 Frontend:   HTML + CSS + Vanilla JS (index.html)
 Backend:    Vercel Serverless Functions (Node.js 20) → carpeta /api
-Base datos: Supabase (PostgreSQL) — a implementar en Fase 3
-Agente IA:  Claude API (Anthropic) — a implementar en Fase 3
-Mensajería: WhatsApp Business API — a implementar en Fase 3
+Base datos: Supabase (PostgreSQL) ✅ CONFIGURADO
+Agente IA:  Claude API (Anthropic) — Fase 3
+Mensajería: WhatsApp Business API — Fase 3
 ```
+
+## Supabase
+- **Project URL:** `https://jdqjweuzwtsxderzttqx.supabase.com`
+- **Tabla principal:** `property_config` — almacena configuración como pares key/value (jsonb)
+- Las credenciales (anon key, service key) están en Vercel env vars — nunca hardcodear en el código
 
 ## Roadmap de fases
 - **Fase 1** ✅ Sitio en vivo en Vercel + GitHub
-- **Fase 2** 🔄 Sincronización de calendarios Booking.com + Airbnb (iCal) → ver `CODEX_TASK.md`
-- **Fase 3** ⏳ Agente IA de reservas (Claude API + Supabase + WhatsApp)
-- **Fase 4** ⏳ Automatización completa + panel admin + plantilla multi-propiedad
+- **Fase 2** 🔄 Calendarios iCal (Booking + Airbnb) → `CODEX_TASK.md`
+- **Fase 2.5** 🔄 Panel de administración `/admin` → `CODEX_TASK_ADMIN.md`
+- **Fase 3** ⏳ Agente IA de reservas (Claude API + WhatsApp)
+- **Fase 4** ⏳ Automatización completa + plantilla multi-propiedad
 
-## Variables de entorno (Vercel Dashboard → Settings → Environment Variables)
-| Variable | Descripción |
-|----------|-------------|
-| `BOOKING_ICAL_URL` | URL .ics exportada desde Booking.com Extranet |
-| `AIRBNB_ICAL_URL` | URL .ics exportada desde Airbnb (puede estar vacía) |
-| `ANTHROPIC_API_KEY` | API key de Claude (Fase 3) |
-| `SUPABASE_URL` | URL del proyecto Supabase (Fase 3) |
-| `SUPABASE_ANON_KEY` | Anon key de Supabase (Fase 3) |
-| `WHATSAPP_TOKEN` | Token de WhatsApp Business API (Fase 3) |
+## Variables de entorno en Vercel
+| Variable | Descripción | Estado |
+|----------|-------------|--------|
+| `SUPABASE_URL` | `https://jdqjweuzwtsxderzttqx.supabase.com` | ✅ Lista |
+| `SUPABASE_ANON_KEY` | Anon public key de Supabase | ✅ Lista |
+| `SUPABASE_SERVICE_KEY` | Service role key de Supabase | ✅ Lista |
+| `ADMIN_PASSWORD` | Contraseña para acceder a /admin | ✅ Lista |
+| `BOOKING_ICAL_URL` | URL .ics de Booking.com Extranet | ⏳ Pendiente |
+| `AIRBNB_ICAL_URL` | URL .ics de Airbnb | ⏳ Pendiente |
+| `ANTHROPIC_API_KEY` | API key de Claude (Fase 3) | ⏳ Pendiente |
+| `WHATSAPP_TOKEN` | Token de WhatsApp Business API (Fase 3) | ⏳ Pendiente |
 
 ## Convenciones de código
 - Funciones serverless en `/api/*.js` — cada archivo = un endpoint
-- Nombres de endpoint en kebab-case: `/api/availability`, `/api/reservations`, `/api/chat`
+- Nombres de endpoint en kebab-case: `/api/availability`, `/api/config`, `/api/update-config`, `/api/chat`
 - Respuestas JSON siempre con estructura `{ data, error, updatedAt }`
 - Frontend llama a las APIs con `fetch('/api/...')` — sin URLs hardcodeadas
 - Commits en inglés, formato: `feat:`, `fix:`, `chore:`
 
-## Tarea actual
-Ver `CODEX_TASK.md` para la tarea en curso.
+## Tareas para Codex
+- `CODEX_TASK.md` — Fase 2: calendario de disponibilidad iCal
+- `CODEX_TASK_ADMIN.md` — Fase 2.5: panel de administración con Supabase

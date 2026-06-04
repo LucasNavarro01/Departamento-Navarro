@@ -7,6 +7,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
   <style>
     :root {
       --terracotta: #C67B5C;
@@ -95,6 +98,14 @@
     .photo-meta strong { display: block; font-size: .9rem; word-break: break-word; }
     .photo-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .55rem; }
     .photo-actions button { padding: .45rem .65rem; font-size: .78rem; }
+    .info-box { border: 1px solid var(--border); border-radius: 8px; padding: .9rem 1rem; background: var(--sand); margin-bottom: 1rem; }
+    .info-box p { margin: 0; }
+    .calendar-url { display: grid; grid-template-columns: 1fr; gap: .5rem; margin: .75rem 0 1rem; }
+    @media (min-width: 620px) { .calendar-url { grid-template-columns: 1fr auto; } }
+    .blocked-list { display: grid; gap: .75rem; margin: 1rem 0; }
+    .blocked-row { display: flex; align-items: center; justify-content: space-between; gap: .75rem; border: 1px solid var(--border); border-radius: 8px; padding: .75rem; background: var(--cream); }
+    .blocked-row strong { display: block; font-size: .92rem; }
+    .blocked-row button { flex: 0 0 auto; padding: .55rem .7rem; font-size: .8rem; }
     .hidden { display: none !important; }
   </style>
 </head>
@@ -125,6 +136,7 @@
         <button class="tab" data-tab="contacto">Contacto</button>
         <button class="tab" data-tab="comodidades">Comodidades</button>
         <button class="tab" data-tab="fotos">Fotos</button>
+        <button class="tab" data-tab="calendario">Calendario</button>
       </div>
 
       <form class="section active" id="estado" data-save="estado">
@@ -209,6 +221,44 @@
         <div class="status" data-status="fotos"></div>
       </form>
 
+      <section class="section" id="calendario">
+        <h2>Calendario</h2>
+        <div class="info-box">
+          <p>Las fechas cerradas se exportan en tu calendario iCal. Booking y Airbnb las importan automaticamente cada pocas horas (no es instantaneo).</p>
+        </div>
+
+        <form id="blocked-date-form">
+          <div class="row">
+            <div class="field">
+              <label for="block-start">Desde</label>
+              <input id="block-start" type="date" required />
+            </div>
+            <div class="field">
+              <label for="block-end">Hasta</label>
+              <input id="block-end" type="date" required />
+              <p class="help">La fecha "hasta" es checkout: ese dia no se bloquea.</p>
+            </div>
+          </div>
+          <div class="field">
+            <label for="block-reason">Motivo opcional</label>
+            <input id="block-reason" type="text" placeholder="Mantenimiento, uso personal..." />
+          </div>
+          <button type="submit">Cerrar fechas</button>
+          <div class="status" data-status="calendario"></div>
+        </form>
+
+        <h2 style="margin-top:1.5rem;">Bloqueos activos</h2>
+        <div class="blocked-list" id="blocked-list"></div>
+
+        <h2 style="margin-top:1.5rem;">iCal de exportacion</h2>
+        <p class="help">Copia esta URL y pegala en la seccion de sincronizacion/importacion de calendarios de Booking y Airbnb.</p>
+        <div class="calendar-url">
+          <input id="calendar-url" type="text" readonly />
+          <button type="button" id="copy-calendar-url" class="secondary">Copiar</button>
+        </div>
+        <p class="help">En Booking: Extranet &gt; Tarifas y disponibilidad &gt; Sincronizar calendarios. En Airbnb: Disponibilidad &gt; Sincronizacion de calendarios.</p>
+      </section>
+
       <div style="margin-top:1.5rem;">
         <button class="ghost" id="logout" type="button">Cerrar sesión</button>
       </div>
@@ -216,7 +266,7 @@
   </main>
 
   <script>
-    const state = { password: '', config: {}, amenities: [], photos: [] };
+    const state = { password: '', config: {}, amenities: [], photos: [], blockedDates: [] };
     const sections = {
       estado: ['is_closed', 'closed_message'],
       precios: ['price_per_night', 'price_extra_person', 'min_nights_low', 'min_nights_high'],
@@ -303,6 +353,78 @@
       `).join('');
     }
 
+    function getCalendarUrl() {
+      return `${window.location.origin}/api/calendar.ics`;
+    }
+
+    function formatDateLabel(value) {
+      if (!value) return '';
+      const [year, month, day] = value.split('-');
+      return `${day}/${month}/${year}`;
+    }
+
+    function renderBlockedDates() {
+      const list = $('#blocked-list');
+      if (!list) return;
+      list.innerHTML = state.blockedDates.length ? state.blockedDates.map(row => `
+        <div class="blocked-row">
+          <div>
+            <strong>${formatDateLabel(row.start_date)} al ${formatDateLabel(row.end_date)}</strong>
+            <p class="help">${escapeHtml(row.reason || 'Sin motivo')}</p>
+          </div>
+          <button type="button" class="danger" data-remove-block="${escapeAttr(row.id)}">Eliminar</button>
+        </div>
+      `).join('') : '<p class="help">No hay bloqueos manuales cargados.</p>';
+    }
+
+    async function loadBlockedDates() {
+      const res = await fetch(`/api/blocked-dates?password=${encodeURIComponent(state.password)}`);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'No se pudieron cargar los bloqueos');
+      state.blockedDates = Array.isArray(data.data) ? data.data : [];
+      renderBlockedDates();
+    }
+
+    async function createBlockedDate(event) {
+      event.preventDefault();
+      setStatus('calendario', 'Guardando...', 'ok');
+      const payload = {
+        password: state.password,
+        start_date: $('#block-start').value,
+        end_date: $('#block-end').value,
+        reason: $('#block-reason').value
+      };
+      const res = await fetch('/api/blocked-dates', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'No se pudieron cerrar las fechas');
+      $('#blocked-date-form').reset();
+      await loadBlockedDates();
+      setStatus('calendario', '✓ Fechas cerradas');
+    }
+
+    async function removeBlockedDate(id) {
+      setStatus('calendario', 'Eliminando...', 'ok');
+      const res = await fetch(`/api/blocked-dates?password=${encodeURIComponent(state.password)}&id=${encodeURIComponent(id)}`, {
+        method: 'DELETE'
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'No se pudo eliminar el bloqueo');
+      await loadBlockedDates();
+      setStatus('calendario', '✓ Bloqueo eliminado');
+    }
+
+    function initCalendarTab() {
+      $('#calendar-url').value = getCalendarUrl();
+      if (window.flatpickr) {
+        flatpickr('#block-start', { locale: 'es', dateFormat: 'Y-m-d', minDate: 'today' });
+        flatpickr('#block-end', { locale: 'es', dateFormat: 'Y-m-d', minDate: 'today' });
+      }
+    }
+
     function escapeHtml(value) {
       return String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[char]));
     }
@@ -335,6 +457,8 @@
       $('#login-view').classList.add('hidden');
       $('#admin-view').classList.remove('hidden');
       await loadConfig();
+      initCalendarTab();
+      await loadBlockedDates().catch(error => setStatus('calendario', error.message, 'error'));
     }
 
     $('#login-form').addEventListener('submit', async event => {
@@ -355,10 +479,13 @@
         $$('.section').forEach(section => section.classList.remove('active'));
         tab.classList.add('active');
         document.getElementById(tab.dataset.tab).classList.add('active');
+        if (tab.dataset.tab === 'calendario') {
+          loadBlockedDates().catch(error => setStatus('calendario', error.message, 'error'));
+        }
       });
     });
 
-    $$('.section').forEach(form => {
+    $$('[data-save]').forEach(form => {
       form.addEventListener('submit', async event => {
         event.preventDefault();
         try {
@@ -403,6 +530,25 @@
         state.photos.splice(Number(removePhoto), 1);
         renderPhotos();
       }
+
+      const removeBlock = event.target.dataset.removeBlock;
+      if (removeBlock !== undefined) {
+        removeBlockedDate(removeBlock).catch(error => setStatus('calendario', error.message, 'error'));
+      }
+    });
+    $('#blocked-date-form').addEventListener('submit', event => {
+      createBlockedDate(event).catch(error => setStatus('calendario', error.message, 'error'));
+    });
+    $('#copy-calendar-url').addEventListener('click', async () => {
+      const url = $('#calendar-url').value;
+      try {
+        if (!navigator.clipboard?.writeText) throw new Error('Clipboard no disponible');
+        await navigator.clipboard.writeText(url);
+      } catch (error) {
+        $('#calendar-url').select();
+        document.execCommand('copy');
+      }
+      setStatus('calendario', '✓ URL copiada');
     });
     $('#logout').addEventListener('click', () => {
       sessionStorage.removeItem('admin_auth');

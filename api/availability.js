@@ -1,4 +1,5 @@
 const ical = require('node-ical');
+const { restSelect } = require('./_lib/supabase');
 
 const FIFTEEN_MINUTES = 900;
 
@@ -51,6 +52,31 @@ async function fetchCalendarDates(url) {
   return blockedDates;
 }
 
+function expandDateRange(startDate, endDate) {
+  const dates = [];
+  const start = new Date(`${startDate}T00:00:00Z`);
+  const end = new Date(`${endDate}T00:00:00Z`);
+
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || start >= end) {
+    return dates;
+  }
+
+  for (const cursor = new Date(start); cursor < end; cursor.setUTCDate(cursor.getUTCDate() + 1)) {
+    dates.push(toDateKey(cursor));
+  }
+
+  return dates;
+}
+
+async function fetchManualBlockedDates() {
+  const rows = await restSelect(
+    'blocked_dates',
+    'select=start_date,end_date&order=start_date.asc'
+  );
+
+  return rows.flatMap(row => expandDateRange(row.start_date, row.end_date));
+}
+
 module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') {
     res.status(204).end();
@@ -74,21 +100,25 @@ module.exports = async function handler(req, res) {
     process.env.AIRBNB_ICAL_URL
   ].filter(Boolean);
 
-  if (calendarUrls.length === 0) {
-    res.status(200).json({
-      blockedDates: [],
-      error: 'No hay calendarios iCal configurados',
-      updatedAt: new Date().toISOString()
-    });
-    return;
-  }
-
   try {
-    const calendars = await Promise.all(calendarUrls.map(fetchCalendarDates));
-    const blockedDates = [...new Set(calendars.flat())].sort();
+    const calendarResults = await Promise.allSettled(calendarUrls.map(fetchCalendarDates));
+    const manualResults = await Promise.allSettled([fetchManualBlockedDates()]);
+    const calendarDates = calendarResults
+      .filter(result => result.status === 'fulfilled')
+      .flatMap(result => result.value);
+    const manualDates = manualResults
+      .filter(result => result.status === 'fulfilled')
+      .flatMap(result => result.value);
+    const blockedDates = [...new Set([...calendarDates, ...manualDates])].sort();
+    const failedSources = [...calendarResults, ...manualResults].filter(result => result.status === 'rejected');
 
     res.status(200).json({
       blockedDates,
+      ...(calendarUrls.length === 0 && manualDates.length === 0
+        ? { error: 'No hay calendarios iCal ni bloqueos manuales configurados' }
+        : failedSources.length > 0
+          ? { error: 'Algunas fuentes de disponibilidad no pudieron cargarse' }
+          : {}),
       updatedAt: new Date().toISOString()
     });
   } catch (error) {

@@ -75,6 +75,13 @@ async function restPatch(table, query, patch) {
   });
 }
 
+async function restDelete(table, query) {
+  return supabaseFetch(`/rest/v1/${table}?${query}`, {
+    method: 'DELETE',
+    headers: { Prefer: 'return=minimal' }
+  });
+}
+
 module.exports = {
   baseUrl,
   supabaseFetch,
@@ -83,5 +90,6 @@ module.exports = {
   restSelect,
   restUpsert,
   restInsert,
-  restPatch
+  restPatch,
+  restDelete
 };

@@ -37,7 +37,14 @@ Mensajería: WhatsApp Business API — Fase 3
 ## Supabase
 - **Project URL:** `https://jdqjweuzwtsxderzttqx.supabase.com`
 - **Tabla principal:** `property_config` — almacena configuración como pares key/value (jsonb)
+- **Tabla de bloqueos:** `blocked_dates` — rangos cerrados manualmente desde `/admin`, con `end_date` exclusivo
 - Las credenciales (anon key, service key) están en Vercel env vars — nunca hardcodear en el código
+
+## Calendarios iCal
+- Importación hacia la web: `api/availability.js` lee `BOOKING_ICAL_URL` y `AIRBNB_ICAL_URL`
+- Exportación pública para plataformas: `/api/calendar.ics`
+- El feed exporta reservas directas `confirmed` y `pending`, más bloqueos manuales de `blocked_dates`
+- Pegar la URL pública de `/api/calendar.ics` en Booking/Airbnb para que esas plataformas importen los cierres. La actualización externa puede tardar varias horas y no es instantánea.
 
 ## Roadmap de fases
 - **Fase 1** ✅ Sitio en vivo en Vercel + GitHub
@@ -57,6 +64,8 @@ Mensajería: WhatsApp Business API — Fase 3
 | `AIRBNB_ICAL_URL` | URL .ics de Airbnb | ⏳ Pendiente |
 | `ANTHROPIC_API_KEY` | API key de Claude (Fase 3) | ⏳ Pendiente |
 | `WHATSAPP_TOKEN` | Token de WhatsApp Business API (Fase 3) | ⏳ Pendiente |
+
+No se requieren variables nuevas para exportar el calendario iCal; reutiliza `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`/`SUPABASE_SERVICE_ROLE_KEY` y `ADMIN_PASSWORD`.
 
 ## Convenciones de código
 - Funciones serverless en `/api/*.js` — cada archivo = un endpoint

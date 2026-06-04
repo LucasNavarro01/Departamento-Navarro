@@ -1,23 +1,43 @@
 const baseUrl = () => {
-  if (!process.env.SUPABASE_URL) throw new Error('SUPABASE_URL no esta configurado');
-  return process.env.SUPABASE_URL.replace(/\/$/, '');
+  const url = String(process.env.SUPABASE_URL || '').trim();
+  if (!url) throw new Error('SUPABASE_URL no esta configurado');
+  return url.replace(/\/$/, '');
 };
 
-const serviceKey = () => process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY;
+const serviceKey = () => String(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY || '').trim();
+const anonKey = () => String(process.env.SUPABASE_ANON_KEY || '').trim();
 
 async function supabaseFetch(path, options = {}) {
-  const key = options.key || serviceKey() || process.env.SUPABASE_ANON_KEY;
+  const key = String(options.key || serviceKey() || anonKey() || '').trim();
   if (!key) throw new Error('Supabase key no esta configurada');
+  const bearer = String(options.bearer || key).trim();
+  const url = `${baseUrl()}${path}`;
 
-  const response = await fetch(`${baseUrl()}${path}`, {
-    ...options,
-    headers: {
-      apikey: key,
-      Authorization: `Bearer ${options.bearer || key}`,
-      'Content-Type': 'application/json',
-      ...(options.headers || {})
+  let response;
+  let lastError;
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      response = await fetch(url, {
+        ...options,
+        headers: {
+          apikey: key,
+          Authorization: `Bearer ${bearer}`,
+          'Content-Type': 'application/json',
+          ...(options.headers || {})
+        }
+      });
+      break;
+    } catch (error) {
+      lastError = error;
+      if (attempt === 1) {
+        throw new Error(`No se pudo conectar con Supabase (${error.message || 'fetch failed'})`);
+      }
     }
-  });
+  }
+
+  if (!response && lastError) {
+    throw new Error(`No se pudo conectar con Supabase (${lastError.message || 'fetch failed'})`);
+  }
 
   const text = await response.text();
   const data = text ? JSON.parse(text) : null;
@@ -30,7 +50,7 @@ async function supabaseFetch(path, options = {}) {
 async function getSupabaseUser(accessToken) {
   return supabaseFetch('/auth/v1/user', {
     method: 'GET',
-    key: process.env.SUPABASE_ANON_KEY,
+    key: anonKey(),
     bearer: accessToken
   });
 }
@@ -38,7 +58,7 @@ async function getSupabaseUser(accessToken) {
 async function refreshSupabaseSession(refreshToken) {
   return supabaseFetch('/auth/v1/token?grant_type=refresh_token', {
     method: 'POST',
-    key: process.env.SUPABASE_ANON_KEY,
+    key: anonKey(),
     body: JSON.stringify({ refresh_token: refreshToken })
   });
 }

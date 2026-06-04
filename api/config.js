@@ -10,7 +10,6 @@ const DEFAULT_CONFIG = {
     6: 70000
   },
   min_nights_low: 1,
-  min_nights_high: 1,
   phone: '+5492604000000',
   is_closed: false,
   closed_message: 'Temporalmente sin disponibilidad. Contactanos por WhatsApp.',

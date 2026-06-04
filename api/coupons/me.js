@@ -14,11 +14,13 @@ module.exports = async function handler(req, res) {
 
   sendJson(res, 200, {
     data: {
+      user: auth.user,
       tier: auth.tier.key,
       label: auth.tier.label,
       percent: auth.tier.percent,
       code: buildCouponCode(auth.user, auth.tier),
       count: auth.reservationCount,
+      reservationCount: auth.reservationCount,
       nextTier: auth.tier.next
     }
   });

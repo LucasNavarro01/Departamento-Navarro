@@ -1,5 +1,44 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Iniciar sesion · Departamento Navarro</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,500&display=swap" rel="stylesheet"><link rel="stylesheet" href="/loyalty.css"></head>
-<body><main class="auth-shell"><section class="auth-visual"><a class="brand" href="/">Depto. <span>Navarro</span></a><div><span class="badge">Malargue · Mendoza</span><h1>Tu base perfecta para <em>explorar</em> el sur de Mendoza.</h1><p>Inicia sesion con tu cuenta social y aplicamos tus descuentos de fidelidad automaticamente.</p></div><small>Las Lenas · Invierno</small></section>
-<section class="auth-card-wrap"><div class="card"><p class="eyebrow">Bienvenido de nuevo</p><h2 class="title">Inicia sesion</h2><p class="muted">Usa Google, Facebook o Apple. No guardamos contrasenas propias.</p><div class="oauth-grid"><button class="oauth" onclick="startOAuth('google')">G Google</button><button class="oauth" onclick="startOAuth('facebook')">f Facebook</button><button class="oauth" onclick="startOAuth('apple')">Apple</button></div><p class="muted" style="font-size:.85rem;margin-top:1.5rem">La primera vez se crea tu cuenta automaticamente.</p><a href="/" class="btn btn-outline" style="margin-top:1rem">Volver al sitio</a></div></section></main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/loyalty.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Iniciar sesion · Departamento Navarro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/loyalty.css">
+</head>
+<body>
+  <main class="auth-shell">
+    <section class="auth-visual">
+      <a class="brand" href="/">Depto. <span>Navarro</span></a>
+      <div>
+        <span class="badge">Login opcional</span>
+        <h1>Descuentos para huespedes que vuelven.</h1>
+        <p>Inicia sesion si queres ver tu nivel de fidelidad. Tambien podes reservar sin cuenta al precio normal.</p>
+      </div>
+      <small>Malargue · Mendoza</small>
+    </section>
+    <section class="auth-card-wrap">
+      <div class="card">
+        <p class="eyebrow">Mi cuenta</p>
+        <h2 class="title">Iniciar sesion</h2>
+        <p class="muted">El login sirve para aplicar automaticamente descuentos en reservas directas futuras.</p>
+        <button class="oauth" type="button" onclick="startOAuth('google')">Continuar con Google</button>
+        <form style="margin-top:1rem" onsubmit="sendMagicLink(event)">
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" required placeholder="tu@email.com">
+          </div>
+          <button class="btn btn-primary" type="submit" style="width:100%;margin-top:.75rem">Enviar magic link</button>
+          <p id="login-status" class="muted" aria-live="polite"></p>
+        </form>
+        <a href="/" class="btn btn-outline" style="margin-top:1rem">Volver al sitio</a>
+      </div>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/loyalty.js"></script>
+</body>
+</html>

@@ -1,23 +1,8 @@
 const { readBody, sendJson } = require('./_lib/http');
 const { requireSession } = require('./_lib/auth');
-const { getCouponTier, getManualCouponPercent } = require('./_lib/coupons');
+const { getManualCouponPercent } = require('./_lib/coupons');
+const { buildQuote, daysBetween } = require('./_lib/pricing');
 const { restInsert, restPatch, restSelect } = require('./_lib/supabase');
-
-const CLEANING_FEE = 4500;
-const DEFAULT_PRICE_BY_GUESTS = {
-  1: 25000,
-  2: 30000,
-  3: 40000,
-  4: 50000,
-  5: 60000,
-  6: 70000
-};
-
-function daysBetween(checkin, checkout) {
-  const start = new Date(`${checkin}T00:00:00Z`);
-  const end = new Date(`${checkout}T00:00:00Z`);
-  return Math.round((end - start) / 86400000);
-}
 
 async function hasOverlap(checkin, checkout) {
   const query = [
@@ -29,80 +14,6 @@ async function hasOverlap(checkin, checkout) {
   ].join('&');
   const rows = await restSelect('reservations', query);
   return rows.length > 0;
-}
-
-async function hasManualBlock(checkin, checkout) {
-  const rows = await restSelect(
-    'blocked_dates',
-    [
-      'select=id',
-      `start_date=lt.${encodeURIComponent(checkout)}`,
-      `end_date=gt.${encodeURIComponent(checkin)}`,
-      'limit=1'
-    ].join('&')
-  );
-  return rows.length > 0;
-}
-
-async function readConfig() {
-  const rows = await restSelect('property_config', 'select=key,value');
-  return rows.reduce((config, row) => {
-    config[row.key] = row.value;
-    return config;
-  }, {});
-}
-
-async function readCalendarRules(checkin, checkout) {
-  return restSelect(
-    'calendar_rules',
-    [
-      'select=start_date,end_date,price_per_night,min_nights',
-      `start_date=lt.${encodeURIComponent(checkout)}`,
-      `end_date=gt.${encodeURIComponent(checkin)}`,
-      'order=start_date.asc'
-    ].join('&')
-  );
-}
-
-function dateKeysBetween(checkin, checkout) {
-  const dates = [];
-  const start = new Date(`${checkin}T00:00:00Z`);
-  const end = new Date(`${checkout}T00:00:00Z`);
-  for (const cursor = new Date(start); cursor < end; cursor.setUTCDate(cursor.getUTCDate() + 1)) {
-    dates.push(cursor.toISOString().slice(0, 10));
-  }
-  return dates;
-}
-
-function getBaseNightlyRate(config, guests) {
-  const guestPrices = config.price_by_guests && typeof config.price_by_guests === 'object'
-    ? config.price_by_guests
-    : DEFAULT_PRICE_BY_GUESTS;
-  return Number(guestPrices[String(guests)] || guestPrices[guests] || guestPrices[6] || 0);
-}
-
-function getRuleForDate(rules, dateKey) {
-  return rules.find(rule => rule.start_date <= dateKey && rule.end_date > dateKey);
-}
-
-function calculateStay({ checkin, checkout, guests, config, rules }) {
-  const nights = dateKeysBetween(checkin, checkout);
-  const baseRate = getBaseNightlyRate(config, guests);
-  const minNights = Math.max(
-    1,
-    Number(config.min_nights_low || 1),
-    ...rules.map(rule => Number(rule.min_nights || 1))
-  );
-  const nightlyRates = nights.map(dateKey => {
-    const rule = getRuleForDate(rules, dateKey);
-    return Number(rule?.price_per_night || baseRate);
-  });
-
-  return {
-    minNights,
-    nightlyRates,
-    subtotal: nightlyRates.reduce((sum, rate) => sum + rate, 0)
-  };
 }
 
 async function createReservation(req, res) {
@@ -131,28 +42,15 @@ async function createReservation(req, res) {
   if (await hasOverlap(checkin, checkout)) {
     return sendJson(res, 409, { error: 'Las fechas seleccionadas no estan disponibles' });
   }
-  if (await hasManualBlock(checkin, checkout)) {
+  const manualPct = getManualCouponPercent(body.couponCode);
+  const discountPct = Math.max(auth?.tier?.percent || 0, manualPct);
+  const quote = await buildQuote({ checkin, checkout, guests, discountPct });
+  if (quote.blocked) {
     return sendJson(res, 409, { error: 'Las fechas seleccionadas estan cerradas' });
   }
-
-  const [config, rules] = await Promise.all([
-    readConfig(),
-    readCalendarRules(checkin, checkout)
-  ]);
-  const pricing = calculateStay({ checkin, checkout, guests, config, rules });
-  if (nights < pricing.minNights) {
-    return sendJson(res, 400, { error: `La estadia minima para esas fechas es de ${pricing.minNights} ${pricing.minNights === 1 ? 'noche' : 'noches'}` });
+  if (!quote.meetsMinNights) {
+    return sendJson(res, 400, { error: `La estadia minima para esas fechas es de ${quote.minNights} ${quote.minNights === 1 ? 'noche' : 'noches'}` });
   }
-
-  const subtotal = pricing.subtotal;
-  const autoPct = auth ? getCouponTier(auth.reservationCount).percent : 0;
-  const manualPct = getManualCouponPercent(body.couponCode);
-  const appliedPct = Math.max(autoPct, manualPct);
-  const discountAmount = Math.round(subtotal * (appliedPct / 100));
-  const total = subtotal - discountAmount + CLEANING_FEE;
-  const currentTier = auth ? getCouponTier(auth.reservationCount) : null;
-  const newTier = auth ? getCouponTier(auth.reservationCount + 1) : null;
-  const leveledUp = Boolean(auth && currentTier.key !== newTier.key);
 
   const inserted = await restInsert('reservations', [{
     user_id: auth?.user?.id || null,
@@ -167,34 +65,76 @@ async function createReservation(req, res) {
     message: body.message || null,
     source: 'direct',
     status: 'confirmed',
-    subtotal,
-    discount_pct: appliedPct,
-    discount_amount: discountAmount,
-    cleaning_fee: CLEANING_FEE,
-    total,
+    subtotal: quote.subtotal,
+    discount_pct: quote.discountPct,
+    discount_amount: quote.discountAmount,
+    cleaning_fee: quote.cleaningFee,
+    total: quote.total,
     coupon_code: manualPct > 0 ? String(body.couponCode).trim().toUpperCase() : null
   }]);
-
-  if (auth) {
-    await restPatch(
-      'loyalty_profiles',
-      `id=eq.${encodeURIComponent(auth.user.id)}`,
-      { reservation_count: auth.reservationCount + 1, updated_at: new Date().toISOString() }
-    );
-  }
 
   sendJson(res, 200, {
     data: {
       id: inserted[0]?.id,
-      total,
-      appliedPct,
-      discountAmount,
-      newTier,
-      leveledUp,
+      total: quote.total,
+      appliedPct: quote.discountPct,
+      discountAmount: quote.discountAmount,
       nights,
       guests
     }
   });
+}
+
+async function updateReservationStatus(req, res) {
+  const body = await readBody(req);
+  const allowedStatuses = new Set(['pending', 'confirmed', 'completed', 'cancelled']);
+
+  if (!process.env.ADMIN_PASSWORD || body.password !== process.env.ADMIN_PASSWORD) {
+    return sendJson(res, 401, { error: 'Unauthorized' });
+  }
+
+  if (!body.id || !allowedStatuses.has(body.status)) {
+    return sendJson(res, 400, { error: 'Reserva o estado invalido' });
+  }
+
+  const currentRows = await restSelect('reservations', `select=*&id=eq.${encodeURIComponent(body.id)}&limit=1`);
+  const current = currentRows[0];
+  if (!current) return sendJson(res, 404, { error: 'Reserva no encontrada' });
+
+  const validTransitions = {
+    pending: new Set(['confirmed', 'cancelled']),
+    confirmed: new Set(['completed', 'cancelled']),
+    completed: new Set(['cancelled']),
+    cancelled: new Set(['pending', 'confirmed'])
+  };
+  if (!validTransitions[current.status || 'pending']?.has(body.status)) {
+    return sendJson(res, 400, { error: 'Transicion de estado no permitida' });
+  }
+
+  const rows = await restPatch(
+    'reservations',
+    `id=eq.${encodeURIComponent(body.id)}`,
+    { status: body.status }
+  );
+
+  if (current.user_id) {
+    const completedRows = await restSelect(
+      'reservations',
+      [
+        'select=id',
+        `user_id=eq.${encodeURIComponent(current.user_id)}`,
+        'source=eq.direct',
+        'status=eq.completed'
+      ].join('&')
+    );
+    await restPatch(
+      'loyalty_profiles',
+      `id=eq.${encodeURIComponent(current.user_id)}`,
+      { reservation_count: completedRows.length, updated_at: new Date().toISOString() }
+    );
+  }
+
+  return sendJson(res, 200, { data: rows[0] || null });
 }
 
 module.exports = async function handler(req, res) {
@@ -206,9 +146,16 @@ module.exports = async function handler(req, res) {
       return sendJson(res, 500, { error: error.message || 'No se pudo crear la reserva' });
     }
   }
+  if (req.method === 'PATCH') {
+    try {
+      return await updateReservationStatus(req, res);
+    } catch (error) {
+      return sendJson(res, 500, { error: error.message || 'No se pudo actualizar la reserva' });
+    }
+  }
 
   if (req.method !== 'GET') {
-    res.setHeader('Allow', 'GET, POST, OPTIONS');
+    res.setHeader('Allow', 'GET, POST, PATCH, OPTIONS');
     return sendJson(res, 405, { error: 'Method not allowed' });
   }
 

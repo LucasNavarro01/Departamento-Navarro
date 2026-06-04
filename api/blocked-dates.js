@@ -66,10 +66,11 @@ async function listBlockedDates(req, res) {
   }
 
   if (req.query.mode === 'settings') {
-    const [blockedDates, rules] = await Promise.all([
-      restSelect('blocked_dates', 'select=id,start_date,end_date,reason&order=start_date.asc'),
-      restSelect('calendar_rules', 'select=id,start_date,end_date,price_per_night,min_nights&order=start_date.asc')
-    ]);
+    const blockedDates = await restSelect('blocked_dates', 'select=id,start_date,end_date,reason&order=start_date.asc');
+    const rules = await restSelect(
+      'calendar_rules',
+      'select=id,start_date,end_date,price_per_night,min_nights&order=start_date.asc'
+    ).catch(() => []);
 
     return send(res, 200, { data: { blockedDates, rules } });
   }
@@ -105,6 +106,8 @@ async function createBlockedDate(req, res) {
     const isAvailable = Boolean(body.is_available);
     const pricePerNight = normalizeInt(body.price_per_night);
     const minNights = Math.max(1, normalizeInt(body.min_nights, 1));
+    const hasCustomMinNights = body.min_nights !== '' && body.min_nights !== null && body.min_nights !== undefined && minNights !== 1;
+    const shouldWriteRule = pricePerNight !== null || hasCustomMinNights;
 
     await replaceRange(
       'blocked_dates',
@@ -114,7 +117,7 @@ async function createBlockedDate(req, res) {
       row => ({ reason: row.reason || null })
     );
 
-    if (pricePerNight !== null || minNights !== null) {
+    if (shouldWriteRule) {
       await replaceRange(
         'calendar_rules',
         startDate,

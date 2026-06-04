@@ -1,18 +1,15 @@
 function getCouponTier(count = 0) {
   const safeCount = Number(count) || 0;
-  if (safeCount >= 10) {
-    return { key: 'vip', percent: 20, label: 'VIP · Anfitrion Honorario', next: null };
-  }
-  if (safeCount >= 5) {
-    return { key: 'gold', percent: 15, label: 'Huesped Frecuente', next: { at: 10, percent: 20, label: 'VIP' } };
+  if (safeCount >= 3) {
+    return { key: 'ambassador', percent: 18, label: 'Embajador', next: null };
   }
   if (safeCount >= 2) {
-    return { key: 'silver', percent: 10, label: 'Cliente Recurrente', next: { at: 5, percent: 15, label: 'Huesped Frecuente' } };
+    return { key: 'frequent', percent: 15, label: 'Frecuente', next: { at: 3, percent: 18, label: 'Embajador' } };
   }
   if (safeCount >= 1) {
-    return { key: 'bronze', percent: 0, label: 'Primera estadia completada', next: { at: 2, percent: 10, label: 'Cliente Recurrente' } };
+    return { key: 'recurrent', percent: 10, label: 'Recurrente', next: { at: 2, percent: 15, label: 'Frecuente' } };
   }
-  return { key: 'new', percent: 0, label: 'Nuevo huesped', next: { at: 2, percent: 10, label: 'Cliente Recurrente' } };
+  return { key: 'new', percent: 0, label: 'Nuevo', next: { at: 1, percent: 10, label: 'Recurrente' } };
 }
 
 function buildCouponCode(user, tier) {

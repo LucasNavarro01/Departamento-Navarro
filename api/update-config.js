@@ -1,9 +1,9 @@
+const { restUpsert } = require('./_lib/supabase');
 const ALLOWED_KEYS = new Set([
   'price_per_night',
   'price_extra_person',
   'price_by_guests',
   'min_nights_low',
-  'min_nights_high',
   'phone',
   'is_closed',
   'closed_message',
@@ -39,31 +39,11 @@ async function readBody(req) {
 }
 
 async function upsertConfig(key, value) {
-  const { SUPABASE_URL, SUPABASE_SERVICE_KEY } = process.env;
-
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
-    throw new Error('Supabase service key no está configurada');
-  }
-
-  const url = `${SUPABASE_URL.replace(/\/$/, '')}/rest/v1/property_config?on_conflict=key`;
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      apikey: SUPABASE_SERVICE_KEY,
-      Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
-      'Content-Type': 'application/json',
-      Prefer: 'resolution=merge-duplicates'
-    },
-    body: JSON.stringify({
-      key,
-      value,
-      updated_at: new Date().toISOString()
-    })
-  });
-
-  if (!response.ok) {
-    throw new Error(`Supabase respondió ${response.status}`);
-  }
+  await restUpsert('property_config', [{
+    key,
+    value,
+    updated_at: new Date().toISOString()
+  }], 'key');
 }
 
 module.exports = async function handler(req, res) {

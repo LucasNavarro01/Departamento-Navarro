@@ -48,6 +48,14 @@ Mensajería: WhatsApp Business API — Fase 3
 - Pegar la URL pública de `/api/calendar.ics` en Booking/Airbnb para que esas plataformas importen los cierres. La actualización externa puede tardar varias horas y no es instantánea.
 - El admin usa `/api/blocked-dates?mode=settings` para aplicar en un rango: abrir/cerrar, precio por noche y mínimo de noches.
 - `property_config.price_by_guests` guarda precios editables por cantidad de huéspedes (1 a 6).
+- `/api/quote` calcula presupuesto público por fechas/huéspedes y aplica descuento de fidelidad si hay sesión.
+
+## Login y fidelidad
+- Páginas: `/login`, `/auth/callback`, `/cuenta`
+- Login opcional con Supabase Auth (Google OAuth y magic link por email)
+- Descuentos por estadías directas completadas (`source='direct'`, `status='completed'`): 1 estadía = 10%, 2 = 15%, 3+ = 18%
+- El tab **Reservas** del admin permite confirmar, completar y cancelar reservas; solo `completed` suma al nivel.
+- OAuth usa `SUPABASE_URL` y `SUPABASE_ANON_KEY`; la cookie local se firma con `SESSION_SECRET` si existe o `ADMIN_PASSWORD` como fallback.
 
 ## Roadmap de fases
 - **Fase 1** ✅ Sitio en vivo en Vercel + GitHub

@@ -44,6 +44,19 @@ async function getProfile(userId) {
   return rows[0] || null;
 }
 
+async function countCompletedDirectStays(userId) {
+  const rows = await restSelect(
+    'reservations',
+    [
+      'select=id',
+      `user_id=eq.${encodeURIComponent(userId)}`,
+      'source=eq.direct',
+      'status=eq.completed'
+    ].join('&')
+  );
+  return rows.length;
+}
+
 async function requireSession(req, res) {
   const raw = parseCookies(req)[COOKIE_NAME];
   let session = decodeSession(raw);
@@ -63,7 +76,16 @@ async function requireSession(req, res) {
 
     const authUser = await getSupabaseUser(session.access_token);
     const profile = await upsertProfile(authUser);
-    const count = Number(profile?.reservation_count || 0);
+    const count = await countCompletedDirectStays(authUser.id);
+    if (Number(profile?.reservation_count || 0) !== count) {
+      await restUpsert('loyalty_profiles', [{
+        id: authUser.id,
+        email: authUser.email,
+        name: profile?.name || authUser.user_metadata?.full_name || authUser.email,
+        reservation_count: count,
+        updated_at: new Date().toISOString()
+      }], 'id');
+    }
     return {
       session,
       user: {
@@ -80,4 +102,4 @@ async function requireSession(req, res) {
   }
 }
 
-module.exports = { COOKIE_NAME, setSessionCookie, requireSession, getProfile, upsertProfile };
+module.exports = { COOKIE_NAME, setSessionCookie, requireSession, getProfile, upsertProfile, countCompletedDirectStays };

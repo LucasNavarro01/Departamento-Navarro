@@ -25,6 +25,15 @@ Departamento completo para hasta 6 huéspedes. La base perfecta para explorar La
 
 Variables necesarias: `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` o `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_ANON_KEY` y `ADMIN_PASSWORD`. No se agrega ninguna variable nueva para el feed iCal.
 
+## Login y fidelidad
+- `/login`: acceso opcional con Google o magic link por email.
+- `/cuenta`: nivel, descuento vigente, progreso e historial del huésped.
+- `/api/quote`: presupuesto en vivo por fechas y huéspedes, con descuento validado en backend si hay sesión.
+- Descuentos por estadías directas completadas: 1 = 10%, 2 = 15%, 3 o más = 18%.
+- El admin tiene tab **Reservas** para confirmar, completar o cancelar reservas.
+
+OAuth reutiliza `SUPABASE_URL` y `SUPABASE_ANON_KEY`. Para firmar la cookie de sesión puede usarse `SESSION_SECRET`; si no existe, se usa `ADMIN_PASSWORD` como fallback.
+
 ## 📁 Estructura
 ```
 ├── index.html          # Sitio completo (single-file)

@@ -1,8 +1,16 @@
 const DEFAULT_CONFIG = {
   price_per_night: 15000,
   price_extra_person: 3000,
-  min_nights_low: 2,
-  min_nights_high: 4,
+  price_by_guests: {
+    1: 25000,
+    2: 30000,
+    3: 40000,
+    4: 50000,
+    5: 60000,
+    6: 70000
+  },
+  min_nights_low: 1,
+  min_nights_high: 1,
   phone: '+5492604000000',
   is_closed: false,
   closed_message: 'Temporalmente sin disponibilidad. Contactanos por WhatsApp.',

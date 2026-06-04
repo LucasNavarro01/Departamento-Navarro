@@ -38,6 +38,7 @@ Mensajería: WhatsApp Business API — Fase 3
 - **Project URL:** `https://jdqjweuzwtsxderzttqx.supabase.com`
 - **Tabla principal:** `property_config` — almacena configuración como pares key/value (jsonb)
 - **Tabla de bloqueos:** `blocked_dates` — rangos cerrados manualmente desde `/admin`, con `end_date` exclusivo
+- **Tabla de reglas:** `calendar_rules` — precio por noche y mínimo de noches por rango, con `end_date` exclusivo
 - Las credenciales (anon key, service key) están en Vercel env vars — nunca hardcodear en el código
 
 ## Calendarios iCal
@@ -45,6 +46,8 @@ Mensajería: WhatsApp Business API — Fase 3
 - Exportación pública para plataformas: `/api/calendar.ics`
 - El feed exporta reservas directas `confirmed` y `pending`, más bloqueos manuales de `blocked_dates`
 - Pegar la URL pública de `/api/calendar.ics` en Booking/Airbnb para que esas plataformas importen los cierres. La actualización externa puede tardar varias horas y no es instantánea.
+- El admin usa `/api/calendar-settings` para aplicar en un rango: abrir/cerrar, precio por noche y mínimo de noches.
+- `property_config.price_by_guests` guarda precios editables por cantidad de huéspedes (1 a 6).
 
 ## Roadmap de fases
 - **Fase 1** ✅ Sitio en vivo en Vercel + GitHub

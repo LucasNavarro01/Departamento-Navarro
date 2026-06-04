@@ -757,6 +757,8 @@
               <option>2 personas</option>
               <option>3 personas</option>
               <option>4 personas</option>
+              <option>5 personas</option>
+              <option>6 personas</option>
             </select>
           </div>
           <div class="fg">
@@ -918,8 +920,16 @@
   const defaultSiteConfig = {
     price_per_night: 15000,
     price_extra_person: 3000,
-    min_nights_low: 2,
-    min_nights_high: 4,
+    price_by_guests: {
+      1: 25000,
+      2: 30000,
+      3: 40000,
+      4: 50000,
+      5: 60000,
+      6: 70000
+    },
+    min_nights_low: 1,
+    min_nights_high: 1,
     phone: '+5492604000000',
     is_closed: false,
     closed_message: 'Temporalmente sin disponibilidad. Contactanos por WhatsApp.',
@@ -1038,10 +1048,12 @@
   }
 
   function applySiteConfig(config) {
-    document.querySelector('.price-amt').innerHTML = `<sup>$</sup>${formatARS(config.price_per_night)}`;
-    document.querySelector('.price-per').textContent = 'por noche · precio base 2 personas';
+    const guestPrices = config.price_by_guests || {};
+    const fromPrice = guestPrices[1] || guestPrices['1'] || config.price_per_night;
+    document.querySelector('.price-amt').innerHTML = `<sup>$</sup>${formatARS(fromPrice)}`;
+    document.querySelector('.price-per').textContent = 'por noche ? segun cantidad de huespedes';
     const priceExtra = document.querySelector('.price-extra');
-    if (priceExtra) priceExtra.textContent = `+ $${formatARS(config.price_extra_person)} por persona adicional`;
+    if (priceExtra) priceExtra.textContent = 'Tarifas editables para 1 a 6 personas';
 
     updateMinimumStay(config);
     updateWhatsAppLinks(config.phone);
@@ -1049,7 +1061,6 @@
     updateGallery(config.photos);
     updateClosedState(config);
   }
-
   (async function initDynamicConfig() {
     const [configResult] = await Promise.allSettled([
       fetch('/api/config').then(res => {

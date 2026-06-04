@@ -1,6 +1,7 @@
 const ALLOWED_KEYS = new Set([
   'price_per_night',
   'price_extra_person',
+  'price_by_guests',
   'min_nights_low',
   'min_nights_high',
   'phone',

@@ -30,7 +30,7 @@
       background: var(--cream);
       color: var(--brown);
     }
-    .wrap { width: min(100% - 2rem, 680px); margin: 0 auto; padding: 2rem 0 3rem; }
+    .wrap { width: min(100% - 2rem, 1120px); margin: 0 auto; padding: 2rem 0 3rem; }
     header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; }
     h1 { margin: 0; font-size: clamp(1.35rem, 5vw, 2rem); line-height: 1.15; }
     h2 { margin: 0 0 1rem; font-size: 1.1rem; }
@@ -106,6 +106,28 @@
     .blocked-row { display: flex; align-items: center; justify-content: space-between; gap: .75rem; border: 1px solid var(--border); border-radius: 8px; padding: .75rem; background: var(--cream); }
     .blocked-row strong { display: block; font-size: .92rem; }
     .blocked-row button { flex: 0 0 auto; padding: .55rem .7rem; font-size: .8rem; }
+    .guest-price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .75rem; margin-bottom: 1rem; }
+    .calendar-workspace { display: grid; grid-template-columns: 1fr; gap: 1rem; align-items: start; }
+    @media (min-width: 900px) { .calendar-workspace { grid-template-columns: minmax(0, 1fr) 320px; } }
+    .calendar-shell { overflow-x: auto; }
+    .calendar-toolbar { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin-bottom: 1rem; }
+    .calendar-title { font-size: 1.45rem; font-weight: 800; text-transform: capitalize; }
+    .calendar-nav { display: flex; gap: .5rem; }
+    .calendar-nav button { width: 42px; height: 42px; padding: 0; border-radius: 50%; }
+    .calendar-weekdays, .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(96px, 1fr)); gap: .45rem; min-width: 720px; }
+    .calendar-weekdays { margin-bottom: .45rem; color: var(--muted); font-size: .78rem; font-weight: 800; text-align: center; }
+    .calendar-day { min-height: 92px; border: 1px solid var(--border); border-radius: 8px; background: var(--white); padding: .65rem; text-align: left; color: var(--brown); display: flex; flex-direction: column; justify-content: space-between; }
+    .calendar-day.muted { opacity: .38; }
+    .calendar-day.closed { background: #F2E7E2; color: #7A3328; text-decoration: line-through; }
+    .calendar-day.selected { background: var(--brown); color: var(--white); border-color: var(--brown); text-decoration: none; }
+    .calendar-day.today { box-shadow: inset 0 0 0 2px var(--terracotta); }
+    .day-num { font-weight: 800; }
+    .day-meta { display: grid; gap: .2rem; font-size: .78rem; text-decoration: none; }
+    .day-price { font-weight: 800; }
+    .side-panel { position: sticky; top: 1rem; border: 1px solid var(--border); border-radius: 8px; padding: 1rem; background: var(--cream); }
+    .segmented { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; margin-bottom: 1rem; }
+    .segmented button { background: var(--sand); color: var(--brown); border: 1px solid var(--border); }
+    .segmented button.active { background: var(--brown); color: var(--white); }
     .hidden { display: none !important; }
   </style>
 </head>
@@ -161,24 +183,19 @@
 
       <form class="section" id="precios" data-save="precios">
         <h2>Precios</h2>
-        <div class="row">
-          <div class="field">
-            <label for="price_per_night">Precio base por noche (ARS $)</label>
-            <input id="price_per_night" type="number" min="0" step="100" />
-          </div>
-          <div class="field">
-            <label for="price_extra_person">Cargo por persona adicional (ARS $)</label>
-            <input id="price_extra_person" type="number" min="0" step="100" />
-            <p class="help">Se cobra a partir de la 3ra persona.</p>
-          </div>
-          <div class="field">
-            <label for="min_nights_low">Mínimo de noches — temporada baja</label>
-            <input id="min_nights_low" type="number" min="1" step="1" />
-          </div>
-          <div class="field">
-            <label for="min_nights_high">Mínimo de noches — temporada alta (julio–sept)</label>
-            <input id="min_nights_high" type="number" min="1" step="1" />
-          </div>
+        <p class="help">Estos son los precios predeterminados por noche. En Calendario podes cambiar precios para fechas puntuales.</p>
+        <div class="guest-price-grid" id="guest-price-grid">
+          <div class="field"><label for="price_guest_1">1 persona</label><input id="price_guest_1" data-guest-price="1" type="number" min="0" step="100" /></div>
+          <div class="field"><label for="price_guest_2">2 personas</label><input id="price_guest_2" data-guest-price="2" type="number" min="0" step="100" /></div>
+          <div class="field"><label for="price_guest_3">3 personas</label><input id="price_guest_3" data-guest-price="3" type="number" min="0" step="100" /></div>
+          <div class="field"><label for="price_guest_4">4 personas</label><input id="price_guest_4" data-guest-price="4" type="number" min="0" step="100" /></div>
+          <div class="field"><label for="price_guest_5">5 personas</label><input id="price_guest_5" data-guest-price="5" type="number" min="0" step="100" /></div>
+          <div class="field"><label for="price_guest_6">6 personas</label><input id="price_guest_6" data-guest-price="6" type="number" min="0" step="100" /></div>
+        </div>
+        <div class="field">
+          <label for="min_nights_low">Minimo predeterminado de noches</label>
+          <input id="min_nights_low" type="number" min="1" step="1" />
+          <p class="help">Por defecto es 1 noche. Tambien se puede ajustar por fecha desde Calendario.</p>
         </div>
         <button type="submit">Guardar cambios</button>
         <div class="status" data-status="precios"></div>
@@ -224,39 +241,53 @@
       <section class="section" id="calendario">
         <h2>Calendario</h2>
         <div class="info-box">
-          <p>Las fechas cerradas se exportan en tu calendario iCal. Booking y Airbnb las importan automaticamente cada pocas horas (no es instantaneo).</p>
+          <p>Selecciona uno o varios dias y aplica cambios: abrir/cerrar, precio por noche y minimo de noches. Las fechas cerradas se exportan al iCal para Booking y Airbnb.</p>
         </div>
 
-        <form id="blocked-date-form">
-          <div class="row">
-            <div class="field">
-              <label for="block-start">Desde</label>
-              <input id="block-start" type="date" required />
+        <div class="calendar-workspace">
+          <div class="calendar-shell">
+            <div class="calendar-toolbar">
+              <div class="calendar-title" id="calendar-title"></div>
+              <div class="calendar-nav">
+                <button type="button" class="ghost" id="calendar-prev" aria-label="Mes anterior">?</button>
+                <button type="button" class="ghost" id="calendar-next" aria-label="Mes siguiente">?</button>
+              </div>
+            </div>
+            <div class="calendar-weekdays"><span>lun</span><span>mar</span><span>mie</span><span>jue</span><span>vie</span><span>sab</span><span>dom</span></div>
+            <div class="calendar-grid" id="calendar-grid"></div>
+          </div>
+
+          <aside class="side-panel">
+            <h2 id="selected-range-title">Selecciona fechas</h2>
+            <p class="help" id="selected-range-help">Click en el dia de inicio y luego en el dia final.</p>
+            <div class="segmented" role="group" aria-label="Disponibilidad">
+              <button type="button" id="set-open" class="active">Abrir</button>
+              <button type="button" id="set-closed">Cerrar</button>
             </div>
             <div class="field">
-              <label for="block-end">Hasta</label>
-              <input id="block-end" type="date" required />
-              <p class="help">La fecha "hasta" es checkout: ese dia no se bloquea.</p>
+              <label for="calendar-price">Precio por noche (ARS $)</label>
+              <input id="calendar-price" type="number" min="0" step="100" placeholder="Usar precio predeterminado" />
             </div>
-          </div>
-          <div class="field">
-            <label for="block-reason">Motivo opcional</label>
-            <input id="block-reason" type="text" placeholder="Mantenimiento, uso personal..." />
-          </div>
-          <button type="submit">Cerrar fechas</button>
-          <div class="status" data-status="calendario"></div>
-        </form>
+            <div class="field">
+              <label for="calendar-min-nights">Minimo de noches</label>
+              <input id="calendar-min-nights" type="number" min="1" step="1" value="1" />
+            </div>
+            <div class="field" id="calendar-reason-wrap">
+              <label for="calendar-reason">Motivo si se cierra</label>
+              <input id="calendar-reason" type="text" placeholder="Mantenimiento, uso personal..." />
+            </div>
+            <button type="button" id="apply-calendar-settings" disabled>Aplicar cambios</button>
+            <button type="button" class="ghost" id="clear-calendar-selection" style="margin-top:.5rem;width:100%;">Limpiar seleccion</button>
+            <div class="status" data-status="calendario"></div>
 
-        <h2 style="margin-top:1.5rem;">Bloqueos activos</h2>
-        <div class="blocked-list" id="blocked-list"></div>
-
-        <h2 style="margin-top:1.5rem;">iCal de exportacion</h2>
-        <p class="help">Copia esta URL y pegala en la seccion de sincronizacion/importacion de calendarios de Booking y Airbnb.</p>
-        <div class="calendar-url">
-          <input id="calendar-url" type="text" readonly />
-          <button type="button" id="copy-calendar-url" class="secondary">Copiar</button>
+            <h2 style="margin-top:1.5rem;">iCal de exportacion</h2>
+            <p class="help">Copia esta URL y pegala en Booking/Airbnb para importar cierres.</p>
+            <div class="calendar-url">
+              <input id="calendar-url" type="text" readonly />
+              <button type="button" id="copy-calendar-url" class="secondary">Copiar</button>
+            </div>
+          </aside>
         </div>
-        <p class="help">En Booking: Extranet &gt; Tarifas y disponibilidad &gt; Sincronizar calendarios. En Airbnb: Disponibilidad &gt; Sincronizacion de calendarios.</p>
       </section>
 
       <div style="margin-top:1.5rem;">
@@ -266,10 +297,22 @@
   </main>
 
   <script>
-    const state = { password: '', config: {}, amenities: [], photos: [], blockedDates: [] };
+    const defaultGuestPrices = { 1: 25000, 2: 30000, 3: 40000, 4: 50000, 5: 60000, 6: 70000 };
+    const state = {
+      password: '',
+      config: {},
+      amenities: [],
+      photos: [],
+      blockedDates: [],
+      calendarRules: [],
+      calendarMonth: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+      selectionStart: null,
+      selectionEnd: null,
+      calendarAvailable: true
+    };
     const sections = {
       estado: ['is_closed', 'closed_message'],
-      precios: ['price_per_night', 'price_extra_person', 'min_nights_low', 'min_nights_high'],
+      precios: ['price_by_guests', 'price_per_night', 'min_nights_low', 'min_nights_high'],
       contacto: ['phone'],
       comodidades: ['amenities'],
       fotos: ['photos']
@@ -312,13 +355,20 @@
       fillFields();
     }
 
+    function getGuestPrices() {
+      return { ...defaultGuestPrices, ...(state.config.price_by_guests || {}) };
+    }
+
+    function readGuestPrices() {
+      return Object.fromEntries($$('[data-guest-price]').map(input => [input.dataset.guestPrice, Number(input.value || 0)]));
+    }
+
     function fillFields() {
       $('#is_closed').checked = Boolean(state.config.is_closed);
       $('#closed_message').value = state.config.closed_message || '';
-      $('#price_per_night').value = state.config.price_per_night || 0;
-      $('#price_extra_person').value = state.config.price_extra_person || 0;
+      const guestPrices = getGuestPrices();
+      $$('[data-guest-price]').forEach(input => { input.value = guestPrices[input.dataset.guestPrice] || 0; });
       $('#min_nights_low').value = state.config.min_nights_low || 1;
-      $('#min_nights_high').value = state.config.min_nights_high || 1;
       $('#phone').value = state.config.phone || '';
       renderClosedFields();
       renderAmenities();
@@ -333,7 +383,7 @@
 
     function renderAmenities() {
       $('#amenities-list').innerHTML = state.amenities.map((item, index) => `
-        <span class="chip">${escapeHtml(item)} <button type="button" data-remove-amenity="${index}" aria-label="Eliminar">×</button></span>
+        <span class="chip">${escapeHtml(item)} <button type="button" data-remove-amenity="${index}" aria-label="Eliminar">?</button></span>
       `).join('');
     }
 
@@ -357,72 +407,158 @@
       return `${window.location.origin}/api/calendar.ics`;
     }
 
+    function toDateKey(date) {
+      return date.toISOString().slice(0, 10);
+    }
+
+    function addDays(dateKey, days) {
+      const date = new Date(`${dateKey}T00:00:00Z`);
+      date.setUTCDate(date.getUTCDate() + days);
+      return toDateKey(date);
+    }
+
     function formatDateLabel(value) {
       if (!value) return '';
       const [year, month, day] = value.split('-');
       return `${day}/${month}/${year}`;
     }
 
-    function renderBlockedDates() {
-      const list = $('#blocked-list');
-      if (!list) return;
-      list.innerHTML = state.blockedDates.length ? state.blockedDates.map(row => `
-        <div class="blocked-row">
-          <div>
-            <strong>${formatDateLabel(row.start_date)} al ${formatDateLabel(row.end_date)}</strong>
-            <p class="help">${escapeHtml(row.reason || 'Sin motivo')}</p>
-          </div>
-          <button type="button" class="danger" data-remove-block="${escapeAttr(row.id)}">Eliminar</button>
-        </div>
-      `).join('') : '<p class="help">No hay bloqueos manuales cargados.</p>';
+    function dateInRange(dateKey, start, endExclusive) {
+      return start <= dateKey && dateKey < endExclusive;
     }
 
-    async function loadBlockedDates() {
-      const res = await fetch(`/api/blocked-dates?password=${encodeURIComponent(state.password)}`);
+    function getBlockForDate(dateKey) {
+      return state.blockedDates.find(row => dateInRange(dateKey, row.start_date, row.end_date));
+    }
+
+    function getRuleForDate(dateKey) {
+      return state.calendarRules.find(row => dateInRange(dateKey, row.start_date, row.end_date));
+    }
+
+    function getDefaultNightPrice() {
+      const prices = readGuestPrices();
+      return prices[2] || prices[1] || 0;
+    }
+
+    function isSelectedDate(dateKey) {
+      if (!state.selectionStart) return false;
+      const end = state.selectionEnd || state.selectionStart;
+      const start = state.selectionStart <= end ? state.selectionStart : end;
+      const final = state.selectionStart <= end ? end : state.selectionStart;
+      return start <= dateKey && dateKey <= final;
+    }
+
+    function getSelectionRange() {
+      if (!state.selectionStart) return null;
+      const rawEnd = state.selectionEnd || state.selectionStart;
+      const start = state.selectionStart <= rawEnd ? state.selectionStart : rawEnd;
+      const endInclusive = state.selectionStart <= rawEnd ? rawEnd : state.selectionStart;
+      return { start, endInclusive, endExclusive: addDays(endInclusive, 1) };
+    }
+
+    function renderSelectionPanel() {
+      const range = getSelectionRange();
+      $('#apply-calendar-settings').disabled = !range;
+      if (!range) {
+        $('#selected-range-title').textContent = 'Selecciona fechas';
+        $('#selected-range-help').textContent = 'Click en el dia de inicio y luego en el dia final.';
+        return;
+      }
+      $('#selected-range-title').textContent = range.start === range.endInclusive
+        ? formatDateLabel(range.start)
+        : `${formatDateLabel(range.start)} al ${formatDateLabel(range.endInclusive)}`;
+      $('#selected-range-help').textContent = 'Aplica disponibilidad, precio o minimo de noches al rango seleccionado.';
+    }
+
+    function renderCalendarBoard() {
+      const grid = $('#calendar-grid');
+      if (!grid) return;
+      const month = state.calendarMonth;
+      $('#calendar-title').textContent = month.toLocaleDateString('es-AR', { month: 'long', year: 'numeric' });
+      const first = new Date(month.getFullYear(), month.getMonth(), 1);
+      const startOffset = (first.getDay() + 6) % 7;
+      const start = new Date(first);
+      start.setDate(first.getDate() - startOffset);
+      const today = toDateKey(new Date());
+      const defaultPrice = getDefaultNightPrice();
+      const days = [];
+
+      for (let index = 0; index < 42; index += 1) {
+        const date = new Date(start);
+        date.setDate(start.getDate() + index);
+        const dateKey = toDateKey(date);
+        const muted = date.getMonth() !== month.getMonth();
+        const block = getBlockForDate(dateKey);
+        const rule = getRuleForDate(dateKey);
+        const price = Number(rule?.price_per_night || defaultPrice);
+        const minNights = Number(rule?.min_nights || state.config.min_nights_low || 1);
+        const classes = ['calendar-day', muted ? 'muted' : '', block ? 'closed' : '', isSelectedDate(dateKey) ? 'selected' : '', dateKey === today ? 'today' : ''].filter(Boolean).join(' ');
+        days.push(`
+          <button type="button" class="${classes}" data-calendar-date="${dateKey}">
+            <span class="day-num">${date.getDate()}</span>
+            <span class="day-meta">
+              <span>${block ? 'Cerrado' : 'Disponible'}</span>
+              <span class="day-price">$${Number(price || 0).toLocaleString('es-AR')}</span>
+              <span>Min ${minNights}n</span>
+            </span>
+          </button>
+        `);
+      }
+      grid.innerHTML = days.join('');
+      renderSelectionPanel();
+    }
+
+    async function loadCalendarSettings() {
+      const res = await fetch(`/api/calendar-settings?password=${encodeURIComponent(state.password)}`);
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || 'No se pudieron cargar los bloqueos');
-      state.blockedDates = Array.isArray(data.data) ? data.data : [];
-      renderBlockedDates();
+      if (!res.ok) throw new Error(data.error || 'No se pudo cargar el calendario');
+      state.blockedDates = Array.isArray(data.data?.blockedDates) ? data.data.blockedDates : [];
+      state.calendarRules = Array.isArray(data.data?.rules) ? data.data.rules : [];
+      renderCalendarBoard();
     }
 
-    async function createBlockedDate(event) {
-      event.preventDefault();
+    async function applyCalendarSettings() {
+      const range = getSelectionRange();
+      if (!range) return;
       setStatus('calendario', 'Guardando...', 'ok');
-      const payload = {
-        password: state.password,
-        start_date: $('#block-start').value,
-        end_date: $('#block-end').value,
-        reason: $('#block-reason').value
-      };
-      const res = await fetch('/api/blocked-dates', {
+      const res = await fetch('/api/calendar-settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({
+          password: state.password,
+          start_date: range.start,
+          end_date: range.endExclusive,
+          is_available: state.calendarAvailable,
+          price_per_night: $('#calendar-price').value,
+          min_nights: $('#calendar-min-nights').value || 1,
+          reason: $('#calendar-reason').value
+        })
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || 'No se pudieron cerrar las fechas');
-      $('#blocked-date-form').reset();
-      await loadBlockedDates();
-      setStatus('calendario', '✓ Fechas cerradas');
+      if (!res.ok) throw new Error(data.error || 'No se pudo actualizar el calendario');
+      state.selectionStart = null;
+      state.selectionEnd = null;
+      await loadCalendarSettings();
+      setStatus('calendario', '? Calendario actualizado');
     }
 
-    async function removeBlockedDate(id) {
-      setStatus('calendario', 'Eliminando...', 'ok');
-      const res = await fetch(`/api/blocked-dates?password=${encodeURIComponent(state.password)}&id=${encodeURIComponent(id)}`, {
-        method: 'DELETE'
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || 'No se pudo eliminar el bloqueo');
-      await loadBlockedDates();
-      setStatus('calendario', '✓ Bloqueo eliminado');
+    function clearCalendarSelection() {
+      state.selectionStart = null;
+      state.selectionEnd = null;
+      renderCalendarBoard();
+    }
+
+    function setCalendarAvailability(available) {
+      state.calendarAvailable = available;
+      $('#set-open').classList.toggle('active', available);
+      $('#set-closed').classList.toggle('active', !available);
+      $('#calendar-reason-wrap').classList.toggle('hidden', available);
     }
 
     function initCalendarTab() {
       $('#calendar-url').value = getCalendarUrl();
-      if (window.flatpickr) {
-        flatpickr('#block-start', { locale: 'es', dateFormat: 'Y-m-d', minDate: 'today' });
-        flatpickr('#block-end', { locale: 'es', dateFormat: 'Y-m-d', minDate: 'today' });
-      }
+      setCalendarAvailability(true);
+      renderCalendarBoard();
     }
 
     function escapeHtml(value) {
@@ -441,10 +577,13 @@
         if (key === 'is_closed') return [key, $('#is_closed').checked];
         if (key === 'amenities') return [key, state.amenities];
         if (key === 'photos') return [key, state.photos];
-        if (['price_per_night', 'price_extra_person', 'min_nights_low', 'min_nights_high'].includes(key)) {
+        if (key === 'price_by_guests') return [key, readGuestPrices()];
+        if (key === 'price_per_night') return [key, Number(readGuestPrices()[1] || 0)];
+        if (key === 'min_nights_high') return [key, Number($('#min_nights_low').value || 1)];
+        if (['min_nights_low'].includes(key)) {
           return [key, Number(document.getElementById(key).value || 0)];
         }
-        return [key, document.getElementById(key).value];
+        return [key, document.getElementById(key)?.value];
       });
 
       await Promise.all(payloads.map(([key, value]) => postConfig(key, value)));
@@ -458,7 +597,7 @@
       $('#admin-view').classList.remove('hidden');
       await loadConfig();
       initCalendarTab();
-      await loadBlockedDates().catch(error => setStatus('calendario', error.message, 'error'));
+      await loadCalendarSettings().catch(error => setStatus('calendario', error.message, 'error'));
     }
 
     $('#login-form').addEventListener('submit', async event => {
@@ -480,7 +619,7 @@
         tab.classList.add('active');
         document.getElementById(tab.dataset.tab).classList.add('active');
         if (tab.dataset.tab === 'calendario') {
-          loadBlockedDates().catch(error => setStatus('calendario', error.message, 'error'));
+          loadCalendarSettings().catch(error => setStatus('calendario', error.message, 'error'));
         }
       });
     });
@@ -531,13 +670,30 @@
         renderPhotos();
       }
 
-      const removeBlock = event.target.dataset.removeBlock;
-      if (removeBlock !== undefined) {
-        removeBlockedDate(removeBlock).catch(error => setStatus('calendario', error.message, 'error'));
+      const calendarDate = event.target.closest('[data-calendar-date]')?.dataset.calendarDate;
+      if (calendarDate) {
+        if (!state.selectionStart || (state.selectionStart && state.selectionEnd)) {
+          state.selectionStart = calendarDate;
+          state.selectionEnd = null;
+        } else {
+          state.selectionEnd = calendarDate;
+        }
+        renderCalendarBoard();
       }
     });
-    $('#blocked-date-form').addEventListener('submit', event => {
-      createBlockedDate(event).catch(error => setStatus('calendario', error.message, 'error'));
+    $('#calendar-prev').addEventListener('click', () => {
+      state.calendarMonth = new Date(state.calendarMonth.getFullYear(), state.calendarMonth.getMonth() - 1, 1);
+      renderCalendarBoard();
+    });
+    $('#calendar-next').addEventListener('click', () => {
+      state.calendarMonth = new Date(state.calendarMonth.getFullYear(), state.calendarMonth.getMonth() + 1, 1);
+      renderCalendarBoard();
+    });
+    $('#set-open').addEventListener('click', () => setCalendarAvailability(true));
+    $('#set-closed').addEventListener('click', () => setCalendarAvailability(false));
+    $('#clear-calendar-selection').addEventListener('click', clearCalendarSelection);
+    $('#apply-calendar-settings').addEventListener('click', () => {
+      applyCalendarSettings().catch(error => setStatus('calendario', error.message, 'error'));
     });
     $('#copy-calendar-url').addEventListener('click', async () => {
       const url = $('#calendar-url').value;

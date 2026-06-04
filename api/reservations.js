@@ -3,8 +3,15 @@ const { requireSession } = require('./_lib/auth');
 const { getCouponTier, getManualCouponPercent } = require('./_lib/coupons');
 const { restInsert, restPatch, restSelect } = require('./_lib/supabase');
 
-const NIGHTLY_RATE = 18500;
 const CLEANING_FEE = 4500;
+const DEFAULT_PRICE_BY_GUESTS = {
+  1: 25000,
+  2: 30000,
+  3: 40000,
+  4: 50000,
+  5: 60000,
+  6: 70000
+};
 
 function daysBetween(checkin, checkout) {
   const start = new Date(`${checkin}T00:00:00Z`);
@@ -24,6 +31,80 @@ async function hasOverlap(checkin, checkout) {
   return rows.length > 0;
 }
 
+async function hasManualBlock(checkin, checkout) {
+  const rows = await restSelect(
+    'blocked_dates',
+    [
+      'select=id',
+      `start_date=lt.${encodeURIComponent(checkout)}`,
+      `end_date=gt.${encodeURIComponent(checkin)}`,
+      'limit=1'
+    ].join('&')
+  );
+  return rows.length > 0;
+}
+
+async function readConfig() {
+  const rows = await restSelect('property_config', 'select=key,value');
+  return rows.reduce((config, row) => {
+    config[row.key] = row.value;
+    return config;
+  }, {});
+}
+
+async function readCalendarRules(checkin, checkout) {
+  return restSelect(
+    'calendar_rules',
+    [
+      'select=start_date,end_date,price_per_night,min_nights',
+      `start_date=lt.${encodeURIComponent(checkout)}`,
+      `end_date=gt.${encodeURIComponent(checkin)}`,
+      'order=start_date.asc'
+    ].join('&')
+  );
+}
+
+function dateKeysBetween(checkin, checkout) {
+  const dates = [];
+  const start = new Date(`${checkin}T00:00:00Z`);
+  const end = new Date(`${checkout}T00:00:00Z`);
+  for (const cursor = new Date(start); cursor < end; cursor.setUTCDate(cursor.getUTCDate() + 1)) {
+    dates.push(cursor.toISOString().slice(0, 10));
+  }
+  return dates;
+}
+
+function getBaseNightlyRate(config, guests) {
+  const guestPrices = config.price_by_guests && typeof config.price_by_guests === 'object'
+    ? config.price_by_guests
+    : DEFAULT_PRICE_BY_GUESTS;
+  return Number(guestPrices[String(guests)] || guestPrices[guests] || guestPrices[6] || 0);
+}
+
+function getRuleForDate(rules, dateKey) {
+  return rules.find(rule => rule.start_date <= dateKey && rule.end_date > dateKey);
+}
+
+function calculateStay({ checkin, checkout, guests, config, rules }) {
+  const nights = dateKeysBetween(checkin, checkout);
+  const baseRate = getBaseNightlyRate(config, guests);
+  const minNights = Math.max(
+    1,
+    Number(config.min_nights_low || 1),
+    ...rules.map(rule => Number(rule.min_nights || 1))
+  );
+  const nightlyRates = nights.map(dateKey => {
+    const rule = getRuleForDate(rules, dateKey);
+    return Number(rule?.price_per_night || baseRate);
+  });
+
+  return {
+    minNights,
+    nightlyRates,
+    subtotal: nightlyRates.reduce((sum, rate) => sum + rate, 0)
+  };
+}
+
 async function createReservation(req, res) {
   const auth = await requireSession(req, res);
   const body = await readBody(req);
@@ -39,6 +120,9 @@ async function createReservation(req, res) {
   if (!checkin || !checkout || !guestName) {
     return sendJson(res, 400, { error: 'Faltan datos obligatorios' });
   }
+  if (!Number.isInteger(guests) || guests < 1 || guests > 6) {
+    return sendJson(res, 400, { error: 'La cantidad de huespedes debe estar entre 1 y 6' });
+  }
 
   const nights = daysBetween(checkin, checkout);
   if (!Number.isFinite(nights) || nights < 1) {
@@ -47,8 +131,20 @@ async function createReservation(req, res) {
   if (await hasOverlap(checkin, checkout)) {
     return sendJson(res, 409, { error: 'Las fechas seleccionadas no estan disponibles' });
   }
+  if (await hasManualBlock(checkin, checkout)) {
+    return sendJson(res, 409, { error: 'Las fechas seleccionadas estan cerradas' });
+  }
 
-  const subtotal = NIGHTLY_RATE * nights;
+  const [config, rules] = await Promise.all([
+    readConfig(),
+    readCalendarRules(checkin, checkout)
+  ]);
+  const pricing = calculateStay({ checkin, checkout, guests, config, rules });
+  if (nights < pricing.minNights) {
+    return sendJson(res, 400, { error: `La estadia minima para esas fechas es de ${pricing.minNights} ${pricing.minNights === 1 ? 'noche' : 'noches'}` });
+  }
+
+  const subtotal = pricing.subtotal;
   const autoPct = auth ? getCouponTier(auth.reservationCount).percent : 0;
   const manualPct = getManualCouponPercent(body.couponCode);
   const appliedPct = Math.max(autoPct, manualPct);

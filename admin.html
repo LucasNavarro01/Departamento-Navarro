@@ -509,7 +509,7 @@
     }
 
     async function loadCalendarSettings() {
-      const res = await fetch(`/api/calendar-settings?password=${encodeURIComponent(state.password)}`);
+      const res = await fetch(`/api/blocked-dates?mode=settings&password=${encodeURIComponent(state.password)}`);
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || 'No se pudo cargar el calendario');
       state.blockedDates = Array.isArray(data.data?.blockedDates) ? data.data.blockedDates : [];
@@ -521,10 +521,11 @@
       const range = getSelectionRange();
       if (!range) return;
       setStatus('calendario', 'Guardando...', 'ok');
-      const res = await fetch('/api/calendar-settings', {
+      const res = await fetch('/api/blocked-dates', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          mode: 'settings',
           password: state.password,
           start_date: range.start,
           end_date: range.endExclusive,

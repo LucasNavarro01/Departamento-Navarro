@@ -10,7 +10,7 @@ const DEFAULT_CONFIG = {
     6: 70000
   },
   min_nights_low: 1,
-  phone: '+5492604000000',
+  phone: process.env.WHATSAPP_PHONE || '',
   is_closed: false,
   closed_message: 'Temporalmente sin disponibilidad. Contactanos por WhatsApp.',
   amenities: [

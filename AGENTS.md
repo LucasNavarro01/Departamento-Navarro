@@ -73,6 +73,7 @@ Mensajería: WhatsApp Business API — Fase 3
 | `ADMIN_PASSWORD` | Contraseña para acceder a /admin | ✅ Lista |
 | `BOOKING_ICAL_URL` | URL .ics de Booking.com Extranet | ⏳ Pendiente |
 | `AIRBNB_ICAL_URL` | URL .ics de Airbnb | ⏳ Pendiente |
+| `WHATSAPP_PHONE` | Número de WhatsApp para el link de reserva (con código de país, solo dígitos o +) | ⏳ Pendiente |
 | `ANTHROPIC_API_KEY` | API key de Claude (Fase 3) | ⏳ Pendiente |
 | `WHATSAPP_TOKEN` | Token de WhatsApp Business API (Fase 3) | ⏳ Pendiente |
 

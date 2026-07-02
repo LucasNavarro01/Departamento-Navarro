@@ -9,10 +9,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/airbnb.css">
 
   <style>
     :root {
@@ -232,8 +228,8 @@
     .loyalty-banner { border:1px solid rgba(198,123,92,.25); border-radius:12px; background:rgba(198,123,92,.08); padding:.85rem 1rem; margin-bottom:1rem; font-size:.88rem; color:var(--brown); }
     .loyalty-banner a { color:var(--terracotta); font-weight:800; }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-    .flatpickr-day.blocked { background:#FECACA !important; color:#991B1B !important; cursor:not-allowed; }
-    .flatpickr-day.blocked:hover { background:#FCA5A5 !important; }
+    .date-range-wrap { display:grid; grid-template-columns:1fr 1fr; gap:.6rem; }
+    .avail-warning { color:#B91C1C; font-weight:700; margin-top:.6rem; font-size:.85rem; }
     .form-btn { width: 100%; padding: .95rem; font-size: .95rem; font-weight: 700; margin-top: .5rem; border-radius: 10px; }
     #form-success { display: none; text-align: center; padding: 2rem; background: rgba(198,123,92,.08); border-radius: var(--radius); border: 1px solid rgba(198,123,92,.3); }
 
@@ -733,7 +729,7 @@
           <p style="font-size:.82rem;color:var(--brown-light);margin-bottom:.75rem;">¿Preferís reservar por plataformas?</p>
           <div class="plats">
             <a href="https://www.booking.com/hotel/ar/departamento-navarro-malargue.es-ar.html" target="_blank" rel="noopener" class="plat-btn">🏨 Booking.com</a>
-            <a href="https://wa.me/5492604000000?text=Hola!%20Quiero%20consultar%20disponibilidad%20en%20el%20Departamento%20Navarro%20en%20Malarg%C3%BCe" target="_blank" rel="noopener" class="plat-btn">💬 WhatsApp</a>
+            <a href="https://wa.me/?text=Hola!%20Quiero%20consultar%20disponibilidad%20en%20el%20Departamento%20Navarro%20en%20Malarg%C3%BCe" target="_blank" rel="noopener" class="plat-btn">💬 WhatsApp</a>
           </div>
         </div>
       </div>
@@ -754,10 +750,14 @@
           <div class="fg"><label>Email</label><input type="email" placeholder="tu@email.com" required /></div>
           <div class="fg"><label>WhatsApp / Teléfono</label><input type="tel" placeholder="+54 9 XXX XXX XXXX" /></div>
           <div class="fg date-range-wrap">
-            <label>Fechas de estadía</label>
-            <input type="text" id="date-range" placeholder="Seleccioná llegada — salida" readonly />
-            <input type="hidden" id="checkin-hidden" name="checkin" />
-            <input type="hidden" id="checkout-hidden" name="checkout" />
+            <div>
+              <label for="checkin-hidden">Llegada</label>
+              <input type="date" id="checkin-hidden" name="checkin" required />
+            </div>
+            <div>
+              <label for="checkout-hidden">Salida</label>
+              <input type="date" id="checkout-hidden" name="checkout" required />
+            </div>
           </div>
           <div class="fg">
             <label>Huéspedes</label>
@@ -771,6 +771,7 @@
             </select>
           </div>
           <div class="quote-box" id="quote-box" aria-live="polite"></div>
+          <div class="avail-warning" id="avail-warning" role="alert" hidden></div>
           <div class="fg">
             <label>Mensaje (opcional)</label>
             <textarea placeholder="¿Traés mascotas? ¿Necesitás algo especial?"></textarea>
@@ -851,7 +852,7 @@
       <p>Temporada de ski 2025 · Las plazas se agotan. Reservá con anticipación.</p>
       <div class="cta-actions">
         <a href="/reservar" class="btn btn-primary">Reservar Ahora</a>
-        <a href="https://wa.me/5492604000000?text=Hola!%20Quiero%20consultar%20por%20el%20Departamento%20Navarro%20en%20Malarg%C3%BCe" target="_blank" rel="noopener" class="btn btn-outline">💬 WhatsApp Directo</a>
+        <a href="https://wa.me/?text=Hola!%20Quiero%20consultar%20por%20el%20Departamento%20Navarro%20en%20Malarg%C3%BCe" target="_blank" rel="noopener" class="btn btn-outline">💬 WhatsApp Directo</a>
       </div>
     </div>
   </div>
@@ -908,6 +909,7 @@
   </div>
 </footer>
 
+<script src="booking.js"></script>
 <script>
   // Navbar scroll
   const navbar = document.getElementById('navbar');
@@ -993,20 +995,47 @@
     }
   }
 
-  function buildBookingMessage() {
-    const checkin = document.getElementById('checkin-hidden')?.value || 'sin fecha';
-    const checkout = document.getElementById('checkout-hidden')?.value || 'sin fecha';
+  function buildBookingMessage(nights) {
+    const checkin = document.getElementById('checkin-hidden')?.value;
+    const checkout = document.getElementById('checkout-hidden')?.value;
     const guests = getSelectedGuests();
+    const message = window.Booking.buildWhatsAppMessage({ checkin, checkout, nights, guests });
     const total = currentQuote ? ` Total estimado: $${formatARS(currentQuote.total)}.` : '';
-    return `Hola! Quiero consultar disponibilidad en Departamento Navarro. Fechas: ${checkin} al ${checkout}. Huespedes: ${guests}.${total}`;
+    return `${message}${total}`;
+  }
+
+  function showAvailabilityWarning(message) {
+    const warning = document.getElementById('avail-warning');
+    if (!warning) return;
+    warning.textContent = message;
+    warning.hidden = !message;
   }
 
   // Form submit
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
+    showAvailabilityWarning('');
+    const checkin = document.getElementById('checkin-hidden')?.value;
+    const checkout = document.getElementById('checkout-hidden')?.value;
+
+    let result;
+    try {
+      const res = await fetch('/api/availability');
+      const data = await res.json();
+      result = window.Booking.checkRangeAvailability(checkin, checkout, data.blockedDates || []);
+    } catch (error) {
+      showAvailabilityWarning(error.message || 'No se pudo verificar la disponibilidad. Intentá de nuevo.');
+      return;
+    }
+
+    if (!result.available) {
+      showAvailabilityWarning('No hay disponibilidad en esas fechas. Probá con otro rango.');
+      return;
+    }
+
     const cleanPhone = String(defaultSiteConfig.phone || '').replace(/[^\d]/g, '');
     const phone = String(window.sitePhone || cleanPhone);
-    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(buildBookingMessage())}`, '_blank', 'noopener');
+    window.open(window.Booking.buildWhatsAppUrl(phone, buildBookingMessage(result.nights)), '_blank', 'noopener');
     document.getElementById('contactForm').style.display = 'none';
     document.getElementById('form-success').style.display = 'block';
   }
@@ -1023,7 +1052,7 @@
       6: 70000
     },
     min_nights_low: 1,
-    phone: '+5492604000000',
+    phone: '',
     is_closed: false,
     closed_message: 'Temporalmente sin disponibilidad. Contactanos por WhatsApp.',
     amenities: [
@@ -1202,50 +1231,46 @@
     });
   });
 
-  // Availability calendar
-  (async function initCalendar() {
+  // Availability status + date range wiring
+  (async function initAvailability() {
     const statusEl = document.getElementById('avail-status');
     const dotEl = statusEl?.querySelector('.avail-dot');
     const textEl = statusEl?.querySelector('.avail-text');
+    const checkinInput = document.getElementById('checkin-hidden');
+    const checkoutInput = document.getElementById('checkout-hidden');
     let blockedDates = [];
+
+    const today = new Date().toISOString().split('T')[0];
+    if (checkinInput) checkinInput.min = today;
+    if (checkoutInput) checkoutInput.min = today;
 
     try {
       const res = await fetch('/api/availability');
       const data = await res.json();
       blockedDates = data.blockedDates || [];
       if (dotEl) { dotEl.className = 'avail-dot ok'; }
-      if (textEl) { textEl.textContent = blockedDates.length > 0
-        ? 'Calendario actualizado — fechas en rojo no disponibles'
-        : 'Todas las fechas disponibles'; }
+      if (textEl) { textEl.textContent = 'Disponibilidad actualizada'; }
     } catch (e) {
       if (dotEl) { dotEl.className = 'avail-dot error'; }
-      if (textEl) { textEl.textContent = 'No se pudo cargar el calendario'; }
+      if (textEl) { textEl.textContent = 'No se pudo cargar la disponibilidad'; }
     }
 
-    const input = document.getElementById('date-range');
-    if (!input) return;
+    function revalidateRange() {
+      const checkin = checkinInput?.value;
+      const checkout = checkoutInput?.value;
+      if (checkoutInput && checkin) checkoutInput.min = checkin;
+      if (!checkin || !checkout) { showAvailabilityWarning(''); return; }
 
-    flatpickr(input, {
-      mode: 'range',
-      minDate: 'today',
-      dateFormat: 'd/m/Y',
-      locale: 'es',
-      disable: blockedDates,
-      onDayCreate: function(dObj, dStr, fp, dayElem) {
-        const dateStr = dayElem.dateObj.toISOString().split('T')[0];
-        if (blockedDates.includes(dateStr)) {
-          dayElem.classList.add('blocked');
-        }
-      },
-      onChange: function(selectedDates) {
-        if (selectedDates.length === 2) {
-          const fmt = d => d.toISOString().split('T')[0];
-          document.getElementById('checkin-hidden').value = fmt(selectedDates[0]);
-          document.getElementById('checkout-hidden').value = fmt(selectedDates[1]);
-          updateQuote();
-        }
+      try {
+        const result = window.Booking.checkRangeAvailability(checkin, checkout, blockedDates);
+        showAvailabilityWarning(result.available ? '' : 'No hay disponibilidad en esas fechas. Probá con otro rango.');
+      } catch (error) {
+        showAvailabilityWarning('');
       }
-    });
+    }
+
+    checkinInput?.addEventListener('change', () => { revalidateRange(); updateQuote(); });
+    checkoutInput?.addEventListener('change', () => { revalidateRange(); updateQuote(); });
   })();
 
   document.getElementById('guests-select')?.addEventListener('change', updateQuote);

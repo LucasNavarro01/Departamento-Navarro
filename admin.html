@@ -7,9 +7,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
   <style>
     :root {
       --terracotta: #C67B5C;
@@ -71,7 +68,7 @@
     button.ghost { background: transparent; color: var(--brown); border: 1px solid var(--border); }
     button.danger { background: #B91C1C; }
     button:disabled { opacity: .6; cursor: not-allowed; }
-    button:focus-visible, .tab:focus-visible, .calendar-day:focus-visible, .segmented button:focus-visible, a:focus-visible {
+    button:focus-visible, .tab:focus-visible, a:focus-visible {
       outline: 3px solid var(--terracotta);
       outline-offset: 2px;
     }
@@ -104,47 +101,13 @@
     .photo-actions button { padding: .45rem .65rem; font-size: .78rem; }
     .info-box { border: 1px solid var(--border); border-radius: 8px; padding: .9rem 1rem; background: var(--sand); margin-bottom: 1rem; }
     .info-box p { margin: 0; }
-    .calendar-url { display: grid; grid-template-columns: 1fr; gap: .5rem; margin: .75rem 0 1rem; }
-    @media (min-width: 620px) { .calendar-url { grid-template-columns: 1fr auto; } }
-    .blocked-list { display: grid; gap: .75rem; margin: 1rem 0; }
-    .blocked-row { display: flex; align-items: center; justify-content: space-between; gap: .75rem; border: 1px solid var(--border); border-radius: 8px; padding: .75rem; background: var(--cream); }
-    .blocked-row strong { display: block; font-size: .92rem; }
-    .blocked-row button { flex: 0 0 auto; padding: .55rem .7rem; font-size: .8rem; }
     .reservation-list { display:grid; gap:.75rem; }
     .reservation-row { border:1px solid var(--border); border-radius:8px; padding:.85rem; background:var(--cream); display:grid; gap:.65rem; }
     .reservation-actions { display:flex; flex-wrap:wrap; gap:.5rem; }
     .reservation-actions button { padding:.5rem .7rem; font-size:.8rem; }
     .guest-price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .75rem; margin-bottom: 1rem; }
-    .calendar-workspace { display: grid; grid-template-columns: 1fr; gap: 1rem; align-items: start; }
-    @media (min-width: 900px) { .calendar-workspace { grid-template-columns: minmax(0, 1fr) 320px; } }
-    .calendar-shell { overflow-x: auto; }
-    .calendar-toolbar { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin-bottom: 1rem; }
-    .calendar-title { font-size: 1.45rem; font-weight: 800; text-transform: capitalize; }
-    .calendar-nav { display: flex; gap: .5rem; }
-    .calendar-nav button { width: 42px; height: 42px; padding: 0; border-radius: 50%; }
-    .calendar-weekdays, .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(96px, 1fr)); gap: .45rem; }
-    .calendar-weekdays { margin-bottom: .45rem; color: var(--muted); font-size: .78rem; font-weight: 800; text-align: center; }
-    .calendar-day { min-height: 92px; border: 1px solid var(--border); border-radius: 8px; background: var(--white); padding: .65rem; text-align: left; color: var(--brown); display: flex; flex-direction: column; justify-content: space-between; }
-    .calendar-day.muted { color: var(--muted); background: #FAF7EF; }
-    .calendar-day.closed { background: #F2E7E2; color: #7A3328; text-decoration: line-through; }
-    .calendar-day.selected { background: var(--brown); color: var(--white); border-color: var(--brown); text-decoration: none; }
-    .calendar-day.today { box-shadow: inset 0 0 0 2px var(--terracotta); }
-    .day-num { font-weight: 800; }
-    .day-meta { display: grid; gap: .2rem; font-size: .82rem; text-decoration: none; }
-    .day-price { font-weight: 800; }
-    .side-panel { position: sticky; top: 1rem; border: 1px solid var(--border); border-radius: 8px; padding: 1rem; background: var(--cream); }
-    .segmented { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; margin-bottom: 1rem; }
-    .segmented button { background: var(--sand); color: var(--brown); border: 1px solid var(--border); }
-    .segmented button.active { background: var(--brown); color: var(--white); }
     @media (max-width: 620px) {
       .wrap { width: min(100% - 1rem, 1120px); padding-top: 1rem; }
-      .calendar-weekdays, .calendar-grid { grid-template-columns: repeat(7, minmax(0, 1fr)); }
-      .calendar-weekdays, .calendar-grid { gap: .25rem; }
-      .calendar-weekdays { font-size: .7rem; }
-      .calendar-day { min-height: 54px; padding: .35rem; }
-      .day-meta { font-size: .68rem; }
-      .day-price, .day-min { display: none; }
-      .calendar-title { font-size: 1.15rem; }
       .tabs { gap: .35rem; }
       .tab { padding: .65rem .75rem; }
     }
@@ -178,7 +141,6 @@
         <button class="tab" id="tab-contacto" data-tab="contacto" role="tab" aria-selected="false" aria-controls="contacto" tabindex="-1">Contacto</button>
         <button class="tab" id="tab-comodidades" data-tab="comodidades" role="tab" aria-selected="false" aria-controls="comodidades" tabindex="-1">Comodidades</button>
         <button class="tab" id="tab-fotos" data-tab="fotos" role="tab" aria-selected="false" aria-controls="fotos" tabindex="-1">Fotos</button>
-        <button class="tab" id="tab-calendario" data-tab="calendario" role="tab" aria-selected="false" aria-controls="calendario" tabindex="-1">Calendario</button>
         <button class="tab" id="tab-reservas" data-tab="reservas" role="tab" aria-selected="false" aria-controls="reservas" tabindex="-1">Reservas</button>
       </div>
 
@@ -204,7 +166,7 @@
 
       <form class="section" id="precios" data-save="precios" role="tabpanel" aria-labelledby="tab-precios">
         <h2>Precios</h2>
-        <p class="help">Estos son los precios predeterminados por noche. En Calendario podes cambiar precios para fechas puntuales.</p>
+        <p class="help">Estos son los precios predeterminados por noche.</p>
         <div class="guest-price-grid" id="guest-price-grid">
           <div class="field"><label for="price_guest_1">1 persona</label><input id="price_guest_1" data-guest-price="1" type="number" min="0" step="100" /></div>
           <div class="field"><label for="price_guest_2">2 personas</label><input id="price_guest_2" data-guest-price="2" type="number" min="0" step="100" /></div>
@@ -216,7 +178,7 @@
         <div class="field">
           <label for="min_nights_low">Minimo predeterminado de noches</label>
           <input id="min_nights_low" type="number" min="1" step="1" />
-          <p class="help">Por defecto es 1 noche. Tambien se puede ajustar por fecha desde Calendario.</p>
+          <p class="help">Por defecto es 1 noche.</p>
         </div>
         <button type="submit">Guardar cambios</button>
         <div class="status" aria-live="polite" data-status="precios"></div>
@@ -259,58 +221,6 @@
         <div class="status" aria-live="polite" data-status="fotos"></div>
       </form>
 
-      <section class="section" id="calendario" role="tabpanel" aria-labelledby="tab-calendario">
-        <h2>Calendario</h2>
-        <div class="info-box">
-          <p>Selecciona uno o varios dias y aplica cambios: abrir/cerrar, precio por noche y minimo de noches. Las fechas cerradas se exportan al iCal para Booking y Airbnb.</p>
-        </div>
-
-        <div class="calendar-workspace">
-          <div class="calendar-shell">
-            <div class="calendar-toolbar">
-              <div class="calendar-title" id="calendar-title"></div>
-              <div class="calendar-nav">
-                <button type="button" class="ghost" id="calendar-prev" aria-label="Mes anterior">‹</button>
-                <button type="button" class="ghost" id="calendar-next" aria-label="Mes siguiente">›</button>
-              </div>
-            </div>
-            <div class="calendar-weekdays"><span>lun</span><span>mar</span><span>mie</span><span>jue</span><span>vie</span><span>sab</span><span>dom</span></div>
-            <div class="calendar-grid" id="calendar-grid"></div>
-          </div>
-
-          <aside class="side-panel">
-            <h2 id="selected-range-title">Selecciona fechas</h2>
-            <p class="help" id="selected-range-help">Click en el dia de inicio y luego en el dia final.</p>
-            <div class="segmented" role="group" aria-label="Disponibilidad">
-              <button type="button" id="set-open" class="active">Abrir</button>
-              <button type="button" id="set-closed">Cerrar</button>
-            </div>
-            <div class="field">
-              <label for="calendar-price">Precio por noche (ARS $)</label>
-              <input id="calendar-price" type="number" min="0" step="100" placeholder="Usar precio predeterminado" />
-            </div>
-            <div class="field">
-              <label for="calendar-min-nights">Minimo de noches</label>
-              <input id="calendar-min-nights" type="number" min="1" step="1" value="1" />
-            </div>
-            <div class="field" id="calendar-reason-wrap">
-              <label for="calendar-reason">Motivo si se cierra</label>
-              <input id="calendar-reason" type="text" placeholder="Mantenimiento, uso personal..." />
-            </div>
-            <button type="button" id="apply-calendar-settings" disabled>Aplicar cambios</button>
-            <button type="button" class="ghost" id="clear-calendar-selection" style="margin-top:.5rem;width:100%;">Limpiar seleccion</button>
-            <div class="status" aria-live="polite" data-status="calendario"></div>
-
-            <h2 style="margin-top:1.5rem;">iCal de exportacion</h2>
-            <p class="help">Copia esta URL y pegala en Booking/Airbnb para importar cierres.</p>
-            <div class="calendar-url">
-              <input id="calendar-url" type="text" readonly />
-              <button type="button" id="copy-calendar-url" class="secondary">Copiar</button>
-            </div>
-          </aside>
-        </div>
-      </section>
-
       <section class="section" id="reservas" role="tabpanel" aria-labelledby="tab-reservas">
         <h2>Reservas</h2>
         <p class="help">Confirmá, completá o cancelá reservas directas. Solo las completadas suman para fidelidad.</p>
@@ -331,13 +241,7 @@
       config: {},
       amenities: [],
       photos: [],
-      blockedDates: [],
-      calendarRules: [],
-      reservations: [],
-      calendarMonth: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-      selectionStart: null,
-      selectionEnd: null,
-      calendarAvailable: true
+      reservations: []
     };
     const sections = {
       estado: ['is_closed', 'closed_message'],
@@ -468,170 +372,10 @@
       setStatus('reservas', '✓ Reserva actualizada');
     }
 
-    function getCalendarUrl() {
-      return `${window.location.origin}/api/calendar.ics`;
-    }
-
-    function toDateKey(date) {
-      const y = date.getFullYear();
-      const m = String(date.getMonth() + 1).padStart(2, '0');
-      const d = String(date.getDate()).padStart(2, '0');
-      return `${y}-${m}-${d}`;
-    }
-
-    function addDays(dateKey, days) {
-      const date = new Date(`${dateKey}T00:00:00Z`);
-      date.setUTCDate(date.getUTCDate() + days);
-      return toDateKey(date);
-    }
-
     function formatDateLabel(value) {
       if (!value) return '';
       const [year, month, day] = value.split('-');
       return `${day}/${month}/${year}`;
-    }
-
-    function dateInRange(dateKey, start, endExclusive) {
-      return start <= dateKey && dateKey < endExclusive;
-    }
-
-    function getBlockForDate(dateKey) {
-      return state.blockedDates.find(row => dateInRange(dateKey, row.start_date, row.end_date));
-    }
-
-    function getRuleForDate(dateKey) {
-      return state.calendarRules.find(row => dateInRange(dateKey, row.start_date, row.end_date));
-    }
-
-    function getDefaultNightPrice() {
-      const prices = readGuestPrices();
-      return prices[2] || prices[1] || 0;
-    }
-
-    function isSelectedDate(dateKey) {
-      if (!state.selectionStart) return false;
-      const end = state.selectionEnd || state.selectionStart;
-      const start = state.selectionStart <= end ? state.selectionStart : end;
-      const final = state.selectionStart <= end ? end : state.selectionStart;
-      return start <= dateKey && dateKey <= final;
-    }
-
-    function getSelectionRange() {
-      if (!state.selectionStart) return null;
-      const rawEnd = state.selectionEnd || state.selectionStart;
-      const start = state.selectionStart <= rawEnd ? state.selectionStart : rawEnd;
-      const endInclusive = state.selectionStart <= rawEnd ? rawEnd : state.selectionStart;
-      return { start, endInclusive, endExclusive: addDays(endInclusive, 1) };
-    }
-
-    function renderSelectionPanel() {
-      const range = getSelectionRange();
-      $('#apply-calendar-settings').disabled = !range;
-      if (!range) {
-        $('#selected-range-title').textContent = 'Selecciona fechas';
-        $('#selected-range-help').textContent = 'Click en el dia de inicio y luego en el dia final.';
-        return;
-      }
-      $('#selected-range-title').textContent = range.start === range.endInclusive
-        ? formatDateLabel(range.start)
-        : `${formatDateLabel(range.start)} al ${formatDateLabel(range.endInclusive)}`;
-      $('#selected-range-help').textContent = 'Aplica disponibilidad, precio o minimo de noches al rango seleccionado.';
-    }
-
-    function renderCalendarBoard() {
-      const grid = $('#calendar-grid');
-      if (!grid) return;
-      const month = state.calendarMonth;
-      $('#calendar-title').textContent = month.toLocaleDateString('es-AR', { month: 'long', year: 'numeric' });
-      const first = new Date(month.getFullYear(), month.getMonth(), 1);
-      const startOffset = (first.getDay() + 6) % 7;
-      const start = new Date(first);
-      start.setDate(first.getDate() - startOffset);
-      const today = toDateKey(new Date());
-      const defaultPrice = getDefaultNightPrice();
-      const days = [];
-
-      for (let index = 0; index < 42; index += 1) {
-        const date = new Date(start);
-        date.setDate(start.getDate() + index);
-        const dateKey = toDateKey(date);
-        const muted = date.getMonth() !== month.getMonth();
-        const block = getBlockForDate(dateKey);
-        const rule = getRuleForDate(dateKey);
-        const price = Number(rule?.price_per_night || defaultPrice);
-        const minNights = Number(rule?.min_nights || state.config.min_nights_low || 1);
-        const selected = isSelectedDate(dateKey);
-        const classes = ['calendar-day', muted ? 'muted' : '', block ? 'closed' : '', selected ? 'selected' : '', dateKey === today ? 'today' : ''].filter(Boolean).join(' ');
-        const dateLabel = date.toLocaleDateString('es-AR', { day: 'numeric', month: 'long', year: 'numeric' });
-        const stateLabel = block ? 'cerrado' : 'disponible';
-        const ariaLabel = `${dateLabel}, ${stateLabel}, $${Number(price || 0).toLocaleString('es-AR')} por noche, minimo ${minNights} ${minNights === 1 ? 'noche' : 'noches'}${selected ? ', seleccionado' : ''}`;
-        days.push(`
-          <button type="button" class="${classes}" data-calendar-date="${dateKey}" aria-label="${escapeAttr(ariaLabel)}" aria-pressed="${selected}">
-            <span class="day-num">${selected ? '✓ ' : ''}${date.getDate()}</span>
-            <span class="day-meta">
-              <span>${block ? 'Cerrado' : 'Disponible'}</span>
-              <span class="day-price">$${Number(price || 0).toLocaleString('es-AR')}</span>
-              <span class="day-min">Min ${minNights}n</span>
-            </span>
-          </button>
-        `);
-      }
-      grid.innerHTML = days.join('');
-      renderSelectionPanel();
-    }
-
-    async function loadCalendarSettings() {
-      const res = await fetch(`/api/blocked-dates?mode=settings&password=${encodeURIComponent(state.password)}`);
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || 'No se pudo cargar el calendario');
-      state.blockedDates = Array.isArray(data.data?.blockedDates) ? data.data.blockedDates : [];
-      state.calendarRules = Array.isArray(data.data?.rules) ? data.data.rules : [];
-      renderCalendarBoard();
-    }
-
-    async function applyCalendarSettings() {
-      const range = getSelectionRange();
-      if (!range) return;
-      setStatus('calendario', 'Guardando...', 'ok');
-      const res = await fetch('/api/blocked-dates', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          mode: 'settings',
-          password: state.password,
-          start_date: range.start,
-          end_date: range.endExclusive,
-          is_available: state.calendarAvailable,
-          price_per_night: $('#calendar-price').value,
-          min_nights: $('#calendar-min-nights').value || 1,
-          reason: $('#calendar-reason').value
-        })
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || 'No se pudo actualizar el calendario');
-      state.selectionStart = null;
-      state.selectionEnd = null;
-      await loadCalendarSettings();
-      setStatus('calendario', '✓ Calendario actualizado');
-    }
-
-    function clearCalendarSelection() {
-      state.selectionStart = null;
-      state.selectionEnd = null;
-      renderCalendarBoard();
-    }
-
-    function setCalendarAvailability(available) {
-      state.calendarAvailable = available;
-      $('#set-open').classList.toggle('active', available);
-      $('#set-closed').classList.toggle('active', !available);
-      $('#calendar-reason-wrap').classList.toggle('hidden', available);
-    }
-
-    function initCalendarTab() {
-      $('#calendar-url').value = getCalendarUrl();
-      setCalendarAvailability(true);
-      renderCalendarBoard();
     }
 
     function escapeHtml(value) {
@@ -670,8 +414,6 @@
       $('#login-view').classList.add('hidden');
       $('#admin-view').classList.remove('hidden');
       await loadConfig();
-      initCalendarTab();
-      await loadCalendarSettings().catch(error => setStatus('calendario', error.message, 'error'));
     }
 
     $('#login-form').addEventListener('submit', async event => {
@@ -696,9 +438,6 @@
       $$('.section').forEach(section => section.classList.remove('active'));
       document.getElementById(tab.dataset.tab).classList.add('active');
       if (moveFocus) tab.focus();
-      if (tab.dataset.tab === 'calendario') {
-        loadCalendarSettings().catch(error => setStatus('calendario', error.message, 'error'));
-      }
       if (tab.dataset.tab === 'reservas') {
         loadReservations().catch(error => setStatus('reservas', error.message, 'error'));
       }
@@ -766,47 +505,11 @@
         renderPhotos();
       }
 
-      const calendarDate = event.target.closest('[data-calendar-date]')?.dataset.calendarDate;
-      if (calendarDate) {
-        if (!state.selectionStart || (state.selectionStart && state.selectionEnd)) {
-          state.selectionStart = calendarDate;
-          state.selectionEnd = null;
-        } else {
-          state.selectionEnd = calendarDate;
-        }
-        renderCalendarBoard();
-      }
-
       const reservationButton = event.target.closest('[data-reservation-id]');
       if (reservationButton) {
         updateReservationStatus(reservationButton.dataset.reservationId, reservationButton.dataset.reservationStatus)
           .catch(error => setStatus('reservas', error.message, 'error'));
       }
-    });
-    $('#calendar-prev').addEventListener('click', () => {
-      state.calendarMonth = new Date(state.calendarMonth.getFullYear(), state.calendarMonth.getMonth() - 1, 1);
-      renderCalendarBoard();
-    });
-    $('#calendar-next').addEventListener('click', () => {
-      state.calendarMonth = new Date(state.calendarMonth.getFullYear(), state.calendarMonth.getMonth() + 1, 1);
-      renderCalendarBoard();
-    });
-    $('#set-open').addEventListener('click', () => setCalendarAvailability(true));
-    $('#set-closed').addEventListener('click', () => setCalendarAvailability(false));
-    $('#clear-calendar-selection').addEventListener('click', clearCalendarSelection);
-    $('#apply-calendar-settings').addEventListener('click', () => {
-      applyCalendarSettings().catch(error => setStatus('calendario', error.message, 'error'));
-    });
-    $('#copy-calendar-url').addEventListener('click', async () => {
-      const url = $('#calendar-url').value;
-      try {
-        if (!navigator.clipboard?.writeText) throw new Error('Clipboard no disponible');
-        await navigator.clipboard.writeText(url);
-      } catch (error) {
-        $('#calendar-url').select();
-        document.execCommand('copy');
-      }
-      setStatus('calendario', '✓ URL copiada');
     });
     $('#logout').addEventListener('click', () => {
       sessionStorage.removeItem('admin_auth');

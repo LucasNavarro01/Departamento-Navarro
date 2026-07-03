@@ -253,8 +253,6 @@
     .rev-date { font-size: .73rem; color: var(--brown-light); margin-top: .9rem; opacity: .65; }
 
     /* ── BOOKING ── */
-    #reservas { padding: 100px 0; background: var(--sand); }
-    #reservas .book-info { max-width: 640px; margin: 0 auto; }
     .availability-status { display:flex; align-items:center; gap:.5rem; margin-bottom:1rem; font-size:.85rem; }
     .avail-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
     .avail-dot.loading { background:#C8960C; animation: pulse 1s infinite; }
@@ -272,24 +270,6 @@
     .avail-warning { color:#B91C1C; font-weight:700; margin-top:.6rem; font-size:.85rem; }
     .form-btn { width: 100%; padding: .95rem; font-size: .95rem; font-weight: 700; margin-top: .5rem; border-radius: 10px; }
     #form-success { display: none; text-align: center; padding: 2rem; background: rgba(198,123,92,.08); border-radius: var(--radius); border: 1px solid rgba(198,123,92,.3); }
-
-    .book-info > p { font-size: .92rem; color: var(--brown-light); line-height: 1.75; margin-bottom: 2rem; }
-    .price-card { background: linear-gradient(135deg, var(--terracotta), var(--clay)); border-radius: var(--radius-lg); padding: 2rem; color: #fff; margin-bottom: 1.5rem; }
-    .price-lbl { font-size: .75rem; opacity: .85; text-transform: uppercase; letter-spacing: .1em; }
-    .price-amt { font-family: var(--font-serif); font-size: 2.8rem; font-weight: 700; line-height: 1.1; margin: .3rem 0; }
-    .price-amt sup { font-size: 1.1rem; vertical-align: top; margin-top: .55rem; }
-    .price-per { font-size: .82rem; opacity: .8; }
-    .price-incs { margin-top: 1.25rem; display: flex; flex-direction: column; gap: .45rem; }
-    .price-inc { display: flex; align-items: center; gap: .5rem; font-size: .82rem; opacity: .9; }
-    .price-extra { color: #fff; }
-    .policies { display: flex; flex-direction: column; gap: .7rem; }
-    .pol-item { display: flex; gap: .7rem; }
-    .pol-icon { font-size: 1.05rem; margin-top: .1rem; }
-    .pol-text strong { display: block; font-size: .88rem; font-weight: 600; color: var(--brown); }
-    .pol-text span { font-size: .8rem; color: var(--brown-light); }
-    .plats { display: flex; gap: .65rem; flex-wrap: wrap; margin-top: .75rem; }
-    .plat-btn { display: inline-flex; align-items: center; gap: .45rem; padding: .5rem 1.1rem; border-radius: 8px; font-size: .8rem; font-weight: 600; border: 1.5px solid var(--border); transition: all .2s; color: var(--brown); background: var(--cream); }
-    .plat-btn:hover { border-color: var(--terracotta); color: var(--terracotta); background: rgba(198,123,92,.06); }
 
     /* ── UBICACIÓN ── */
     #ubicacion { padding: 100px 0; }
@@ -760,75 +740,6 @@
   </div>
 </section>
 
-<!-- ── RESERVAS (info) ── -->
-<section id="reservas">
-  <div class="container">
-    <div class="book-info">
-      <p class="section-label">Reservas</p>
-      <h2 class="section-title" style="font-size:clamp(1.6rem,3vw,2.2rem);">Reservá directo y sin comisiones</h2>
-      <p>Hablás directamente con nosotros. Sin intermediarios, sin sorpresas.</p>
-
-      <div class="price-card">
-        <div class="price-lbl">Precio desde</div>
-        <div class="price-amt"><sup>$</sup>15.000</div>
-        <div class="price-per">por noche · hasta 4 personas</div>
-        <div class="price-incs">
-          <div class="price-inc">✓ Ropa de cama y toallas</div>
-          <div class="price-inc">✓ WiFi + garaje incluidos</div>
-          <div class="price-inc">✓ Mascotas permitidas (gratis)</div>
-          <div class="price-inc price-extra"></div>
-        </div>
-      </div>
-      <p style="font-size:.8rem;color:var(--brown-light);margin:.75rem 0 0;">Temporada de ski (julio–septiembre): reservá con anticipación, se llena rápido.</p>
-
-      <div class="policies" style="margin-top:1.75rem;">
-        <div class="pol-item">
-          <span class="pol-icon">🕐</span>
-          <div class="pol-text">
-            <strong>Check-in / Check-out</strong>
-            <span>Check-in desde las 14 hs · Check-out hasta las 11 hs</span>
-          </div>
-        </div>
-        <div class="pol-item">
-          <span class="pol-icon">🌙</span>
-          <div class="pol-text">
-            <strong>Estadía mínima</strong>
-            <span data-dynamic="min-nights">1 noche</span>
-          </div>
-        </div>
-        <div class="pol-item">
-          <span class="pol-icon">💳</span>
-          <div class="pol-text">
-            <strong>Formas de pago aceptadas</strong>
-            <span>Efectivo · Transferencia bancaria · Tarjeta de crédito/débito · MercadoPago</span>
-          </div>
-        </div>
-        <div class="pol-item">
-          <span class="pol-icon">🐾</span>
-          <div class="pol-text">
-            <strong>Mascotas</strong>
-            <span>Se admiten mascotas sin costo adicional</span>
-          </div>
-        </div>
-        <div class="pol-item">
-          <span class="pol-icon">🚫</span>
-          <div class="pol-text">
-            <strong>Política de convivencia</strong>
-            <span>No se permiten fiestas ni despedidas de solteros</span>
-          </div>
-        </div>
-      </div>
-
-      <div style="margin-top:2rem;">
-        <p style="font-size:.82rem;color:var(--brown-light);margin-bottom:.75rem;">¿Preferís reservar por plataformas?</p>
-        <div class="plats">
-          <a href="https://www.booking.com/hotel/ar/departamento-navarro-malargue.es-ar.html" target="_blank" rel="noopener" class="plat-btn">🏨 Booking.com</a>
-          <a href="https://wa.me/?text=Hola!%20Quiero%20consultar%20disponibilidad%20en%20el%20Departamento%20Navarro%20en%20Malarg%C3%BCe" target="_blank" rel="noopener" class="plat-btn">💬 WhatsApp</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- ── UBICACIÓN ── -->
 <section id="ubicacion">
@@ -920,7 +831,7 @@
           <li><a href="#about">Sobre el lugar</a></li>
           <li><a href="#gallery">Fotos</a></li>
           <li><a href="#amenities">Comodidades</a></li>
-          <li><a href="#reservas">Precios</a></li>
+          <li><a href="#reserva-card">Precios</a></li>
           <li><a href="#ubicacion">Cómo llegar</a></li>
         </ul>
       </div>
@@ -1209,17 +1120,6 @@
   }
 
   const defaultSiteConfig = {
-    price_per_night: 15000,
-    price_extra_person: 3000,
-    price_by_guests: {
-      1: 25000,
-      2: 30000,
-      3: 40000,
-      4: 50000,
-      5: 60000,
-      6: 70000
-    },
-    min_nights_low: 1,
     phone: '',
     is_closed: false,
     closed_message: 'Temporalmente sin disponibilidad. Contactanos por WhatsApp.',
@@ -1275,12 +1175,6 @@
     });
   }
 
-  function updateMinimumStay(config) {
-    const minNights = Number(config.min_nights_low || 1);
-    const el = document.querySelector('[data-dynamic="min-nights"]');
-    if (el) el.textContent = `${minNights} ${minNights === 1 ? 'noche' : 'noches'}`;
-  }
-
   function updateAmenities(amenities) {
     const list = document.querySelector('.amenities-list');
     if (!list || !Array.isArray(amenities) || amenities.length === 0) return;
@@ -1333,14 +1227,6 @@
   }
 
   function applySiteConfig(config) {
-    const guestPrices = config.price_by_guests || {};
-    const fromPrice = guestPrices[1] || guestPrices['1'] || config.price_per_night;
-    document.querySelector('.price-amt').innerHTML = `<sup>$</sup>${formatARS(fromPrice)}`;
-    document.querySelector('.price-per').textContent = 'por noche · según cantidad de huéspedes';
-    const priceExtra = document.querySelector('.price-extra');
-    if (priceExtra) priceExtra.textContent = 'Tarifas editables para 1 a 6 personas';
-
-    updateMinimumStay(config);
     updateWhatsAppLinks(config.phone);
     updateAmenities(config.amenities);
     updateGallery(config.photos);

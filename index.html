@@ -127,11 +127,17 @@
     .cal-day { aspect-ratio: 1; border: 1px solid transparent; border-radius: 9px; background: transparent; color: var(--brown); font-family: inherit; font-weight: 500; font-size: .92rem; display: flex; align-items: center; justify-content: center; transition: background .12s, color .12s; }
     .cal-day.is-normal { border-color: var(--border); }
     .cal-day.is-past { color: #CBBEA6; cursor: not-allowed; }
+    .cal-day.is-blocked { background: rgba(185,28,28,.08); color: #B91C1C; text-decoration: line-through; cursor: not-allowed; }
     .cal-day.is-selected { background: var(--terracotta); color: #fff; font-weight: 700; }
     .cal-day.is-in-range { background: rgba(198,123,92,.16); color: var(--clay-dark); font-weight: 600; }
     .cal-day.is-blank { visibility: hidden; }
     .cal-hint { font-size: .8rem; color: var(--brown-light); margin-top: .6rem; display: flex; align-items: center; gap: .4rem; }
     .cal-hint strong { color: var(--terracotta); }
+    .cal-legend { display: flex; flex-wrap: wrap; gap: .9rem; margin-top: .55rem; font-size: .74rem; color: var(--brown-light); }
+    .cal-legend-item { display: flex; align-items: center; gap: .35rem; }
+    .cal-legend-swatch { width: 12px; height: 12px; border-radius: 4px; flex-shrink: 0; }
+    .cal-legend-swatch.blocked { background: rgba(185,28,28,.08); border: 1px solid #B91C1C; }
+    .cal-legend-swatch.selected { background: var(--terracotta); }
 
     .num-mode { background: var(--cream); border: 1.5px solid var(--border); border-radius: 16px; padding: 1.05rem 1.05rem 1.1rem; display: flex; flex-direction: column; gap: .85rem; }
     .num-block { background: var(--card-bg); border: 1px solid var(--border); border-radius: 13px; padding: .8rem .9rem .9rem; }
@@ -426,6 +432,10 @@
           <div class="cal-weekdays"><span>Lu</span><span>Ma</span><span>Mi</span><span>Ju</span><span>Vi</span><span>Sá</span><span>Do</span></div>
           <div id="cal-grid"></div>
           <p class="cal-hint">👆 Tocá el día de <strong>llegada</strong> y luego el de <strong>salida</strong>.</p>
+          <div class="cal-legend">
+            <span class="cal-legend-item"><span class="cal-legend-swatch blocked"></span> No disponible</span>
+            <span class="cal-legend-item"><span class="cal-legend-swatch selected"></span> Seleccionado</span>
+          </div>
         </div>
 
         <!-- MODO NÚMEROS -->
@@ -889,7 +899,7 @@
   };
 
   function calDayClass(state) {
-    return { blank: 'is-blank', past: 'is-past', selected: 'is-selected', inRange: 'is-in-range', normal: 'is-normal' }[state] || 'is-normal';
+    return { blank: 'is-blank', past: 'is-past', blocked: 'is-blocked', selected: 'is-selected', inRange: 'is-in-range', normal: 'is-normal' }[state] || 'is-normal';
   }
 
   function renderCalendar() {
@@ -904,14 +914,15 @@
       year: bookingState.viewYear,
       month: bookingState.viewMonth,
       checkin: bookingState.checkin,
-      checkout: bookingState.checkout
+      checkout: bookingState.checkout,
+      blockedDates: bookingState.blockedDates
     });
 
     grid.innerHTML = weeks.map(week => `
       <div class="cal-week">
         ${week.map(cell => cell.state === 'blank'
           ? '<button type="button" class="cal-day is-blank" disabled></button>'
-          : `<button type="button" class="cal-day ${calDayClass(cell.state)}" data-date-key="${cell.dateKey}" ${cell.disabled ? 'disabled' : ''}>${cell.day}</button>`
+          : `<button type="button" class="cal-day ${calDayClass(cell.state)}" data-date-key="${cell.dateKey}" ${cell.disabled ? 'disabled' : ''} ${cell.state === 'blocked' ? 'aria-label="' + cell.day + ', no disponible" title="No disponible"' : ''}>${cell.day}</button>`
         ).join('')}
       </div>
     `).join('');

@@ -78,6 +78,36 @@ test('buildCalendarWeeks marks checkin/checkout and the nights between them', ()
   assert.equal(flat.find(cell => cell.dateKey === '2026-07-09').state, 'normal');
 });
 
+test('buildCalendarWeeks marks occupied dates as blocked and disabled', () => {
+  const weeks = buildCalendarWeeks({
+    year: 2026, month: 6, checkin: null, checkout: null, todayKey: '2026-07-01',
+    blockedDates: ['2026-07-15', '2026-07-16']
+  });
+  const flat = weeks.flat().filter(cell => cell.dateKey);
+  assert.equal(flat.find(cell => cell.dateKey === '2026-07-15').state, 'blocked');
+  assert.equal(flat.find(cell => cell.dateKey === '2026-07-15').disabled, true);
+  assert.equal(flat.find(cell => cell.dateKey === '2026-07-16').state, 'blocked');
+  assert.equal(flat.find(cell => cell.dateKey === '2026-07-14').state, 'normal');
+});
+
+test('buildCalendarWeeks treats past days as past even if also blocked', () => {
+  const weeks = buildCalendarWeeks({
+    year: 2026, month: 6, checkin: null, checkout: null, todayKey: '2026-07-15',
+    blockedDates: ['2026-07-10']
+  });
+  const flat = weeks.flat().filter(cell => cell.dateKey);
+  assert.equal(flat.find(cell => cell.dateKey === '2026-07-10').state, 'past');
+});
+
+test('buildCalendarWeeks accepts a Set for blockedDates', () => {
+  const weeks = buildCalendarWeeks({
+    year: 2026, month: 6, checkin: null, checkout: null, todayKey: '2026-07-01',
+    blockedDates: new Set(['2026-07-20'])
+  });
+  const flat = weeks.flat().filter(cell => cell.dateKey);
+  assert.equal(flat.find(cell => cell.dateKey === '2026-07-20').state, 'blocked');
+});
+
 test('selectCalendarDay picks checkin first, then checkout', () => {
   let range = selectCalendarDay({ checkin: null, checkout: null }, '2026-07-10');
   assert.deepEqual(range, { checkin: '2026-07-10', checkout: null });

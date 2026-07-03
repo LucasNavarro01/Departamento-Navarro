@@ -61,8 +61,9 @@ function todayDateKey() {
   return `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`;
 }
 
-function buildCalendarWeeks({ year, month, checkin, checkout, todayKey }) {
+function buildCalendarWeeks({ year, month, checkin, checkout, todayKey, blockedDates }) {
   todayKey = todayKey || todayDateKey();
+  const blocked = blockedDates instanceof Set ? blockedDates : new Set(blockedDates || []);
   const startDow = (new Date(year, month, 1).getDay() + 6) % 7; // Monday = 0
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
@@ -73,16 +74,18 @@ function buildCalendarWeeks({ year, month, checkin, checkout, todayKey }) {
   for (let day = 1; day <= daysInMonth; day += 1) {
     const dateKey = `${year}-${pad2(month + 1)}-${pad2(day)}`;
     const isPast = dateKey < todayKey;
+    const isBlocked = blocked.has(dateKey);
     const isCheckin = dateKey === checkin;
     const isCheckout = dateKey === checkout;
     const inRange = Boolean(checkin && checkout && dateKey > checkin && dateKey < checkout);
 
     let state = 'normal';
     if (isPast) state = 'past';
+    else if (isBlocked) state = 'blocked';
     else if (isCheckin || isCheckout) state = 'selected';
     else if (inRange) state = 'inRange';
 
-    cells.push({ day, dateKey, state, disabled: isPast });
+    cells.push({ day, dateKey, state, disabled: isPast || isBlocked });
   }
 
   while (cells.length % 7 !== 0) cells.push(blankCell());

@@ -84,7 +84,8 @@
         url('fotos/malargue-invierno.jpg') center/cover no-repeat;
       display: flex; align-items: center; position: relative; overflow: hidden;
     }
-    .hero-content { padding: 120px 0 80px; max-width: 700px; }
+    .hero-flex { display: flex; flex-wrap: wrap; gap: clamp(32px, 5vw, 64px); align-items: center; padding: clamp(90px, 11vw, 130px) 0 clamp(56px, 7vw, 90px); }
+    .hero-content { flex: 1 1 380px; min-width: 300px; }
     .hero-badge {
       display: inline-flex; align-items: center; gap: .5rem;
       background: rgba(255,255,255,.15); backdrop-filter: blur(8px);
@@ -102,6 +103,61 @@
     .hero-stat-label { font-size: .78rem; color: rgba(255,255,255,.7); margin-top: .1rem; }
     .hero-scroll { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: .4rem; color: rgba(255,255,255,.6); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; animation: bounce 2s ease-in-out infinite; }
     @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+    @keyframes navFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(7px)} }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+
+    /* ── RESERVA CARD ── */
+    .reserva-card { flex: 0 1 470px; min-width: 320px; width: 100%; background: var(--card-bg); border-radius: 22px; box-shadow: 0 30px 70px rgba(30,20,12,.4); border: 1px solid var(--border); padding: clamp(20px, 2.6vw, 30px); animation: fadeUp .5s ease both; }
+    .reserva-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin-bottom: .25rem; }
+    .reserva-head h2 { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 600; color: var(--brown); }
+    .reserva-step { font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--terracotta); }
+    .reserva-sub { font-size: .9rem; color: var(--brown-light); margin-bottom: 1.15rem; }
+    .reserva-card .availability-status { margin-bottom: 1rem; }
+    .reserva-card .loyalty-banner { margin-bottom: 1rem; }
+
+    .mode-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; background: var(--cream); border: 1px solid var(--border); border-radius: 12px; padding: 5px; margin-bottom: 1.1rem; }
+    .mode-tab { padding: .6rem; border-radius: 9px; font-size: .86rem; font-weight: 700; background: transparent; color: var(--brown-light); transition: all .15s; }
+    .mode-tab.active { background: var(--terracotta); color: #fff; box-shadow: 0 2px 8px rgba(198,123,92,.35); }
+
+    .cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: .7rem; }
+    .cal-nav-btn { width: 34px; height: 34px; border: 1px solid var(--border); background: var(--cream); border-radius: 9px; font-size: 1.1rem; color: var(--brown); display: flex; align-items: center; justify-content: center; }
+    .cal-month-label { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 600; color: var(--brown); text-transform: capitalize; }
+    .cal-weekdays, .cal-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 6px; }
+    .cal-weekdays span { text-align: center; font-size: .72rem; font-weight: 700; color: var(--brown-light); opacity: .7; }
+    .cal-day { aspect-ratio: 1; border: 1px solid transparent; border-radius: 9px; background: transparent; color: var(--brown); font-family: inherit; font-weight: 500; font-size: .92rem; display: flex; align-items: center; justify-content: center; transition: background .12s, color .12s; }
+    .cal-day.is-normal { border-color: var(--border); }
+    .cal-day.is-past { color: #CBBEA6; cursor: not-allowed; }
+    .cal-day.is-selected { background: var(--terracotta); color: #fff; font-weight: 700; }
+    .cal-day.is-in-range { background: rgba(198,123,92,.16); color: var(--clay-dark); font-weight: 600; }
+    .cal-day.is-blank { visibility: hidden; }
+    .cal-hint { font-size: .8rem; color: var(--brown-light); margin-top: .6rem; display: flex; align-items: center; gap: .4rem; }
+    .cal-hint strong { color: var(--terracotta); }
+
+    .num-mode { background: var(--cream); border: 1.5px solid var(--border); border-radius: 16px; padding: 1.05rem 1.05rem 1.1rem; display: flex; flex-direction: column; gap: .85rem; }
+    .num-block { background: var(--card-bg); border: 1px solid var(--border); border-radius: 13px; padding: .8rem .9rem .9rem; }
+    .num-block-label { font-size: .74rem; font-weight: 800; letter-spacing: .05em; margin-bottom: .55rem; display: flex; align-items: center; gap: .4rem; }
+    .num-block-label.checkin { color: #1F8A5B; }
+    .num-block-label.checkout { color: var(--clay); }
+    .num-fields { display: grid; grid-template-columns: 1fr auto 1fr auto 1.35fr; align-items: end; gap: .4rem; }
+    .num-field { display: flex; flex-direction: column; gap: .25rem; }
+    .num-field label { font-size: .66rem; font-weight: 600; color: var(--brown-light); text-align: center; text-transform: uppercase; letter-spacing: .04em; }
+    .num-field input { width: 100%; padding: .68rem .4rem; border: 1.5px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 1.1rem; font-weight: 600; text-align: center; color: var(--brown); background: var(--cream); outline: none; }
+    .num-field input:focus { border-color: var(--terracotta); box-shadow: 0 0 0 3px rgba(198,123,92,.12); }
+    .num-sep { font-size: 1.25rem; font-weight: 700; color: var(--terracotta); padding-bottom: .55rem; }
+    .num-hint { font-size: .78rem; color: var(--brown-light); text-align: center; }
+    .num-hint strong { color: var(--terracotta); }
+
+    .guest-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.15rem; padding-top: 1.15rem; border-top: 1px solid var(--border); }
+    .guest-row-label { font-size: .9rem; font-weight: 700; color: var(--brown); }
+    .guest-row-sub { font-size: .76rem; color: var(--brown-light); }
+    .guest-counter { display: flex; align-items: center; gap: .85rem; }
+    .guest-btn { width: 36px; height: 36px; border: 1.5px solid var(--border); background: var(--cream); border-radius: 50%; font-size: 1.25rem; color: var(--brown); line-height: 1; }
+    .guest-btn:disabled { opacity: .4; cursor: not-allowed; }
+    .guest-count { font-size: 1.15rem; font-weight: 700; min-width: 22px; text-align: center; color: var(--brown); }
+
+    .reserva-secondary { display: flex; align-items: center; justify-content: center; gap: .4rem; margin-top: .85rem; font-size: .9rem; font-weight: 600; color: var(--brown-light); }
+    .reserva-secondary span { animation: navFloat 1.8s ease-in-out infinite; }
+    .reserva-secondary:hover { color: var(--terracotta); }
 
     /* ── FEATURES BAR ── */
     #features-bar { background: var(--white); box-shadow: var(--shadow-md); }
@@ -145,26 +201,20 @@
 
     /* ── AMENITIES ── */
     #amenities { padding: 100px 0; }
-    .amenities-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
-    .amenities-list { display: grid; grid-template-columns: 1fr 1fr; gap: .65rem; margin-top: 1.75rem; }
-    .am-item { display: flex; align-items: center; gap: .65rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: .8rem .9rem; transition: border-color .2s, box-shadow .2s; }
+    .amenities-header { text-align: center; max-width: 600px; margin: 0 auto clamp(32px, 4vw, 48px); }
+    .amenities-header .section-sub { margin: .75rem auto 0; }
+    .amenities-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: .7rem; }
+    .am-item { display: flex; align-items: center; gap: .65rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: .85rem .95rem; transition: border-color .2s, box-shadow .2s; }
     .am-item:hover { border-color: var(--terracotta); box-shadow: var(--shadow-sm); }
-    .am-item.highlight { background: rgba(198,123,92,.07); border-color: rgba(198,123,92,.28); }
     .am-icon { font-size: 1.15rem; }
-    .am-label { font-size: .85rem; font-weight: 500; }
-    .cap-card { background: linear-gradient(135deg, var(--clay-dark), var(--brown)); border-radius: var(--radius-lg); padding: 2.25rem; color: #fff; margin-top: 1rem; }
-    .cap-card h3 { font-family: var(--font-serif); font-size: 1.35rem; margin-bottom: 1.25rem; }
-    .cap-row { display: flex; justify-content: space-between; align-items: center; padding: .7rem 0; border-bottom: 1px solid rgba(255,255,255,.1); }
-    .cap-row:last-of-type { border-bottom: none; }
-    .cap-label { font-size: .88rem; opacity: .8; }
-    .cap-value { font-weight: 600; font-size: .92rem; }
-    .cap-note { margin-top: 1.1rem; font-size: .8rem; opacity: .65; line-height: 1.6; border-top: 1px solid rgba(255,255,255,.1); padding-top: 1rem; }
+    .am-label { font-size: .88rem; font-weight: 500; color: var(--brown); }
 
     /* ── ATRACCIONES ── */
     #atracciones { padding: 100px 0; background: var(--sand); }
     .atr-header { text-align: center; margin-bottom: 3.5rem; }
     .atr-header .section-sub { margin: .5rem auto 0; max-width: 560px; }
-    .atr-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+    .atr-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; }
+    .atr-cta { text-align: center; margin-top: clamp(36px, 4vw, 52px); }
     .atr-card { background: var(--card-bg); border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); transition: transform .3s, box-shadow .3s; }
     .atr-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
     .atr-img { height: 190px; overflow: hidden; position: relative; }
@@ -204,16 +254,7 @@
 
     /* ── BOOKING ── */
     #reservas { padding: 100px 0; background: var(--sand); }
-    .res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
-    .book-form-card { background: var(--white); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-lg); border: 1px solid var(--border); }
-    .book-form-card h3 { font-family: var(--font-serif); font-size: 1.45rem; color: var(--brown); margin-bottom: .4rem; }
-    .book-form-card > p { font-size: .88rem; color: var(--brown-light); margin-bottom: 1.75rem; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    .fg { display: flex; flex-direction: column; gap: .35rem; margin-bottom: .9rem; }
-    .fg label { font-size: .8rem; font-weight: 700; color: var(--brown); letter-spacing: .02em; }
-    .fg input, .fg select, .fg textarea { padding: .72rem 1rem; border: 1.5px solid var(--border); border-radius: 8px; font-family: var(--font-sans); font-size: .88rem; color: var(--brown); background: var(--cream); transition: border-color .2s, box-shadow .2s; outline: none; }
-    .fg input:focus, .fg select:focus, .fg textarea:focus { border-color: var(--terracotta); box-shadow: 0 0 0 3px rgba(198,123,92,.12); }
-    .fg textarea { resize: vertical; min-height: 75px; }
+    #reservas .book-info { max-width: 640px; margin: 0 auto; }
     .availability-status { display:flex; align-items:center; gap:.5rem; margin-bottom:1rem; font-size:.85rem; }
     .avail-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
     .avail-dot.loading { background:#C8960C; animation: pulse 1s infinite; }
@@ -228,12 +269,10 @@
     .loyalty-banner { border:1px solid rgba(198,123,92,.25); border-radius:12px; background:rgba(198,123,92,.08); padding:.85rem 1rem; margin-bottom:1rem; font-size:.88rem; color:var(--brown); }
     .loyalty-banner a { color:var(--terracotta); font-weight:800; }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-    .date-range-wrap { display:grid; grid-template-columns:1fr 1fr; gap:.6rem; }
     .avail-warning { color:#B91C1C; font-weight:700; margin-top:.6rem; font-size:.85rem; }
     .form-btn { width: 100%; padding: .95rem; font-size: .95rem; font-weight: 700; margin-top: .5rem; border-radius: 10px; }
     #form-success { display: none; text-align: center; padding: 2rem; background: rgba(198,123,92,.08); border-radius: var(--radius); border: 1px solid rgba(198,123,92,.3); }
 
-    .book-info h3 { font-family: var(--font-serif); font-size: 1.45rem; color: var(--brown); margin-bottom: .5rem; }
     .book-info > p { font-size: .92rem; color: var(--brown-light); line-height: 1.75; margin-bottom: 2rem; }
     .price-card { background: linear-gradient(135deg, var(--terracotta), var(--clay)); border-radius: var(--radius-lg); padding: 2rem; color: #fff; margin-bottom: 1.5rem; }
     .price-lbl { font-size: .75rem; opacity: .85; text-transform: uppercase; letter-spacing: .1em; }
@@ -298,9 +337,8 @@
 
     /* ── RESPONSIVE ── */
     @media (max-width: 1024px) {
-      .about-grid, .amenities-grid, .res-grid, .ubic-grid { grid-template-columns: 1fr; }
+      .about-grid, .ubic-grid { grid-template-columns: 1fr; }
       .about-images { margin-bottom: 1rem; }
-      .atr-grid { grid-template-columns: repeat(2, 1fr); }
       .reviews-grid { grid-template-columns: repeat(2, 1fr); }
       .footer-grid { grid-template-columns: 1fr 1fr; }
       .features-bar-grid { grid-template-columns: repeat(3, 1fr); }
@@ -308,13 +346,11 @@
     @media (max-width: 768px) {
       .nav-links, .nav-cta { display: none; }
       .hamburger { display: flex; }
-      .hero-content { padding-top: 100px; }
       .gallery-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: auto; }
       .g-item:first-child { grid-column: span 2; aspect-ratio: 16/9; }
-      .about-feats, .amenities-list { grid-template-columns: 1fr; }
-      .atr-grid { grid-template-columns: 1fr; }
+      .about-feats { grid-template-columns: 1fr; }
       .reviews-grid { grid-template-columns: 1fr; }
-      .form-row { grid-template-columns: 1fr; }
+      .num-fields { grid-template-columns: 1fr auto 1fr auto 1fr; }
       .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
       .footer-bottom { flex-direction: column; text-align: center; }
     }
@@ -362,22 +398,113 @@
 <!-- ── HERO ── -->
 <section id="hero">
   <div class="container">
-    <div class="hero-content">
-      <div class="hero-badge">📍 Malargüe, Mendoza · Argentina</div>
-      <h1 class="hero-title">Tu base perfecta para <em>explorar</em> el sur de Mendoza</h1>
-      <p class="hero-sub">Departamento completo, cómodo y bien ubicado en Malargüe. A minutos de Las Leñas, Llancanelo y los volcanes. Limpio, equipado y con todo lo que necesitás.</p>
-      <div class="closed-banner" id="closed-banner"></div>
-      <div class="hero-actions">
-        <a href="/reservar" class="btn btn-primary">
-          📅 Consultar disponibilidad
-        </a>
-        <a href="#gallery" class="btn btn-outline">Ver fotos</a>
+    <div class="hero-flex">
+      <div class="hero-content">
+        <div class="hero-badge">📍 Malargüe, Mendoza · Argentina</div>
+        <h1 class="hero-title">Departamento Navarro,<br /><em>tu base en el sur</em> de Mendoza</h1>
+        <p class="hero-sub">Depto completo, limpio y bien ubicado. A minutos de Las Leñas, Llancanelo y los volcanes. Reservá directo, sin comisiones.</p>
+        <div class="closed-banner" id="closed-banner"></div>
+        <div class="hero-actions">
+          <a href="#reserva-card" class="btn btn-primary">📅 Consultar disponibilidad</a>
+          <a href="#gallery" class="btn btn-outline">Ver fotos</a>
+        </div>
+        <div class="hero-stats">
+          <div><div class="hero-stat-num">9.6</div><div class="hero-stat-label">⭐ Nota en Booking</div></div>
+          <div><div class="hero-stat-num">6</div><div class="hero-stat-label">👥 Huéspedes</div></div>
+          <div><div class="hero-stat-num">65</div><div class="hero-stat-label">📐 m² totales</div></div>
+          <div><div class="hero-stat-num">2</div><div class="hero-stat-label">🛏 Dormitorios</div></div>
+        </div>
       </div>
-      <div class="hero-stats">
-        <div><div class="hero-stat-num">9.6</div><div class="hero-stat-label">⭐ Nota en Booking</div></div>
-        <div><div class="hero-stat-num">6</div><div class="hero-stat-label">👥 Huéspedes</div></div>
-        <div><div class="hero-stat-num">65</div><div class="hero-stat-label">📐 m² totales</div></div>
-        <div><div class="hero-stat-num">2</div><div class="hero-stat-label">🛏 Dormitorios</div></div>
+
+      <!-- ── TARJETA DE RESERVA ── -->
+      <div class="reserva-card" id="reserva-card">
+        <div class="reserva-head">
+          <h2>Reservá tu estadía</h2>
+          <span class="reserva-step">Paso 1</span>
+        </div>
+        <p class="reserva-sub">Elegí los días que te quedás. Simple y rápido.</p>
+
+        <div class="loyalty-banner" id="loyalty-banner"></div>
+        <div class="availability-status" id="avail-status">
+          <span class="avail-dot loading"></span>
+          <span class="avail-text">Cargando disponibilidad...</span>
+        </div>
+
+        <!-- Selector de modo -->
+        <div class="mode-toggle">
+          <button type="button" class="mode-tab" id="tab-calendar" data-mode="calendar">📅 Calendario</button>
+          <button type="button" class="mode-tab" id="tab-numeros" data-mode="numeros">Modo tradicional</button>
+        </div>
+
+        <!-- MODO CALENDARIO -->
+        <div id="mode-calendar">
+          <div class="cal-nav">
+            <button type="button" class="cal-nav-btn" id="cal-prev" aria-label="Mes anterior">‹</button>
+            <div class="cal-month-label" id="cal-month-label"></div>
+            <button type="button" class="cal-nav-btn" id="cal-next" aria-label="Mes siguiente">›</button>
+          </div>
+          <div class="cal-weekdays"><span>Lu</span><span>Ma</span><span>Mi</span><span>Ju</span><span>Vi</span><span>Sá</span><span>Do</span></div>
+          <div id="cal-grid"></div>
+          <p class="cal-hint">👆 Tocá el día de <strong>llegada</strong> y luego el de <strong>salida</strong>.</p>
+        </div>
+
+        <!-- MODO NÚMEROS -->
+        <div id="mode-numeros" style="display:none;">
+          <div class="num-mode">
+            <div class="num-block">
+              <div class="num-block-label checkin">🟢 LLEGADA</div>
+              <div class="num-fields">
+                <div class="num-field"><label for="ci-d">Día</label><input inputmode="numeric" maxlength="2" placeholder="12" id="ci-d" /></div>
+                <span class="num-sep">/</span>
+                <div class="num-field"><label for="ci-m">Mes</label><input inputmode="numeric" maxlength="2" placeholder="07" id="ci-m" /></div>
+                <span class="num-sep">/</span>
+                <div class="num-field"><label for="ci-y">Año</label><input inputmode="numeric" maxlength="4" placeholder="2026" id="ci-y" /></div>
+              </div>
+            </div>
+            <div class="num-block">
+              <div class="num-block-label checkout">🔴 SALIDA</div>
+              <div class="num-fields">
+                <div class="num-field"><label for="co-d">Día</label><input inputmode="numeric" maxlength="2" placeholder="15" id="co-d" /></div>
+                <span class="num-sep">/</span>
+                <div class="num-field"><label for="co-m">Mes</label><input inputmode="numeric" maxlength="2" placeholder="07" id="co-m" /></div>
+                <span class="num-sep">/</span>
+                <div class="num-field"><label for="co-y">Año</label><input inputmode="numeric" maxlength="4" placeholder="2026" id="co-y" /></div>
+              </div>
+            </div>
+            <p class="num-hint">✍️ Escribí todo en números — por ejemplo <strong>12 / 07 / 2026</strong></p>
+          </div>
+        </div>
+
+        <input type="hidden" id="checkin-hidden" name="checkin" />
+        <input type="hidden" id="checkout-hidden" name="checkout" />
+
+        <!-- Huéspedes -->
+        <div class="guest-row">
+          <div>
+            <div class="guest-row-label">Huéspedes</div>
+            <div class="guest-row-sub">Hasta 6 personas</div>
+          </div>
+          <div class="guest-counter">
+            <button type="button" class="guest-btn" id="guest-dec" aria-label="Menos huéspedes">−</button>
+            <span class="guest-count" id="guest-count">2</span>
+            <button type="button" class="guest-btn" id="guest-inc" aria-label="Más huéspedes">+</button>
+          </div>
+        </div>
+
+        <!-- Resumen -->
+        <div class="quote-box" id="quote-box" aria-live="polite"></div>
+        <div class="avail-warning" id="avail-warning" role="alert" hidden></div>
+
+        <!-- CTA -->
+        <button type="button" class="btn btn-primary form-btn" id="reserva-cta">💬 Consultar disponibilidad</button>
+        <div id="form-success" style="display:none;">
+          <div style="font-size:2.5rem;margin-bottom:.5rem;">✅</div>
+          <strong style="color:var(--brown);font-size:1rem;">¡Consulta enviada!</strong>
+          <p style="font-size:.85rem;color:var(--brown-light);margin-top:.4rem;">Te respondemos a la brevedad.</p>
+        </div>
+
+        <!-- No estás seguro -->
+        <a href="#gallery" class="reserva-secondary">¿No estás seguro? Conocé el depto primero <span>↓</span></a>
       </div>
     </div>
   </div>
@@ -440,8 +567,8 @@
 <section id="gallery">
   <div class="container">
     <div class="gallery-header">
-      <p class="section-label">Galería</p>
-      <h2 class="section-title">Así es el departamento</h2>
+      <p class="section-label">¿No estás seguro?</p>
+      <h2 class="section-title">Mirá el departamento antes de decidir</h2>
       <p class="section-sub">Espacios luminosos, limpios y bien mantenidos. Todo lo que ves es lo que encontrás.</p>
     </div>
     <div class="gallery-grid">
@@ -474,49 +601,31 @@
         <div class="g-overlay"><span>Fachada y acceso</span></div>
       </div>
     </div>
-    <p class="gallery-note" style="margin-top:1.5rem;">¿Querés ver más fotos? <a href="#reservas" style="color:var(--terracotta);font-weight:600;">Escribinos y te enviamos el álbum completo →</a></p>
+    <p class="gallery-note" style="margin-top:1.5rem;">¿Querés ver más fotos? <a href="#reserva-card" style="color:var(--terracotta);font-weight:600;">Escribinos y te enviamos el álbum completo →</a></p>
   </div>
 </section>
 
 <!-- ── AMENITIES ── -->
 <section id="amenities">
   <div class="container">
-    <div class="amenities-grid">
-      <div>
-        <p class="section-label">Comodidades</p>
-        <h2 class="section-title">Todo incluido, nada que buscar</h2>
-        <p class="section-sub">Llegás y te instalás. El departamento tiene todo lo que necesitás para una estadía cómoda, sea por una noche o varias semanas.</p>
-        <div class="amenities-list">
-          <div class="am-item highlight"><span class="am-icon">📶</span><span class="am-label">WiFi Alta Velocidad gratis</span></div>
-          <div class="am-item highlight"><span class="am-icon">🔥</span><span class="am-label">Calefacción</span></div>
-          <div class="am-item"><span class="am-icon">📺</span><span class="am-label">TV pantalla plana</span></div>
-          <div class="am-item"><span class="am-icon">🍳</span><span class="am-label">Cocina equipada</span></div>
-          <div class="am-item"><span class="am-icon">❄️</span><span class="am-label">Heladera / freezer</span></div>
-          <div class="am-item"><span class="am-icon">🫙</span><span class="am-label">Vajilla completa</span></div>
-          <div class="am-item"><span class="am-icon">🧺</span><span class="am-label">Ropa de cama</span></div>
-          <div class="am-item"><span class="am-icon">🛁</span><span class="am-label">Toallas</span></div>
-          <div class="am-item"><span class="am-icon">🚿</span><span class="am-label">Ducha + bañera</span></div>
-          <div class="am-item"><span class="am-icon">🚽</span><span class="am-label">Bidé</span></div>
-          <div class="am-item"><span class="am-icon">🅿️</span><span class="am-label">Garaje cubierto</span></div>
-          <div class="am-item"><span class="am-icon">🐾</span><span class="am-label">Aceptamos mascotas · sin cargo</span></div>
-          <div class="am-item highlight"><span class="am-icon">🔥</span><span class="am-label">Parrilla/asador</span></div>
-          <div class="am-item"><span class="am-icon">☕</span><span class="am-label">Cafetera</span></div>
-        </div>
-      </div>
-      <div>
-        <div class="cap-card">
-          <h3>Capacidad y Distribución</h3>
-          <div class="cap-row"><span class="cap-label">Huéspedes</span><span class="cap-value">Hasta 6 personas</span></div>
-          <div class="cap-row"><span class="cap-label">Dormitorios</span><span class="cap-value">2 (1 matrimonial + 1 con literas)</span></div>
-          <div class="cap-row"><span class="cap-label">Baños</span><span class="cap-value">1 completo (ducha + bañera)</span></div>
-          <div class="cap-row"><span class="cap-label">Superficie</span><span class="cap-value">65 m²</span></div>
-          <div class="cap-row"><span class="cap-label">Estacionamiento</span><span class="cap-value">Garaje cubierto gratuito</span></div>
-          <div class="cap-row"><span class="cap-label">Mascotas</span><span class="cap-value">Permitidas (sin cargo)</span></div>
-          <div class="cap-row"><span class="cap-label">Estadía mínima</span><span class="cap-value">2 noches</span></div>
-          <div class="cap-row"><span class="cap-label">Pago</span><span class="cap-value">Efectivo, transferencia, tarjeta, MercadoPago</span></div>
-          <p class="cap-note">Temporada de ski (julio–septiembre): reservar con anticipación. Se llena rápido.</p>
-        </div>
-      </div>
+    <div class="amenities-header">
+      <p class="section-label">Comodidades</p>
+      <h2 class="section-title">Todo incluido, nada que buscar</h2>
+      <p class="section-sub">Llegás y te instalás. El depto tiene todo para una estadía cómoda.</p>
+    </div>
+    <div class="amenities-list">
+      <div class="am-item"><span class="am-icon">📶</span><span class="am-label">WiFi alta velocidad</span></div>
+      <div class="am-item"><span class="am-icon">🔥</span><span class="am-label">Calefacción</span></div>
+      <div class="am-item"><span class="am-icon">🅿️</span><span class="am-label">Garaje cubierto</span></div>
+      <div class="am-item"><span class="am-icon">🥩</span><span class="am-label">Patio con parrilla</span></div>
+      <div class="am-item"><span class="am-icon">🍳</span><span class="am-label">Cocina equipada</span></div>
+      <div class="am-item"><span class="am-icon">❄️</span><span class="am-label">Heladera / freezer</span></div>
+      <div class="am-item"><span class="am-icon">📺</span><span class="am-label">Smart TV</span></div>
+      <div class="am-item"><span class="am-icon">🧺</span><span class="am-label">Ropa de cama y toallas</span></div>
+      <div class="am-item"><span class="am-icon">🚿</span><span class="am-label">Ducha + bañera</span></div>
+      <div class="am-item"><span class="am-icon">☕</span><span class="am-label">Cafetera</span></div>
+      <div class="am-item"><span class="am-icon">🐾</span><span class="am-label">Mascotas gratis</span></div>
+      <div class="am-item"><span class="am-icon">🏠</span><span class="am-label">Depto entero exclusivo</span></div>
     </div>
   </div>
 </section>
@@ -537,74 +646,52 @@
           <span class="atr-tag">Ski & Nieve</span>
         </div>
         <div class="atr-body">
-          <div class="atr-dist">📍 95 km · 1 hs 10 min</div>
+          <div class="atr-dist">📍 95 km · 1 h 10</div>
           <div class="atr-name">Las Leñas</div>
-          <p class="atr-desc">El resort de ski más famoso de Argentina. 17.500 hectáreas, 40 pistas, nieve garantizada y el casino más alto del mundo. Temporada de junio a octubre.</p>
+          <p class="atr-desc">El resort de ski más famoso de Argentina. 40 pistas y nieve garantizada de junio a octubre.</p>
         </div>
       </div>
 
       <div class="atr-card">
         <div class="atr-img">
-          <img src="https://www.welcomeargentina.com/malargue/imagenes/malargue_dire18.jpg" alt="Laguna Llancanelo" loading="lazy" />
+          <img src="fotos/malargue-primavera.jpg" alt="Laguna Llancanelo" loading="lazy" />
           <span class="atr-tag">Naturaleza</span>
         </div>
         <div class="atr-body">
           <div class="atr-dist">📍 75 km · 55 min</div>
           <div class="atr-name">Laguna Llancanelo</div>
-          <p class="atr-desc">Reserva de biósfera Ramsar con 155 especies de aves. Miles de flamencos rosados, cisnes y patos en una laguna volcánica única de 650 km².</p>
+          <p class="atr-desc">Reserva Ramsar con miles de flamencos rosados en una laguna volcánica única.</p>
         </div>
       </div>
 
       <div class="atr-card">
         <div class="atr-img">
-          <img src="fotos/malargue-primavera.jpg" alt="Pozo de las Ánimas" loading="lazy" />
+          <img src="fotos/malargue-verano.jpg" alt="Reserva La Payunia" loading="lazy" />
+          <span class="atr-tag">Volcanes</span>
+        </div>
+        <div class="atr-body">
+          <div class="atr-dist">📍 ~90 km · 1 h 20</div>
+          <div class="atr-name">Reserva La Payunia</div>
+          <p class="atr-desc">El campo volcánico más denso del planeta: más de 800 volcanes y paisaje marciano.</p>
+        </div>
+      </div>
+
+      <div class="atr-card">
+        <div class="atr-img">
+          <img src="fotos/malargue-otono.jpg" alt="Pozo de las Ánimas" loading="lazy" />
           <span class="atr-tag">Geología</span>
         </div>
         <div class="atr-body">
           <div class="atr-dist">📍 57 km · 40 min</div>
           <div class="atr-name">Pozo de las Ánimas</div>
-          <p class="atr-desc">Dos dolinas cársticas de 200m de diámetro y 80m de profundidad con agua en el fondo. Una de las formaciones geológicas más impactantes de Argentina.</p>
+          <p class="atr-desc">Dos dolinas cársticas de 200 m con agua en el fondo. Una postal imperdible.</p>
         </div>
       </div>
 
-      <div class="atr-card">
-        <div class="atr-img">
-          <img src="https://www.welcomeargentina.com/paseos/caverna_las_brujas/caverna-las-brujas-4.jpg" alt="Caverna de las Brujas" loading="lazy"
-            onerror="this.src='https://www.welcomeargentina.com/paseos/caverna_las_brujas/caverna-las-brujas-1.jpg'" />
-          <span class="atr-tag">Espeleología</span>
-        </div>
-        <div class="atr-body">
-          <div class="atr-dist">📍 77 km · 1 hs</div>
-          <div class="atr-name">Caverna de las Brujas</div>
-          <p class="atr-desc">La caverna de mármol más importante de Argentina, a 1.830 msnm. Estalactitas, estalagmitas y columnas cristalinas de millones de años. Visita guiada todo el año.</p>
-        </div>
-      </div>
+    </div>
 
-      <div class="atr-card">
-        <div class="atr-img">
-          <img src="https://www.welcomeargentina.com/paseos/reserva_la_payunia/la-payunia-1.jpg" alt="La Payunia" loading="lazy" />
-          <span class="atr-tag">Volcanes</span>
-        </div>
-        <div class="atr-body">
-          <div class="atr-dist">📍 ~90 km · 1 hs 20 min</div>
-          <div class="atr-name">Reserva La Payunia</div>
-          <p class="atr-desc">El campo volcánico más denso del planeta: más de 800 volcanes. Paisaje marciano de lava negra y roja, guanacos y el imponente Volcán Payún Matrú.</p>
-        </div>
-      </div>
-
-      <div class="atr-card">
-        <div class="atr-img">
-          <img src="https://www.welcomeargentina.com/malargue/imagenes/malargue-plaza4.jpg" alt="Centro Malargüe" loading="lazy"
-            onerror="this.src='https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=640&q=80'" />
-          <span class="atr-tag">Ciudad</span>
-        </div>
-        <div class="atr-body">
-          <div class="atr-dist">📍 En el centro · a pie</div>
-          <div class="atr-name">Centro de Malargüe</div>
-          <p class="atr-desc">Plazas, restaurantes de cocina regional, Planetario Pierre Auger, Museo del Petróleo y el Observatorio de Rayos Cósmicos. Todo cerca del departamento.</p>
-        </div>
-      </div>
-
+    <div class="atr-cta">
+      <a href="#reserva-card" class="btn btn-primary">📅 Ahora sí, reservá tu estadía ↑</a>
     </div>
   </div>
 </section>
@@ -673,115 +760,70 @@
   </div>
 </section>
 
-<!-- ── RESERVAS ── -->
+<!-- ── RESERVAS (info) ── -->
 <section id="reservas">
   <div class="container">
-    <div class="res-grid">
-      <div class="book-info">
-        <p class="section-label">Reservas</p>
-        <h2 class="section-title" style="font-size:clamp(1.6rem,3vw,2.2rem);">Reservá directo y sin comisiones</h2>
-        <p>Hablás directamente con nosotros. Sin intermediarios, sin sorpresas.</p>
+    <div class="book-info">
+      <p class="section-label">Reservas</p>
+      <h2 class="section-title" style="font-size:clamp(1.6rem,3vw,2.2rem);">Reservá directo y sin comisiones</h2>
+      <p>Hablás directamente con nosotros. Sin intermediarios, sin sorpresas.</p>
 
-        <div class="price-card">
-          <div class="price-lbl">Precio desde</div>
-          <div class="price-amt"><sup>$</sup>15.000</div>
-          <div class="price-per">por noche · hasta 4 personas</div>
-          <div class="price-incs">
-            <div class="price-inc">✓ Ropa de cama y toallas</div>
-            <div class="price-inc">✓ WiFi + garaje incluidos</div>
-            <div class="price-inc">✓ Mascotas permitidas (gratis)</div>
-            <div class="price-inc price-extra"></div>
+      <div class="price-card">
+        <div class="price-lbl">Precio desde</div>
+        <div class="price-amt"><sup>$</sup>15.000</div>
+        <div class="price-per">por noche · hasta 4 personas</div>
+        <div class="price-incs">
+          <div class="price-inc">✓ Ropa de cama y toallas</div>
+          <div class="price-inc">✓ WiFi + garaje incluidos</div>
+          <div class="price-inc">✓ Mascotas permitidas (gratis)</div>
+          <div class="price-inc price-extra"></div>
+        </div>
+      </div>
+      <p style="font-size:.8rem;color:var(--brown-light);margin:.75rem 0 0;">Temporada de ski (julio–septiembre): reservá con anticipación, se llena rápido.</p>
+
+      <div class="policies" style="margin-top:1.75rem;">
+        <div class="pol-item">
+          <span class="pol-icon">🕐</span>
+          <div class="pol-text">
+            <strong>Check-in / Check-out</strong>
+            <span>Check-in desde las 14 hs · Check-out hasta las 11 hs</span>
           </div>
         </div>
-
-        <div class="policies">
-          <div class="pol-item">
-            <span class="pol-icon">🕐</span>
-            <div class="pol-text">
-              <strong>Check-in / Check-out</strong>
-              <span>Check-in desde las 14 hs · Check-out hasta las 11 hs</span>
-            </div>
-          </div>
-          <div class="pol-item">
-            <span class="pol-icon">💳</span>
-            <div class="pol-text">
-              <strong>Formas de pago aceptadas</strong>
-              <span>Efectivo · Transferencia bancaria · Tarjeta de crédito/débito · MercadoPago</span>
-            </div>
-          </div>
-          <div class="pol-item">
-            <span class="pol-icon">🐾</span>
-            <div class="pol-text">
-              <strong>Mascotas</strong>
-              <span>Se admiten mascotas sin costo adicional</span>
-            </div>
-          </div>
-          <div class="pol-item">
-            <span class="pol-icon">🚫</span>
-            <div class="pol-text">
-              <strong>Política de convivencia</strong>
-              <span>No se permiten fiestas ni despedidas de solteros</span>
-            </div>
+        <div class="pol-item">
+          <span class="pol-icon">🌙</span>
+          <div class="pol-text">
+            <strong>Estadía mínima</strong>
+            <span data-dynamic="min-nights">1 noche</span>
           </div>
         </div>
-
-        <div style="margin-top:2rem;">
-          <p style="font-size:.82rem;color:var(--brown-light);margin-bottom:.75rem;">¿Preferís reservar por plataformas?</p>
-          <div class="plats">
-            <a href="https://www.booking.com/hotel/ar/departamento-navarro-malargue.es-ar.html" target="_blank" rel="noopener" class="plat-btn">🏨 Booking.com</a>
-            <a href="https://wa.me/?text=Hola!%20Quiero%20consultar%20disponibilidad%20en%20el%20Departamento%20Navarro%20en%20Malarg%C3%BCe" target="_blank" rel="noopener" class="plat-btn">💬 WhatsApp</a>
+        <div class="pol-item">
+          <span class="pol-icon">💳</span>
+          <div class="pol-text">
+            <strong>Formas de pago aceptadas</strong>
+            <span>Efectivo · Transferencia bancaria · Tarjeta de crédito/débito · MercadoPago</span>
+          </div>
+        </div>
+        <div class="pol-item">
+          <span class="pol-icon">🐾</span>
+          <div class="pol-text">
+            <strong>Mascotas</strong>
+            <span>Se admiten mascotas sin costo adicional</span>
+          </div>
+        </div>
+        <div class="pol-item">
+          <span class="pol-icon">🚫</span>
+          <div class="pol-text">
+            <strong>Política de convivencia</strong>
+            <span>No se permiten fiestas ni despedidas de solteros</span>
           </div>
         </div>
       </div>
 
-      <div class="book-form-card">
-        <h3>Consultá disponibilidad</h3>
-        <p>Completá el formulario y te respondemos rápido.</p>
-        <div class="loyalty-banner" id="loyalty-banner"></div>
-        <div class="availability-status" id="avail-status">
-          <span class="avail-dot loading"></span>
-          <span class="avail-text">Cargando disponibilidad...</span>
-        </div>
-        <form id="contactForm" onsubmit="handleSubmit(event)">
-          <div class="form-row">
-            <div class="fg"><label>Nombre</label><input type="text" placeholder="Tu nombre" required /></div>
-            <div class="fg"><label>Apellido</label><input type="text" placeholder="Tu apellido" required /></div>
-          </div>
-          <div class="fg"><label>Email</label><input type="email" placeholder="tu@email.com" required /></div>
-          <div class="fg"><label>WhatsApp / Teléfono</label><input type="tel" placeholder="+54 9 XXX XXX XXXX" /></div>
-          <div class="fg date-range-wrap">
-            <div>
-              <label for="checkin-hidden">Llegada</label>
-              <input type="date" id="checkin-hidden" name="checkin" required />
-            </div>
-            <div>
-              <label for="checkout-hidden">Salida</label>
-              <input type="date" id="checkout-hidden" name="checkout" required />
-            </div>
-          </div>
-          <div class="fg">
-            <label>Huéspedes</label>
-            <select id="guests-select">
-              <option>1 persona</option>
-              <option>2 personas</option>
-              <option>3 personas</option>
-              <option>4 personas</option>
-              <option>5 personas</option>
-              <option>6 personas</option>
-            </select>
-          </div>
-          <div class="quote-box" id="quote-box" aria-live="polite"></div>
-          <div class="avail-warning" id="avail-warning" role="alert" hidden></div>
-          <div class="fg">
-            <label>Mensaje (opcional)</label>
-            <textarea placeholder="¿Traés mascotas? ¿Necesitás algo especial?"></textarea>
-          </div>
-          <button type="submit" class="btn btn-primary form-btn">Enviar consulta →</button>
-        </form>
-        <div id="form-success">
-          <div style="font-size:2.5rem;margin-bottom:.5rem;">✅</div>
-          <strong style="color:var(--brown);font-size:1rem;">¡Consulta enviada!</strong>
-          <p style="font-size:.85rem;color:var(--brown-light);margin-top:.4rem;">Te respondemos a la brevedad.</p>
+      <div style="margin-top:2rem;">
+        <p style="font-size:.82rem;color:var(--brown-light);margin-bottom:.75rem;">¿Preferís reservar por plataformas?</p>
+        <div class="plats">
+          <a href="https://www.booking.com/hotel/ar/departamento-navarro-malargue.es-ar.html" target="_blank" rel="noopener" class="plat-btn">🏨 Booking.com</a>
+          <a href="https://wa.me/?text=Hola!%20Quiero%20consultar%20disponibilidad%20en%20el%20Departamento%20Navarro%20en%20Malarg%C3%BCe" target="_blank" rel="noopener" class="plat-btn">💬 WhatsApp</a>
         </div>
       </div>
     </div>
@@ -925,9 +967,112 @@
   let currentQuote = null;
   let loyaltyInfo = null;
 
-  function getSelectedGuests() {
-    const select = document.getElementById('guests-select');
-    return Number(String(select?.value || '1').match(/\d+/)?.[0] || 1);
+  const bookingState = {
+    mode: 'calendar',
+    viewYear: new Date().getFullYear(),
+    viewMonth: new Date().getMonth(),
+    checkin: null,
+    checkout: null,
+    guests: 2,
+    blockedDates: []
+  };
+
+  function calDayClass(state) {
+    return { blank: 'is-blank', past: 'is-past', selected: 'is-selected', inRange: 'is-in-range', normal: 'is-normal' }[state] || 'is-normal';
+  }
+
+  function renderCalendar() {
+    const label = document.getElementById('cal-month-label');
+    const grid = document.getElementById('cal-grid');
+    if (!label || !grid) return;
+
+    const monthDate = new Date(bookingState.viewYear, bookingState.viewMonth, 1);
+    label.textContent = monthDate.toLocaleDateString('es-AR', { month: 'long', year: 'numeric' });
+
+    const weeks = window.Booking.buildCalendarWeeks({
+      year: bookingState.viewYear,
+      month: bookingState.viewMonth,
+      checkin: bookingState.checkin,
+      checkout: bookingState.checkout
+    });
+
+    grid.innerHTML = weeks.map(week => `
+      <div class="cal-week">
+        ${week.map(cell => cell.state === 'blank'
+          ? '<button type="button" class="cal-day is-blank" disabled></button>'
+          : `<button type="button" class="cal-day ${calDayClass(cell.state)}" data-date-key="${cell.dateKey}" ${cell.disabled ? 'disabled' : ''}>${cell.day}</button>`
+        ).join('')}
+      </div>
+    `).join('');
+  }
+
+  function syncNumericFields() {
+    const setParts = (prefix, dateKey) => {
+      const [d, m, y] = dateKey ? dateKey.split('-').reverse() : ['', '', ''];
+      const dEl = document.getElementById(`${prefix}-d`);
+      const mEl = document.getElementById(`${prefix}-m`);
+      const yEl = document.getElementById(`${prefix}-y`);
+      if (dEl) dEl.value = d;
+      if (mEl) mEl.value = m;
+      if (yEl) yEl.value = y;
+    };
+    setParts('ci', bookingState.checkin);
+    setParts('co', bookingState.checkout);
+  }
+
+  function setCheckinCheckout(checkin, checkout) {
+    bookingState.checkin = checkin;
+    bookingState.checkout = checkout;
+    const checkinInput = document.getElementById('checkin-hidden');
+    const checkoutInput = document.getElementById('checkout-hidden');
+    if (checkinInput) checkinInput.value = checkin || '';
+    if (checkoutInput) checkoutInput.value = checkout || '';
+    syncNumericFields();
+    renderCalendar();
+    revalidateRange();
+    updateQuote();
+  }
+
+  function setMode(mode) {
+    bookingState.mode = mode;
+    document.getElementById('tab-calendar')?.classList.toggle('active', mode === 'calendar');
+    document.getElementById('tab-numeros')?.classList.toggle('active', mode === 'numeros');
+    const calView = document.getElementById('mode-calendar');
+    const numView = document.getElementById('mode-numeros');
+    if (calView) calView.style.display = mode === 'calendar' ? '' : 'none';
+    if (numView) numView.style.display = mode === 'numeros' ? '' : 'none';
+  }
+
+  function onNumericInput() {
+    const readDigits = (id, maxLength) => {
+      const el = document.getElementById(id);
+      if (!el) return '';
+      const cleaned = el.value.replace(/\D/g, '').slice(0, maxLength);
+      el.value = cleaned;
+      return cleaned;
+    };
+
+    const ci = window.Booking.dateKeyFromParts(readDigits('ci-d', 2), readDigits('ci-m', 2), readDigits('ci-y', 4));
+    const co = window.Booking.dateKeyFromParts(readDigits('co-d', 2), readDigits('co-m', 2), readDigits('co-y', 4));
+    const checkout = ci && co && co > ci ? co : (!ci && co ? co : null);
+
+    if (ci) {
+      const [y, m] = ci.split('-');
+      bookingState.viewYear = Number(y);
+      bookingState.viewMonth = Number(m) - 1;
+    }
+    setCheckinCheckout(ci, checkout);
+  }
+
+  function setGuests(count) {
+    bookingState.guests = Math.max(1, Math.min(6, count));
+    const countEl = document.getElementById('guest-count');
+    const decBtn = document.getElementById('guest-dec');
+    const incBtn = document.getElementById('guest-inc');
+    if (countEl) countEl.textContent = String(bookingState.guests);
+    if (decBtn) decBtn.disabled = bookingState.guests <= 1;
+    if (incBtn) incBtn.disabled = bookingState.guests >= 6;
+    updateQuote();
   }
 
   function renderQuote(quote) {
@@ -964,42 +1109,40 @@
       const name = (loyaltyInfo.user?.name || 'huesped').split(' ')[0];
       banner.innerHTML = `Hola, ${escapeHtml(name)} · ${escapeHtml(loyaltyInfo.label)} · ${Number(loyaltyInfo.percent || 0)}% off en tu proxima reserva. <a href="/cuenta">Ver cuenta</a>`;
     } catch (error) {
-      banner.innerHTML = '<a href="/login?return_to=/%23reservas">Inicia sesion y obtene descuentos</a> en tus proximas reservas directas.';
+      banner.innerHTML = '<a href="/login?return_to=/%23reserva-card">Inicia sesion y obtene descuentos</a> en tus proximas reservas directas.';
     }
   }
 
   async function updateQuote() {
-    const checkin = document.getElementById('checkin-hidden')?.value;
-    const checkout = document.getElementById('checkout-hidden')?.value;
-    const submit = document.querySelector('#contactForm button[type="submit"]');
+    const checkin = bookingState.checkin;
+    const checkout = bookingState.checkout;
 
     if (!checkin || !checkout) {
       currentQuote = null;
       renderQuote(null);
-      if (submit) submit.disabled = false;
       return;
     }
 
     try {
-      const params = new URLSearchParams({ checkin, checkout, guests: String(getSelectedGuests()) });
+      const params = new URLSearchParams({ checkin, checkout, guests: String(bookingState.guests) });
       const res = await fetch(`/api/quote?${params}`);
       const payload = await res.json();
       if (!res.ok || payload.error) throw new Error(payload.error || 'No se pudo calcular el presupuesto');
       currentQuote = payload.data;
       renderQuote(currentQuote);
-      if (submit) submit.disabled = !currentQuote.meetsMinNights || currentQuote.blocked;
     } catch (error) {
       currentQuote = null;
       renderQuote(null);
-      if (submit) submit.disabled = true;
     }
   }
 
   function buildBookingMessage(nights) {
-    const checkin = document.getElementById('checkin-hidden')?.value;
-    const checkout = document.getElementById('checkout-hidden')?.value;
-    const guests = getSelectedGuests();
-    const message = window.Booking.buildWhatsAppMessage({ checkin, checkout, nights, guests });
+    const message = window.Booking.buildWhatsAppMessage({
+      checkin: bookingState.checkin,
+      checkout: bookingState.checkout,
+      nights,
+      guests: bookingState.guests
+    });
     const total = currentQuote ? ` Total estimado: $${formatARS(currentQuote.total)}.` : '';
     return `${message}${total}`;
   }
@@ -1011,12 +1154,27 @@
     warning.hidden = !message;
   }
 
-  // Form submit
-  async function handleSubmit(e) {
-    e.preventDefault();
+  function revalidateRange() {
+    const { checkin, checkout, blockedDates } = bookingState;
+    if (!checkin || !checkout) { showAvailabilityWarning(''); return; }
+
+    try {
+      const result = window.Booking.checkRangeAvailability(checkin, checkout, blockedDates);
+      showAvailabilityWarning(result.available ? '' : 'No hay disponibilidad en esas fechas. Probá con otro rango.');
+    } catch (error) {
+      showAvailabilityWarning('');
+    }
+  }
+
+  // Reserva CTA click
+  async function handleReservaClick() {
     showAvailabilityWarning('');
-    const checkin = document.getElementById('checkin-hidden')?.value;
-    const checkout = document.getElementById('checkout-hidden')?.value;
+    const { checkin, checkout } = bookingState;
+
+    if (!checkin || !checkout) {
+      showAvailabilityWarning('Elegí las fechas de llegada y salida.');
+      return;
+    }
 
     let result;
     try {
@@ -1033,10 +1191,20 @@
       return;
     }
 
+    if (currentQuote && !currentQuote.meetsMinNights) {
+      showAvailabilityWarning(`La estadía mínima para esas fechas es de ${currentQuote.minNights} ${currentQuote.minNights === 1 ? 'noche' : 'noches'}.`);
+      return;
+    }
+
+    if (currentQuote && currentQuote.blocked) {
+      showAvailabilityWarning('No hay disponibilidad en esas fechas. Probá con otro rango.');
+      return;
+    }
+
     const cleanPhone = String(defaultSiteConfig.phone || '').replace(/[^\d]/g, '');
     const phone = String(window.sitePhone || cleanPhone);
     window.open(window.Booking.buildWhatsAppUrl(phone, buildBookingMessage(result.nights)), '_blank', 'noopener');
-    document.getElementById('contactForm').style.display = 'none';
+    document.getElementById('reserva-cta').style.display = 'none';
     document.getElementById('form-success').style.display = 'block';
   }
 
@@ -1109,22 +1277,17 @@
 
   function updateMinimumStay(config) {
     const minNights = Number(config.min_nights_low || 1);
-    document.querySelectorAll('.cap-row').forEach(row => {
-      if (row.textContent.includes('Estadía mínima')) {
-        const value = row.querySelector('.cap-value');
-        if (value) value.textContent = `${minNights} ${Number(minNights) === 1 ? 'noche' : 'noches'}`;
-      }
-    });
+    const el = document.querySelector('[data-dynamic="min-nights"]');
+    if (el) el.textContent = `${minNights} ${minNights === 1 ? 'noche' : 'noches'}`;
   }
 
   function updateAmenities(amenities) {
     const list = document.querySelector('.amenities-list');
     if (!list || !Array.isArray(amenities) || amenities.length === 0) return;
 
-    const icons = ['✓', '✓', '✓', '✓', '✓', '✓', '✓', '✓', '✓', '✓', '✓', '✓', '✓', '✓'];
-    list.innerHTML = amenities.map((item, index) => `
-      <div class="am-item${index < 2 ? ' highlight' : ''}">
-        <span class="am-icon">${icons[index % icons.length]}</span>
+    list.innerHTML = amenities.map(item => `
+      <div class="am-item">
+        <span class="am-icon">✓</span>
         <span class="am-label">${escapeHtml(item)}</span>
       </div>
     `).join('');
@@ -1147,20 +1310,20 @@
 
   function updateClosedState(config) {
     const banner = document.getElementById('closed-banner');
-    const form = document.getElementById('contactForm');
-    const submit = form?.querySelector('button[type="submit"]');
+    const card = document.getElementById('reserva-card');
+    const cta = document.getElementById('reserva-cta');
 
     if (banner) {
       banner.textContent = config.closed_message || defaultSiteConfig.closed_message;
       banner.classList.toggle('show', Boolean(config.is_closed));
     }
 
-    form?.querySelectorAll('input, select, textarea, button').forEach(control => {
+    card?.querySelectorAll('input, button').forEach(control => {
       control.disabled = Boolean(config.is_closed);
     });
 
-    if (submit) {
-      submit.textContent = config.is_closed ? 'Reservas temporalmente pausadas' : 'Enviar consulta →';
+    if (cta) {
+      cta.textContent = config.is_closed ? 'Reservas temporalmente pausadas' : '💬 Consultar disponibilidad';
     }
 
     document.querySelectorAll('a[href^="https://wa.me/"]').forEach(link => {
@@ -1213,41 +1376,16 @@
     observer.observe(el);
   });
 
-  // Fix missing attraction images with Unsplash fallbacks
-  document.querySelectorAll('.atr-img img').forEach(img => {
-    img.addEventListener('error', function() {
-      const fallbacks = {
-        'Las': 'https://images.unsplash.com/photo-1551524164-687a55dd1126?w=640&q=80',
-        'Llancanelo': 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=640&q=80',
-        'nimas': 'https://images.unsplash.com/photo-1504214208698-ea1916a2195a?w=640&q=80',
-        'Brujas': 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=640&q=80',
-        'Payunia': 'https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=640&q=80',
-        'Malargue': 'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=640&q=80'
-      };
-      const alt = this.alt;
-      for (const [key, url] of Object.entries(fallbacks)) {
-        if (alt.includes(key)) { this.src = url; break; }
-      }
-    });
-  });
-
-  // Availability status + date range wiring
-  (async function initAvailability() {
+  // Reserva widget: availability status + calendar/numeric/guest wiring
+  (async function initBookingWidget() {
     const statusEl = document.getElementById('avail-status');
     const dotEl = statusEl?.querySelector('.avail-dot');
     const textEl = statusEl?.querySelector('.avail-text');
-    const checkinInput = document.getElementById('checkin-hidden');
-    const checkoutInput = document.getElementById('checkout-hidden');
-    let blockedDates = [];
-
-    const today = new Date().toISOString().split('T')[0];
-    if (checkinInput) checkinInput.min = today;
-    if (checkoutInput) checkoutInput.min = today;
 
     try {
       const res = await fetch('/api/availability');
       const data = await res.json();
-      blockedDates = data.blockedDates || [];
+      bookingState.blockedDates = data.blockedDates || [];
       if (dotEl) { dotEl.className = 'avail-dot ok'; }
       if (textEl) { textEl.textContent = 'Disponibilidad actualizada'; }
     } catch (e) {
@@ -1255,25 +1393,49 @@
       if (textEl) { textEl.textContent = 'No se pudo cargar la disponibilidad'; }
     }
 
-    function revalidateRange() {
-      const checkin = checkinInput?.value;
-      const checkout = checkoutInput?.value;
-      if (checkoutInput && checkin) checkoutInput.min = checkin;
-      if (!checkin || !checkout) { showAvailabilityWarning(''); return; }
+    setMode('calendar');
+    setGuests(bookingState.guests);
+    renderCalendar();
 
-      try {
-        const result = window.Booking.checkRangeAvailability(checkin, checkout, blockedDates);
-        showAvailabilityWarning(result.available ? '' : 'No hay disponibilidad en esas fechas. Probá con otro rango.');
-      } catch (error) {
-        showAvailabilityWarning('');
+    document.getElementById('tab-calendar')?.addEventListener('click', () => setMode('calendar'));
+    document.getElementById('tab-numeros')?.addEventListener('click', () => setMode('numeros'));
+
+    document.getElementById('cal-prev')?.addEventListener('click', () => {
+      bookingState.viewMonth -= 1;
+      if (bookingState.viewMonth < 0) { bookingState.viewMonth = 11; bookingState.viewYear -= 1; }
+      renderCalendar();
+    });
+    document.getElementById('cal-next')?.addEventListener('click', () => {
+      bookingState.viewMonth += 1;
+      if (bookingState.viewMonth > 11) { bookingState.viewMonth = 0; bookingState.viewYear += 1; }
+      renderCalendar();
+    });
+    document.getElementById('cal-grid')?.addEventListener('click', event => {
+      const btn = event.target.closest('[data-date-key]');
+      if (!btn || btn.disabled) return;
+      const range = window.Booking.selectCalendarDay(
+        { checkin: bookingState.checkin, checkout: bookingState.checkout },
+        btn.dataset.dateKey
+      );
+      if (range.checkin) {
+        const [y, m] = range.checkin.split('-');
+        bookingState.viewYear = Number(y);
+        bookingState.viewMonth = Number(m) - 1;
       }
-    }
+      setCheckinCheckout(range.checkin, range.checkout);
+    });
 
-    checkinInput?.addEventListener('change', () => { revalidateRange(); updateQuote(); });
-    checkoutInput?.addEventListener('change', () => { revalidateRange(); updateQuote(); });
+    ['ci-d', 'ci-m', 'ci-y', 'co-d', 'co-m', 'co-y'].forEach(id => {
+      document.getElementById(id)?.addEventListener('input', onNumericInput);
+    });
+
+    document.getElementById('guest-dec')?.addEventListener('click', () => setGuests(bookingState.guests - 1));
+    document.getElementById('guest-inc')?.addEventListener('click', () => setGuests(bookingState.guests + 1));
+
+    document.getElementById('reserva-cta')?.addEventListener('click', () => {
+      handleReservaClick().catch(() => showAvailabilityWarning('No se pudo procesar la reserva. Intentá de nuevo.'));
+    });
   })();
-
-  document.getElementById('guests-select')?.addEventListener('change', updateQuote);
 </script>
 </body>
 </html>

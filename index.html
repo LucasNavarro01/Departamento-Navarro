@@ -232,6 +232,23 @@
     .atr-name { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 600; color: var(--brown); margin-bottom: .45rem; }
     .atr-desc { font-size: .85rem; color: var(--brown-light); line-height: 1.6; }
 
+    /* ── POSTALES (masonry) ── */
+    #postales { padding: 100px 0; background: linear-gradient(180deg, #241a12, var(--brown)); }
+    .post-header { text-align: center; max-width: 620px; margin: 0 auto clamp(32px, 4vw, 48px); }
+    .post-header .section-label { color: #E8A87C; }
+    .post-header .section-title { color: #fff; }
+    .post-header .section-sub { color: rgba(255,255,255,.65); }
+    .masonry { column-count: 4; column-gap: 14px; }
+    .masonry-item { break-inside: avoid; margin-bottom: 14px; position: relative; border-radius: 14px; overflow: hidden; }
+    .masonry-item img { width: 100%; display: block; transition: transform .5s ease; }
+    .masonry-item:hover img { transform: scale(1.06); }
+    .masonry-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(20,12,6,.75), transparent 55%); opacity: 0; transition: opacity .25s; display: flex; align-items: flex-end; padding: .9rem; }
+    .masonry-item:hover .masonry-overlay { opacity: 1; }
+    .masonry-overlay span { color: #fff; font-size: .82rem; font-weight: 600; }
+    @media (max-width: 1024px) { .masonry { column-count: 3; } }
+    @media (max-width: 768px) { .masonry { column-count: 2; } }
+    @media (max-width: 480px) { .masonry { column-count: 1; } }
+
     /* ── RESEÑAS ── */
     #resenas { padding: 100px 0; }
     .res-header { text-align: center; margin-bottom: 3rem; }
@@ -632,49 +649,73 @@
 
       <div class="atr-card">
         <div class="atr-img">
-          <img src="fotos/malargue-invierno.jpg" alt="Las Leñas" loading="lazy" />
+          <img src="https://upload.wikimedia.org/wikipedia/commons/5/52/Las_Le%C3%B1as_Cordillera.jpg" alt="Las Leñas" loading="lazy" />
           <span class="atr-tag">Ski & Nieve</span>
         </div>
         <div class="atr-body">
           <div class="atr-dist">📍 95 km · 1 h 10</div>
           <div class="atr-name">Las Leñas</div>
-          <p class="atr-desc">El resort de ski más famoso de Argentina. 40 pistas y nieve garantizada de junio a octubre.</p>
+          <p class="atr-desc">El resort de ski más famoso de Argentina. Pistas para todos los niveles y nieve garantizada de junio a octubre.</p>
         </div>
       </div>
 
       <div class="atr-card">
         <div class="atr-img">
-          <img src="fotos/malargue-primavera.jpg" alt="Laguna Llancanelo" loading="lazy" />
+          <img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Laguna_de_Llancanelo_%28panorama%29.jpg" alt="Laguna Llancanelo" loading="lazy" />
           <span class="atr-tag">Naturaleza</span>
         </div>
         <div class="atr-body">
           <div class="atr-dist">📍 75 km · 55 min</div>
           <div class="atr-name">Laguna Llancanelo</div>
-          <p class="atr-desc">Reserva Ramsar con miles de flamencos rosados en una laguna volcánica única.</p>
+          <p class="atr-desc">Reserva de biósfera Ramsar con más de 150 especies de aves. Miles de flamencos rosados en una laguna volcánica de 650 km².</p>
         </div>
       </div>
 
       <div class="atr-card">
         <div class="atr-img">
-          <img src="fotos/malargue-verano.jpg" alt="Reserva La Payunia" loading="lazy" />
+          <img src="https://upload.wikimedia.org/wikipedia/commons/8/89/La_Payunia_-_Black_desert_%282039757942%29.jpg" alt="Reserva La Payunia" loading="lazy" />
           <span class="atr-tag">Volcanes</span>
         </div>
         <div class="atr-body">
-          <div class="atr-dist">📍 ~90 km · 1 h 20</div>
+          <div class="atr-dist">📍 ~160 km · 2 h 30</div>
           <div class="atr-name">Reserva La Payunia</div>
-          <p class="atr-desc">El campo volcánico más denso del planeta: más de 800 volcanes y paisaje marciano.</p>
+          <p class="atr-desc">El campo volcánico más denso del planeta: más de 800 conos en 4.500 km² de desierto negro. Se ingresa solo con guía.</p>
         </div>
       </div>
 
       <div class="atr-card">
         <div class="atr-img">
-          <img src="fotos/malargue-otono.jpg" alt="Pozo de las Ánimas" loading="lazy" />
+          <img src="https://upload.wikimedia.org/wikipedia/commons/c/c8/Pozo_de_Las_Animas_Mendoza_Argentina.jpg" alt="Pozo de las Ánimas" loading="lazy" />
           <span class="atr-tag">Geología</span>
         </div>
         <div class="atr-body">
-          <div class="atr-dist">📍 57 km · 40 min</div>
+          <div class="atr-dist">📍 ~60 km · 50 min</div>
           <div class="atr-name">Pozo de las Ánimas</div>
-          <p class="atr-desc">Dos dolinas cársticas de 200 m con agua en el fondo. Una postal imperdible.</p>
+          <p class="atr-desc">Dos dolinas cársticas con agua turquesa en el fondo, rodeadas de leyendas locales. Parada obligada sobre la RP 222.</p>
+        </div>
+      </div>
+
+      <div class="atr-card">
+        <div class="atr-img">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/2/23/Caverna_de_las_Brujas_entrada.JPG" alt="Caverna de las Brujas" loading="lazy" />
+          <span class="atr-tag">Espeleología</span>
+        </div>
+        <div class="atr-body">
+          <div class="atr-dist">📍 ~70 km · 1 h</div>
+          <div class="atr-name">Caverna de las Brujas</div>
+          <p class="atr-desc">La caverna de mármol más importante de Argentina, con estalactitas y estalagmitas de miles de años. Visita guiada todo el año.</p>
+        </div>
+      </div>
+
+      <div class="atr-card">
+        <div class="atr-img">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Castillos_de_Pincheira.jpg" alt="Castillos de Pincheira" loading="lazy" />
+          <span class="atr-tag">Geología</span>
+        </div>
+        <div class="atr-body">
+          <div class="atr-dist">📍 27 km · 25 min</div>
+          <div class="atr-name">Castillos de Pincheira</div>
+          <p class="atr-desc">Formaciones rocosas moldeadas por el viento que recuerdan a un castillo medieval. La más cercana a la ciudad.</p>
         </div>
       </div>
 
@@ -682,6 +723,32 @@
 
     <div class="atr-cta">
       <a href="#reserva-card" class="btn btn-primary">📅 Ahora sí, reservá tu estadía ↑</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── POSTALES DE MALARGÜE ── -->
+<section id="postales">
+  <div class="container">
+    <div class="post-header">
+      <p class="section-label">Postales</p>
+      <h2 class="section-title">Así se ve Malargüe</h2>
+      <p class="section-sub">Nieve, volcanes, lagunas y desierto — un vistazo a lo que te espera a minutos del departamento.</p>
+    </div>
+    <div class="masonry">
+      <div class="masonry-item"><img src="https://upload.wikimedia.org/wikipedia/commons/5/52/Las_Le%C3%B1as_Cordillera.jpg" alt="Cordillera en Las Leñas" loading="lazy" /><div class="masonry-overlay"><span>Las Leñas</span></div></div>
+      <div class="masonry-item"><img src="https://upload.wikimedia.org/wikipedia/commons/f/f5/Vegas_de_monta%C3%B1a_en_Malarg%C3%BCe%2C_Mendoza.jpg" alt="Vegas de montaña en Malargüe" loading="lazy" /><div class="masonry-overlay"><span>Vegas de montaña</span></div></div>
+      <div class="masonry-item"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Laguna_de_Llancanelo_%28panorama%29.jpg" alt="Panorámica de Laguna Llancanelo" loading="lazy" /><div class="masonry-overlay"><span>Laguna Llancanelo</span></div></div>
+      <div class="masonry-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Castillos_de_Pincheira.jpg" alt="Castillos de Pincheira" loading="lazy" /><div class="masonry-overlay"><span>Castillos de Pincheira</span></div></div>
+      <div class="masonry-item"><img src="https://upload.wikimedia.org/wikipedia/commons/8/89/La_Payunia_-_Black_desert_%282039757942%29.jpg" alt="Desierto negro de La Payunia" loading="lazy" /><div class="masonry-overlay"><span>Reserva La Payunia</span></div></div>
+      <div class="masonry-item"><img src="https://upload.wikimedia.org/wikipedia/commons/8/8d/Las_Le%C3%B1as_telesilla.jpg" alt="Telesilla de Las Leñas" loading="lazy" /><div class="masonry-overlay"><span>Las Leñas</span></div></div>
+      <div class="masonry-item"><img src="https://upload.wikimedia.org/wikipedia/commons/2/23/Caverna_de_las_Brujas_entrada.JPG" alt="Entrada a la Caverna de las Brujas" loading="lazy" /><div class="masonry-overlay"><span>Caverna de las Brujas</span></div></div>
+      <div class="masonry-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c8/Pozo_de_Las_Animas_Mendoza_Argentina.jpg" alt="Pozo de las Ánimas" loading="lazy" /><div class="masonry-overlay"><span>Pozo de las Ánimas</span></div></div>
+      <div class="masonry-item"><img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Plaza_San_Mart%C3%ADn%2C_Malarg%C3%BCe.jpg" alt="Plaza San Martín, Malargüe" loading="lazy" /><div class="masonry-overlay"><span>Plaza San Martín</span></div></div>
+      <div class="masonry-item"><img src="https://upload.wikimedia.org/wikipedia/commons/b/bd/Volcan_Morado_-Payunia_-_panoramio.jpg" alt="Volcán Morado en La Payunia" loading="lazy" /><div class="masonry-overlay"><span>Reserva La Payunia</span></div></div>
+      <div class="masonry-item"><img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Witches%27_Cave_stalactites.jpg" alt="Estalactitas en la Caverna de las Brujas" loading="lazy" /><div class="masonry-overlay"><span>Caverna de las Brujas</span></div></div>
+      <div class="masonry-item"><img src="https://upload.wikimedia.org/wikipedia/commons/8/86/Llancanelo_Panorama3.jpg" alt="Laguna Llancanelo" loading="lazy" /><div class="masonry-overlay"><span>Laguna Llancanelo</span></div></div>
+      <div class="masonry-item"><img src="https://upload.wikimedia.org/wikipedia/commons/7/7a/Castillos_de_Pincheira_2.jpg" alt="Formaciones rocosas en Castillos de Pincheira" loading="lazy" /><div class="masonry-overlay"><span>Castillos de Pincheira</span></div></div>
     </div>
   </div>
 </section>

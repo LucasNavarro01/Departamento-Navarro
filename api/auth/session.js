@@ -1,12 +1,22 @@
 const { readBody, sendJson } = require('../_lib/http');
 const { getSupabaseUser } = require('../_lib/supabase');
-const { setSessionCookie, upsertProfile } = require('../_lib/auth');
+const { setSessionCookie, upsertProfile, SessionConfigError } = require('../_lib/auth');
+const { rateLimit, getClientIp } = require('../_lib/rate-limit');
+
+const RATE_LIMIT_MAX = 10;
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 
 module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST, OPTIONS');
     return sendJson(res, 405, { error: 'Method not allowed' });
+  }
+
+  const limit = rateLimit(`auth-session:${getClientIp(req)}`, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_MS);
+  if (!limit.allowed) {
+    res.setHeader('Retry-After', String(limit.retryAfter));
+    return sendJson(res, 429, { error: 'Demasiados intentos. Intenta mas tarde.' });
   }
 
   try {
@@ -31,6 +41,10 @@ module.exports = async function handler(req, res) {
       }
     });
   } catch (error) {
-    sendJson(res, 401, { error: error.message || 'No se pudo iniciar sesion' });
+    console.error('auth/session error:', error);
+    if (error instanceof SessionConfigError) {
+      return sendJson(res, 503, { error: 'Sesion no configurada. Contacta al administrador.' });
+    }
+    sendJson(res, 401, { error: 'No se pudo iniciar sesion' });
   }
 };

@@ -1,5 +1,6 @@
 const { readBody } = require('./_lib/http');
 const { restDelete, restInsert, restSelect } = require('./_lib/supabase');
+const { checkAdminAuth } = require('./_lib/admin-auth');
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -13,8 +14,14 @@ function isValidDateKey(value) {
   return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
 }
 
-function hasValidPassword(password) {
-  return Boolean(process.env.ADMIN_PASSWORD && password === process.env.ADMIN_PASSWORD);
+function enforceAdminAuth(req, res, body) {
+  const auth = checkAdminAuth(req, body);
+  if (!auth.ok) {
+    if (auth.retryAfter) res.setHeader('Retry-After', String(auth.retryAfter));
+    send(res, auth.status, { error: auth.message });
+    return false;
+  }
+  return true;
 }
 
 function normalizeInt(value, fallback = null) {
@@ -61,9 +68,7 @@ async function replaceRange(table, startDate, endDate, newRows, preserveRow) {
 }
 
 async function listBlockedDates(req, res) {
-  if (!hasValidPassword(req.query.password)) {
-    return send(res, 401, { error: 'Unauthorized' });
-  }
+  if (!enforceAdminAuth(req, res, null)) return;
 
   if (req.query.mode === 'settings') {
     const blockedDates = await restSelect('blocked_dates', 'select=id,start_date,end_date,reason&order=start_date.asc');
@@ -90,9 +95,7 @@ async function createBlockedDate(req, res) {
     ? body.reason.trim()
     : null;
 
-  if (!hasValidPassword(body.password)) {
-    return send(res, 401, { error: 'Unauthorized' });
-  }
+  if (!enforceAdminAuth(req, res, body)) return;
 
   if (!isValidDateKey(startDate) || !isValidDateKey(endDate)) {
     return send(res, 400, { error: 'Las fechas deben tener formato YYYY-MM-DD' });
@@ -140,9 +143,8 @@ async function createBlockedDate(req, res) {
 }
 
 async function deleteBlockedDate(req, res) {
-  if (!hasValidPassword(req.query.password)) {
-    return send(res, 401, { error: 'Unauthorized' });
-  }
+  const body = await readBody(req).catch(() => ({}));
+  if (!enforceAdminAuth(req, res, body)) return;
 
   if (!req.query.id) {
     return send(res, 400, { error: 'Falta el id del bloqueo' });
@@ -163,6 +165,7 @@ module.exports = async function handler(req, res) {
     res.setHeader('Allow', 'GET, POST, DELETE, OPTIONS');
     return send(res, 405, { error: 'Method not allowed' });
   } catch (error) {
-    return send(res, 500, { error: error.message || 'No se pudieron gestionar las fechas' });
+    console.error('blocked-dates error:', error);
+    return send(res, 500, { error: 'No se pudieron gestionar las fechas' });
   }
 };

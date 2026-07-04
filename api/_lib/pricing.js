@@ -1,6 +1,8 @@
 const { restSelect } = require('./supabase');
+const { ValidationError } = require('./http');
 
 const CLEANING_FEE = 4500;
+const MAX_NIGHTS = 60;
 const DEFAULT_PRICE_BY_GUESTS = {
   1: 25000,
   2: 30000,
@@ -20,6 +22,24 @@ function isDateKey(value) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(String(value || ''))) return false;
   const date = new Date(`${value}T00:00:00Z`);
   return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
+}
+
+// Shared guard before any checkin/checkout pair is used in a query.
+// Throws with a guest-facing message; callers decide the HTTP status.
+function assertValidStayRange(checkin, checkout) {
+  if (!isDateKey(checkin) || !isDateKey(checkout)) {
+    throw new ValidationError('Las fechas deben tener formato YYYY-MM-DD');
+  }
+  if (checkin >= checkout) {
+    throw new ValidationError('La fecha de salida debe ser posterior a la de llegada');
+  }
+
+  const nights = daysBetween(checkin, checkout);
+  if (nights > MAX_NIGHTS) {
+    throw new ValidationError(`La estadia no puede superar las ${MAX_NIGHTS} noches`);
+  }
+
+  return nights;
 }
 
 async function readConfig() {
@@ -105,18 +125,11 @@ function calculateStay({ checkin, checkout, guests, config, rules, discountPct =
 }
 
 async function buildQuote({ checkin, checkout, guests, discountPct = 0 }) {
-  if (!isDateKey(checkin) || !isDateKey(checkout)) {
-    throw new Error('Las fechas deben tener formato YYYY-MM-DD');
-  }
+  assertValidStayRange(checkin, checkout);
 
   const guestCount = Number(guests || 1);
   if (!Number.isInteger(guestCount) || guestCount < 1 || guestCount > 6) {
-    throw new Error('La cantidad de huespedes debe estar entre 1 y 6');
-  }
-
-  const nights = daysBetween(checkin, checkout);
-  if (!Number.isFinite(nights) || nights < 1) {
-    throw new Error('La salida debe ser posterior a la llegada');
+    throw new ValidationError('La cantidad de huespedes debe estar entre 1 y 6');
   }
 
   const [config, rules, manuallyBlocked] = await Promise.all([
@@ -135,8 +148,11 @@ async function buildQuote({ checkin, checkout, guests, discountPct = 0 }) {
 
 module.exports = {
   CLEANING_FEE,
+  MAX_NIGHTS,
   DEFAULT_PRICE_BY_GUESTS,
   daysBetween,
+  isDateKey,
+  assertValidStayRange,
   calculateStay,
   buildQuote,
   hasManualBlock

@@ -40,9 +40,10 @@ module.exports = async function handler(req, res) {
       updatedAt: new Date().toISOString()
     });
   } catch (error) {
+    console.error('availability error:', error);
     res.status(200).json({
       blockedDates: [],
-      error: error.message || 'No se pudo cargar la disponibilidad',
+      error: 'No se pudo cargar la disponibilidad',
       updatedAt: new Date().toISOString()
     });
   }

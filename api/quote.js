@@ -1,5 +1,5 @@
-const { sendJson } = require('./_lib/http');
-const { requireSession } = require('./_lib/auth');
+const { sendJson, ValidationError } = require('./_lib/http');
+const { requireSession, SessionConfigError } = require('./_lib/auth');
 const { buildQuote } = require('./_lib/pricing');
 
 module.exports = async function handler(req, res) {
@@ -20,6 +20,13 @@ module.exports = async function handler(req, res) {
 
     return sendJson(res, 200, { data: quote });
   } catch (error) {
-    return sendJson(res, 400, { error: error.message || 'No se pudo calcular el presupuesto' });
+    if (error instanceof ValidationError) {
+      return sendJson(res, 400, { error: error.message });
+    }
+    console.error('quote error:', error);
+    if (error instanceof SessionConfigError) {
+      return sendJson(res, 503, { error: 'Sesion no configurada. Contacta al administrador.' });
+    }
+    return sendJson(res, 400, { error: 'No se pudo calcular el presupuesto' });
   }
 };

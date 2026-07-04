@@ -88,6 +88,7 @@ module.exports = async function handler(req, res) {
     const config = await readSupabaseConfig();
     json(res, 200, { ...DEFAULT_CONFIG, ...config });
   } catch (error) {
-    json(res, 200, { ...DEFAULT_CONFIG, error: error.message || 'No se pudo leer la configuración' });
+    console.error('config error:', error);
+    json(res, 200, { ...DEFAULT_CONFIG, error: 'No se pudo leer la configuración' });
   }
 };

@@ -1,4 +1,5 @@
 const { restUpsert } = require('./_lib/supabase');
+const { checkAdminAuth } = require('./_lib/admin-auth');
 const ALLOWED_KEYS = new Set([
   'price_per_night',
   'price_extra_person',
@@ -59,10 +60,13 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const { password, key, value } = await readBody(req);
+    const body = await readBody(req);
+    const { key, value } = body;
 
-    if (!process.env.ADMIN_PASSWORD || password !== process.env.ADMIN_PASSWORD) {
-      send(res, 401, { error: 'Unauthorized' });
+    const auth = checkAdminAuth(req, body);
+    if (!auth.ok) {
+      if (auth.retryAfter) res.setHeader('Retry-After', String(auth.retryAfter));
+      send(res, auth.status, { error: auth.message });
       return;
     }
 
@@ -79,6 +83,7 @@ module.exports = async function handler(req, res) {
     await upsertConfig(key, value);
     send(res, 200, { ok: true });
   } catch (error) {
-    send(res, 500, { error: error.message || 'No se pudo actualizar la configuración' });
+    console.error('update-config error:', error);
+    send(res, 500, { error: 'No se pudo actualizar la configuración' });
   }
 };

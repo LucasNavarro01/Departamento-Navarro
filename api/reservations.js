@@ -1,8 +1,13 @@
 const { readBody, sendJson } = require('./_lib/http');
-const { requireSession } = require('./_lib/auth');
+const { requireSession, SessionConfigError } = require('./_lib/auth');
+const { checkAdminAuth } = require('./_lib/admin-auth');
+const { rateLimit, getClientIp } = require('./_lib/rate-limit');
 const { getManualCouponPercent } = require('./_lib/coupons');
-const { buildQuote, daysBetween } = require('./_lib/pricing');
+const { buildQuote, assertValidStayRange } = require('./_lib/pricing');
 const { restInsert, restPatch, restSelect } = require('./_lib/supabase');
+
+const CREATE_RATE_LIMIT_MAX = 3;
+const CREATE_RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 
 async function hasOverlap(checkin, checkout) {
   const query = [
@@ -16,12 +21,35 @@ async function hasOverlap(checkin, checkout) {
   return rows.length > 0;
 }
 
+function enforceAdminAuth(req, res, body) {
+  const auth = checkAdminAuth(req, body);
+  if (!auth.ok) {
+    if (auth.retryAfter) res.setHeader('Retry-After', String(auth.retryAfter));
+    sendJson(res, auth.status, { error: auth.message });
+    return false;
+  }
+  return true;
+}
+
 async function createReservation(req, res) {
-  const auth = await requireSession(req, res);
+  const limit = rateLimit(`reservations-create:${getClientIp(req)}`, CREATE_RATE_LIMIT_MAX, CREATE_RATE_LIMIT_WINDOW_MS);
+  if (!limit.allowed) {
+    res.setHeader('Retry-After', String(limit.retryAfter));
+    return sendJson(res, 429, { error: 'Demasiados intentos. Intenta mas tarde.' });
+  }
+
   const body = await readBody(req);
+  const guests = Number(body.guests || body.num_guests || 1);
+
+  if (body._honeypot) {
+    // Bot filled a field that's hidden from real visitors — fake a normal
+    // success so it doesn't learn anything, but never touch the database.
+    return sendJson(res, 200, { data: { id: null, total: 0, appliedPct: 0, discountAmount: 0, nights: 0, guests } });
+  }
+
+  const auth = await requireSession(req, res);
   const checkin = body.checkin;
   const checkout = body.checkout;
-  const guests = Number(body.guests || body.num_guests || 1);
   const pets = Boolean(body.pets);
   const contact = body.contact || {};
   const guestName = contact.name || body.guest_name || auth?.user?.name;
@@ -35,10 +63,13 @@ async function createReservation(req, res) {
     return sendJson(res, 400, { error: 'La cantidad de huespedes debe estar entre 1 y 6' });
   }
 
-  const nights = daysBetween(checkin, checkout);
-  if (!Number.isFinite(nights) || nights < 1) {
-    return sendJson(res, 400, { error: 'La salida debe ser posterior a la llegada' });
+  let nights;
+  try {
+    nights = assertValidStayRange(checkin, checkout);
+  } catch (error) {
+    return sendJson(res, 400, { error: error.message });
   }
+
   if (await hasOverlap(checkin, checkout)) {
     return sendJson(res, 409, { error: 'Las fechas seleccionadas no estan disponibles' });
   }
@@ -52,6 +83,10 @@ async function createReservation(req, res) {
     return sendJson(res, 400, { error: `La estadia minima para esas fechas es de ${quote.minNights} ${quote.minNights === 1 ? 'noche' : 'noches'}` });
   }
 
+  // Public reservations start as pending, not confirmed — an unattended bot
+  // POST can't lock in dates on its own; an admin has to confirm it first.
+  // hasOverlap() above already excludes only 'cancelled', so pending rows
+  // still block the calendar for everyone else in the meantime.
   const inserted = await restInsert('reservations', [{
     user_id: auth?.user?.id || null,
     checkin,
@@ -64,7 +99,7 @@ async function createReservation(req, res) {
     pets,
     message: body.message || null,
     source: 'direct',
-    status: 'confirmed',
+    status: 'pending',
     subtotal: quote.subtotal,
     discount_pct: quote.discountPct,
     discount_amount: quote.discountAmount,
@@ -87,12 +122,9 @@ async function createReservation(req, res) {
 
 async function updateReservationStatus(req, res) {
   const body = await readBody(req);
+  if (!enforceAdminAuth(req, res, body)) return;
+
   const allowedStatuses = new Set(['pending', 'confirmed', 'completed', 'cancelled']);
-
-  if (!process.env.ADMIN_PASSWORD || body.password !== process.env.ADMIN_PASSWORD) {
-    return sendJson(res, 401, { error: 'Unauthorized' });
-  }
-
   if (!body.id || !allowedStatuses.has(body.status)) {
     return sendJson(res, 400, { error: 'Reserva o estado invalido' });
   }
@@ -143,14 +175,19 @@ module.exports = async function handler(req, res) {
     try {
       return await createReservation(req, res);
     } catch (error) {
-      return sendJson(res, 500, { error: error.message || 'No se pudo crear la reserva' });
+      console.error('reservations POST error:', error);
+      if (error instanceof SessionConfigError) {
+        return sendJson(res, 503, { error: 'Sesion no configurada. Contacta al administrador.' });
+      }
+      return sendJson(res, 500, { error: 'No se pudo crear la reserva' });
     }
   }
   if (req.method === 'PATCH') {
     try {
       return await updateReservationStatus(req, res);
     } catch (error) {
-      return sendJson(res, 500, { error: error.message || 'No se pudo actualizar la reserva' });
+      console.error('reservations PATCH error:', error);
+      return sendJson(res, 500, { error: 'No se pudo actualizar la reserva' });
     }
   }
 
@@ -159,14 +196,13 @@ module.exports = async function handler(req, res) {
     return sendJson(res, 405, { error: 'Method not allowed' });
   }
 
-  if (!process.env.ADMIN_PASSWORD || req.query.password !== process.env.ADMIN_PASSWORD) {
-    return sendJson(res, 401, { error: 'Unauthorized' });
-  }
+  if (!enforceAdminAuth(req, res, null)) return;
 
   try {
     const rows = await restSelect('reservations', 'select=*&order=checkin.asc&limit=100');
     return sendJson(res, 200, { data: rows });
   } catch (error) {
-    return sendJson(res, 500, { error: error.message || 'No se pudieron leer las reservas' });
+    console.error('reservations GET error:', error);
+    return sendJson(res, 500, { error: 'No se pudieron leer las reservas' });
   }
 };

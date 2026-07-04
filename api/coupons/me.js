@@ -1,5 +1,5 @@
 const { sendJson } = require('../_lib/http');
-const { requireSession } = require('../_lib/auth');
+const { requireSession, SessionConfigError } = require('../_lib/auth');
 const { buildCouponCode } = require('../_lib/coupons');
 
 module.exports = async function handler(req, res) {
@@ -9,7 +9,16 @@ module.exports = async function handler(req, res) {
     return sendJson(res, 405, { error: 'Method not allowed' });
   }
 
-  const auth = await requireSession(req, res);
+  let auth;
+  try {
+    auth = await requireSession(req, res);
+  } catch (error) {
+    console.error('coupons/me error:', error);
+    if (error instanceof SessionConfigError) {
+      return sendJson(res, 503, { error: 'Sesion no configurada. Contacta al administrador.' });
+    }
+    return sendJson(res, 401, { error: 'No autenticado' });
+  }
   if (!auth) return sendJson(res, 401, { error: 'No autenticado' });
 
   sendJson(res, 200, {

@@ -1,3 +1,9 @@
+// Thrown deliberately by our own input-validation code with a message that's
+// already safe to show a client. Anything else caught in a handler is treated
+// as an unexpected/internal failure and must be genericized before it reaches
+// the response (see api Reglas: never forward a raw error.message).
+class ValidationError extends Error {}
+
 function sendJson(res, status, body) {
   res.status(status).json({
     data: body.data ?? null,
@@ -46,4 +52,4 @@ function clearCookie(res, name) {
   res.setHeader('Set-Cookie', `${name}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`);
 }
 
-module.exports = { sendJson, readBody, parseCookies, setCookie, clearCookie };
+module.exports = { ValidationError, sendJson, readBody, parseCookies, setCookie, clearCookie };

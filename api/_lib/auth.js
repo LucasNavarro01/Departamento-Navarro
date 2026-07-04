@@ -2,11 +2,16 @@ const crypto = require('crypto');
 const { parseCookies, setCookie } = require('./http');
 const { getSupabaseUser, refreshSupabaseSession, restSelect, restUpsert } = require('./supabase');
 const { getCouponTier } = require('./coupons');
+const { timingSafeEqualStrings } = require('./admin-auth');
 
 const COOKIE_NAME = 'dn_session';
 
+class SessionConfigError extends Error {}
+
 function secret() {
-  return process.env.SESSION_SECRET || process.env.ADMIN_PASSWORD || 'dev-session-secret';
+  const value = process.env.SESSION_SECRET || process.env.ADMIN_PASSWORD;
+  if (!value) throw new SessionConfigError('SESSION_SECRET no configurado');
+  return value;
 }
 
 function sign(value) {
@@ -20,8 +25,17 @@ function encodeSession(session) {
 
 function decodeSession(value) {
   const [payload, signature] = String(value || '').split('.');
-  if (!payload || !signature || sign(payload) !== signature) return null;
-  return JSON.parse(Buffer.from(payload, 'base64url').toString('utf8'));
+  if (!payload || !signature) return null;
+
+  // sign() can throw SessionConfigError — let it propagate so callers can
+  // respond 503 instead of silently treating misconfiguration as "logged out".
+  if (!timingSafeEqualStrings(sign(payload), signature)) return null;
+
+  try {
+    return JSON.parse(Buffer.from(payload, 'base64url').toString('utf8'));
+  } catch (error) {
+    return null;
+  }
 }
 
 function setSessionCookie(res, session, remember = true) {
@@ -98,8 +112,21 @@ async function requireSession(req, res) {
       tier: getCouponTier(count)
     };
   } catch (error) {
+    if (error instanceof SessionConfigError) throw error;
     return null;
   }
 }
 
-module.exports = { COOKIE_NAME, setSessionCookie, requireSession, getProfile, upsertProfile, countCompletedDirectStays };
+module.exports = {
+  COOKIE_NAME,
+  SessionConfigError,
+  setSessionCookie,
+  requireSession,
+  getProfile,
+  upsertProfile,
+  countCompletedDirectStays,
+  // Exported for unit testing only — other modules should go through
+  // requireSession/setSessionCookie rather than signing sessions directly.
+  encodeSession,
+  decodeSession
+};

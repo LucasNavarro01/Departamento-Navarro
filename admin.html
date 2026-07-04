@@ -263,8 +263,8 @@
     async function postConfig(key, value) {
       const res = await fetch('/api/update-config', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: state.password, key, value })
+        headers: { 'Content-Type': 'application/json', 'x-admin-password': state.password },
+        body: JSON.stringify({ key, value })
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || 'No se pudo guardar');
@@ -274,8 +274,8 @@
     async function verifyPassword(password) {
       const res = await fetch('/api/update-config', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password, key: 'ping', value: 1 })
+        headers: { 'Content-Type': 'application/json', 'x-admin-password': password },
+        body: JSON.stringify({ key: 'ping', value: 1 })
       });
       return res.ok;
     }
@@ -352,7 +352,9 @@
     }
 
     async function loadReservations() {
-      const res = await fetch(`/api/reservations?password=${encodeURIComponent(state.password)}`);
+      const res = await fetch('/api/reservations', {
+        headers: { 'x-admin-password': state.password }
+      });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || 'No se pudieron cargar las reservas');
       state.reservations = Array.isArray(data.data) ? data.data : [];
@@ -363,8 +365,8 @@
       setStatus('reservas', 'Actualizando...', 'ok');
       const res = await fetch('/api/reservations', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: state.password, id, status })
+        headers: { 'Content-Type': 'application/json', 'x-admin-password': state.password },
+        body: JSON.stringify({ id, status })
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || data.error) throw new Error(data.error || 'No se pudo actualizar la reserva');
